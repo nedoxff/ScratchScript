@@ -1,6 +1,7 @@
 ﻿using CliWrap;
 using CliWrap.Exceptions;
 using ScratchScript.Core;
+using ScratchScript.Core.Reflection;
 using Serilog;
 using Spectre.Console.Cli;
 
@@ -19,6 +20,8 @@ public class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
         }
 
         if (settings.Verbose) Static.LogToConsole = true;
+        
+        ReflectionBlockLoader.Load();
 
         var output = Path.Join(Path.GetTempPath(), $"temp_{Guid.NewGuid():N}.sb3");
         var manager = new ProjectManager(settings.File, settings.IrPath, output);

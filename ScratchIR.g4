@@ -39,8 +39,9 @@ expression
     | multiplyOperators expression expression #binaryMultiplyExpression
     | booleanOperators expression expression #binaryBooleanExpression
     | compareOperators expression expression #binaryCompareExpression
+    | 'rawshadow' Identifier callProcedureArgument*? 'endshadow' #rawShadowExpression
     | '!' expression #notExpression
-    | Identifier '#' expression #listAccessExpression ;
+    | Identifier '#' expression #listAccessExpression;
 
 Event: 'start'; //todo: add other events
 //StopType: 'script'; //todo: add other types

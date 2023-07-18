@@ -50,11 +50,11 @@ public partial class ScratchIRBackendVisitor
             var expression = Visit(argument.expression());
             if (argument.procedureArgumentType().GetText() == "i:")
                 block.SetInput(procedure.Arguments[argumentName].Id, ScratchInput.New(expression, block));
-            else 
+            else
                 block.SetField(procedure.Arguments[argumentName].Id, ScratchField.New(expression));
             UpdateBlocks(expression);
         }
-        
+
         return block;
     }
 
@@ -62,19 +62,31 @@ public partial class ScratchIRBackendVisitor
     {
         var opcode = context.Identifier().GetText();
         var block = new Block(opcode, "raw");
+        SetRawBlockProperties(ref block, context.callProcedureArgument());
+        return block;
+    }
 
-        foreach (var argument in context.callProcedureArgument())
+    public override object VisitRawShadowExpression(ScratchIRParser.RawShadowExpressionContext context)
+    {
+        var opcode = context.Identifier().GetText();
+        var block = new Block(opcode, "raws", shadow: true);
+        SetRawBlockProperties(ref block, context.callProcedureArgument());
+        return block;
+    }
+
+    private void SetRawBlockProperties(ref Block block,
+        IEnumerable<ScratchIRParser.CallProcedureArgumentContext> arguments)
+    {
+        foreach (var argument in arguments)
         {
             var name = argument.Identifier().GetText();
             var expression = Visit(argument.expression());
-            if (argument.procedureArgumentType().GetText() == ":i")
+            if (argument.procedureArgumentType().GetText() == "i:")
                 block.SetInput(name, ScratchInput.New(expression, block));
-            else 
+            else
                 block.SetField(name, ScratchField.New(expression));
-            if(expression is Block b) UpdateBlocks(b);
+            UpdateBlocks(expression);
         }
-        
-        return block;
     }
 
     private void UpdateProcedure()

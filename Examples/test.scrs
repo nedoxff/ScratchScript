@@ -1,21 +1,9 @@
-function plus(a) {
-    return a + a;
-}
+import "scratch/motion";
 
 on start {
-    var a = 10;
-    var b = 1;
-    while a > 0 {
-        if plus(a) == plus(3) {
-            if 1 == 1 {
-                b = a;
-                break;
-            }
-            else {
-                plus(1);
-            }
-        }
-        a -= 1;
-    }
-    plus(b);
+    setX(0);
+    setY(0);
+    goTo("random");
+    var x = getX();
+    var y = getY();
 }

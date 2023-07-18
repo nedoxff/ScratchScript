@@ -252,6 +252,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>

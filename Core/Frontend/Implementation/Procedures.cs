@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using ScratchScript.Core.Diagnostics;
+using ScratchScript.Core.Reflection;
 using ScratchScript.Helpers;
 using Spectre.Console;
 
@@ -36,6 +37,7 @@ public partial class ScratchScriptVisitor
 
     private ScratchIrProcedure InitProcedure = new("__Init", Array.Empty<string>());
     private List<ScratchIrProcedure> _procedures = new();
+    private List<ScratchFunction> _functions = new();
 
     public override object VisitProcedureDeclarationStatement(
         ScratchScriptParser.ProcedureDeclarationStatementContext context)
@@ -62,6 +64,7 @@ public partial class ScratchScriptVisitor
 
         var scope = CreateScope(context.block().line(), reporters: argumentNames);
         procedure.Code = scope.ToString();
+        DefineFunction(procedure);
         return procedure.ToString();
     }
 
@@ -76,60 +79,112 @@ public partial class ScratchScriptVisitor
     public override object VisitProcedureCallStatement(ScratchScriptParser.ProcedureCallStatementContext context)
     {
         var name = context.Identifier().GetText();
-        if (_procedures.All(x => x.Name != name))
+        var function = GetFunction(name);
+        if (function == null)
         {
             DiagnosticReporter.Error(ScratchScriptError.ProcedureNotDefined, context, context.Identifier().Symbol,
                 name);
             return null;
         }
 
-        var procedure = _procedures.First(x => x.Name == name);
-        if (procedure.Arguments.Count != context.procedureArgument().Length)
+        if (function.Arguments.Count != context.procedureArgument().Length)
         {
             DiagnosticReporter.Error(ScratchScriptError.ProcedureArgumentCountDifferent, context,
-                ParserRuleContext.EmptyContext, name, procedure.Arguments.Count, context.procedureArgument().Length);
+                ParserRuleContext.EmptyContext, name, function.Arguments.Count, context.procedureArgument().Length);
             return null;
         }
 
-        var result = $"call {name} ";
         var contexts = context.procedureArgument();
-        for (var index = 0; index < contexts.Length; index++)
+        switch (function)
         {
-            var argument = contexts[index];
-            var argumentName = argument.Identifier() == null
-                ? procedure.Arguments.Keys.ElementAt(index)
-                : argument.Identifier().GetText();
+            case DefinedScratchFunction:
+            {
+                var result = $"call {name} ";
+                for (var index = 0; index < contexts.Length; index++)
+                {
+                    var argument = contexts[index];
+                    var argumentName = argument.Identifier() == null
+                        ? function.Arguments.ElementAt(index).Name
+                        : argument.Identifier().GetText();
 
-            var expression = Visit(argument.expression());
-            if (GetType(procedure.Arguments[argumentName]) != ScratchType.Unknown)
-                AssertType(context, expression, procedure.Arguments[argumentName], argument.expression());
+                    var expression = Visit(argument.expression());
+                    var argumentType = function.Arguments.First(x => x.Name == argumentName).Type;
+                    if (GetType(argumentType) != ScratchType.Unknown)
+                        AssertType(context, expression, argumentType, argument.expression());
 
-            result += $"i:{argumentName}:{expression} ";
+                    result += $"i:{argumentName}:{expression} ";
+                }
+
+                result += "\n";
+                if (context.Parent is ScratchScriptParser
+                        .ProcedureCallExpressionContext) // Avoid repeating the same line in a statement (instead of an expression)
+                    _currentScope.Prepend += result;
+                _currentScope.Append += PopFunctionStackCommand;
+                return result;
+            }
+            case NativeScratchFunction nativeFunction:
+            {
+                var arguments = new object[nativeFunction.Arguments.Count];
+                for (var index = 0; index < contexts.Length; index++)
+                {
+                    var argument = contexts[index];
+                    var argumentName = argument.Identifier() == null
+                        ? function.Arguments.ElementAt(index).Name
+                        : argument.Identifier().GetText();
+
+                    var expression = Visit(argument.expression());
+                    var argumentIndex = nativeFunction.Arguments.FindIndex(x => x.Name == argumentName);
+                    var argumentType = function.Arguments.First(x => x.Name == argumentName).Type;
+
+                    if (!function.Arguments[argumentIndex].AllowedValues.Contains(expression))
+                    {
+                        //TODO: error
+                    }
+                    
+                    if (GetType(argumentType) != ScratchType.Unknown)
+                        AssertType(context, expression, argumentType, argument.expression());
+                    
+                    arguments[argumentIndex] = expression.ToString();
+                }
+
+                var result = nativeFunction.NativeMethod.Invoke(null, arguments) as string;
+                return $"{result}\n";
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
         }
-
-        result += "\n";
-        if (context.Parent is ScratchScriptParser
-                .ProcedureCallExpressionContext) // Avoid repeating the same line in a statement (instead of an expression)
-            _currentScope.Prepend += result;
-        _currentScope.Append += PopFunctionStackCommand;
-        return result;
     }
 
     public override object VisitProcedureCallExpression(ScratchScriptParser.ProcedureCallExpressionContext context)
     {
         var statement = Visit(context.procedureCallStatement());
-        var procedure = _procedures.First(x => x.Name == context.procedureCallStatement().Identifier().GetText());
+        var name = context.procedureCallStatement().Identifier().GetText();
+        var function = GetFunction(name);
         Assert<string>(context, statement, context.procedureCallStatement());
-        if (procedure.ReturnType == ScratchType.Unknown)
+        if (function.BlockInformation.ReturnType == ScratchType.Unknown)
         {
             DiagnosticReporter.Error(ScratchScriptError.ProcedureExpressionDoesNotReturn, context,
-                ParserRuleContext.EmptyContext, procedure.Name);
+                ParserRuleContext.EmptyContext, name);
             return null;
         }
 
-        var result = $"__FunctionReturnValues#{_currentScope.ProcedureIndex + 1}";
+        var result = function is NativeScratchFunction ? statement.ToString(): $"__FunctionReturnValues#{_currentScope.ProcedureIndex + 1}";
         _currentScope.ProcedureIndex++;
-        SaveType(result, procedure.ReturnType);
+        SaveType(result, function.BlockInformation.ReturnType);
         return result;
     }
+
+    private void DefineFunction(ScratchIrProcedure procedure)
+    {
+        var function = new DefinedScratchFunction
+        {
+            BlockInformation = new ScratchBlockAttribute(string.IsNullOrEmpty(Namespace) ? "global" : Namespace,
+                procedure.Name, true, false, ScratchType.Unknown, procedure.ReturnType),
+            Arguments = procedure.Arguments.Select(arg => new ScratchArgumentAttribute(arg.Key, arg.Value))
+                .ToList()
+        };
+        _functions.Add(function);
+    }
+
+    private ScratchFunction GetFunction(string name) => _functions.FirstOrDefault(x => x.BlockInformation.Name == name);
 }

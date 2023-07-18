@@ -356,6 +356,20 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBinaryCompareExpression([NotNull] ScratchIRParser.BinaryCompareExpressionContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by the <c>rawShadowExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterRawShadowExpression([NotNull] ScratchIRParser.RawShadowExpressionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>rawShadowExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitRawShadowExpression([NotNull] ScratchIRParser.RawShadowExpressionContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by the <c>notExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>

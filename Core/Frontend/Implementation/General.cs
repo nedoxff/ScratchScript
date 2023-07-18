@@ -1,6 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Drawing.Printing;
+using System.Text.RegularExpressions;
 using Antlr4.Runtime.Tree.Xpath;
 using ScratchScript.Core.Frontend.Scope;
+using ScratchScript.Core.Reflection;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -14,6 +16,8 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
     private string _loadSection = "";
 
     public string Output => RemoveEmptyLines($"{_loadSection}\n{_proceduresSection}\n{_output}");
+    public string Namespace = "global";
+    
     private ScratchScriptParser _parser;
     private Dictionary<string, ScratchType> _typeLookup = new();
     private ScopeInfo _currentScope;
@@ -49,6 +53,10 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
             result = Visit(context.procedureDeclarationStatement());
         if (context.eventStatement() != null)
             result = Visit(context.eventStatement());
+        if (context.importStatement() != null)
+            return Visit(context.importStatement());
+        if (context.namespaceStatement() != null)
+            return Visit(context.namespaceStatement());
         return result;
     }
 
@@ -125,8 +133,6 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
             return Visit(context.procedureCallStatement());
         if (context.variableDeclarationStatement() != null)
             return Visit(context.variableDeclarationStatement());
-        if (context.importStatement() != null)
-            return Visit(context.importStatement());
         if (context.returnStatement() != null)
             return Visit(context.returnStatement());
         if (context.breakStatement() != null)
@@ -140,7 +146,7 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
         if (context.Number() is { } n)
             return decimal.Parse(n.GetText());
         if (context.String() is { } s)
-            return s.GetText();
+            return s.GetText()[1..^1];
         if (context.boolean() is { } b)
             return b.GetText() == "true";
         return null;
@@ -205,6 +211,35 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
 
         _currentScope = scope.ParentScope;
         return scope;
+    }
+
+    public override object VisitNamespaceStatement(ScratchScriptParser.NamespaceStatementContext context)
+    {
+        var name = context.String().GetText()[1..^1];
+        if (_procedures.Count != 0 && string.IsNullOrEmpty(Namespace))
+        {
+            //TODO: add an error about the namespace's position in code
+        }
+
+        Namespace = name;
+        return null;
+    }
+
+    public override object VisitImportStatement(ScratchScriptParser.ImportStatementContext context)
+    {
+        var name = context.String().GetText()[1..^1];
+        if (context.Identifier().Length != 0)
+            throw new NotImplementedException(); //TODO: yet
+        //TODO: also add searching in other files
+        var namespaceExists = ReflectionBlockLoader.Functions.ContainsKey(name);
+        if (!namespaceExists)
+        {
+            //TODO: error   
+        }
+        
+        if(ReflectionBlockLoader.Functions.TryGetValue(name, out var functions))
+            _functions.AddRange(functions);
+        return null;
     }
 
     // Annoying workaround

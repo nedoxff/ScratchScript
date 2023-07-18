@@ -140,6 +140,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

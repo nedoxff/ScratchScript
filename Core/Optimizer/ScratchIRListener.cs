@@ -305,6 +305,18 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitBinaryCompareExpression([NotNull] ScratchIRParser.BinaryCompareExpressionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>rawShadowExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterRawShadowExpression([NotNull] ScratchIRParser.RawShadowExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>rawShadowExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitRawShadowExpression([NotNull] ScratchIRParser.RawShadowExpressionContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>notExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// </summary>

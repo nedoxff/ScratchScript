@@ -4,9 +4,9 @@ Parser
 */
 
 program: topLevelStatement* EOF;
-topLevelStatement: attributeStatement | procedureDeclarationStatement | eventStatement;
+topLevelStatement: attributeStatement | procedureDeclarationStatement | eventStatement | importStatement | namespaceStatement;
 line: (statement | ifStatement | whileStatement | repeatStatement | comment);
-statement: (assignmentStatement | procedureCallStatement | variableDeclarationStatement | importStatement | returnStatement | breakStatement | continueStatement) Semicolon;
+statement: (assignmentStatement | procedureCallStatement | variableDeclarationStatement | returnStatement | breakStatement | continueStatement) Semicolon;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
 assignmentStatement: Identifier assignmentOperators expression;
@@ -16,12 +16,13 @@ procedureDeclarationStatement: ProcedureDeclare Identifier LeftParen (Identifier
 ifStatement: If expression block (Else elseIfStatement)?;
 whileStatement: While expression block;
 elseIfStatement: block | ifStatement;
-importStatement: Import String;
-attributeStatement: At Identifier;
+importStatement: Import (LeftBrace Identifier (Comma Identifier)*? RightBrace From)? String Semicolon;
+attributeStatement: At Identifier (LeftParen (constant (Comma constant)*?)? RightParen)?;
 returnStatement: Return expression;
 repeatStatement: Repeat expression block;
 breakStatement: Break;
 continueStatement: Continue;
+namespaceStatement: Namespace String Semicolon;
 
 procedureArgument: (Identifier ':')? expression;
 
@@ -143,6 +144,8 @@ ProcedureDeclare: 'function' Whitespace+;
 Return: 'return' Whitespace+;
 Repeat: 'repeat' Whitespace+;
 Event: 'on' Whitespace+;
+From: 'from' Whitespace+;
+Namespace: 'namespace' Whitespace+;
 
 /*
     Lexer rules

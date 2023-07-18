@@ -211,6 +211,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

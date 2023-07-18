@@ -192,6 +192,13 @@ public interface IScratchIRVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBinaryCompareExpression([NotNull] ScratchIRParser.BinaryCompareExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>rawShadowExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRawShadowExpression([NotNull] ScratchIRParser.RawShadowExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>notExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// </summary>

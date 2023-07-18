@@ -38,4 +38,6 @@ public class Target
 
 
     [JsonProperty("volume")] public int Volume = 100;
+
+    [NonSerialized] public string Namespace;
 }

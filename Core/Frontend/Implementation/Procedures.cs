@@ -73,7 +73,7 @@ public partial class ScratchScriptVisitor
         var expression = Visit(context.expression());
         _procedures.Last().ReturnType = GetType(expression);
         return
-            $"push __FunctionReturnValues {expression}\n{PopAllProcedureCache}\nraw control_stop f:STOP_OPTION:\"this script\"\n";
+            $"push __FunctionReturnValues {expression}\nraw control_stop f:STOP_OPTION:\"this script\"\n";
     }
 
     public override object VisitProcedureCallStatement(ScratchScriptParser.ProcedureCallStatementContext context)
@@ -168,8 +168,9 @@ public partial class ScratchScriptVisitor
             return null;
         }
 
-        var result = function is NativeScratchFunction ? statement.ToString(): $"__FunctionReturnValues#{_currentScope.ProcedureIndex + 1}";
-        _currentScope.ProcedureIndex++;
+        var isNative = function is NativeScratchFunction;
+        var result = isNative ? statement.ToString(): $"__FunctionReturnValues#{_currentScope.ProcedureIndex + 1}";
+        if(isNative) _currentScope.ProcedureIndex++;
         SaveType(result, function.BlockInformation.ReturnType);
         return result;
     }
@@ -179,7 +180,7 @@ public partial class ScratchScriptVisitor
         var function = new DefinedScratchFunction
         {
             BlockInformation = new ScratchBlockAttribute(string.IsNullOrEmpty(Namespace) ? "global" : Namespace,
-                procedure.Name, true, false, ScratchType.Unknown, procedure.ReturnType),
+                procedure.Name, false, true, ScratchType.Unknown, procedure.ReturnType),
             Arguments = procedure.Arguments.Select(arg => new ScratchArgumentAttribute(arg.Key, arg.Value))
                 .ToList()
         };

@@ -23,7 +23,6 @@ public class ReflectionBlockLoader
             {
                 var function = new NativeScratchFunction();
                 var blockInformation = methodInfo.GetCustomAttribute<ScratchBlockAttribute>()!;
-                Log.Verbose("Adding function {NativeName} as {ScratchName} to {Namespace}", methodInfo.Name, blockInformation.Name, blockInformation.Namespace);
 
                 if (!Functions.ContainsKey(blockInformation.Namespace))
                     Functions[blockInformation.Namespace] = new();
@@ -38,5 +37,8 @@ public class ReflectionBlockLoader
                 Functions[blockInformation.Namespace].Add(function);
             }
         }
+        
+        foreach (var (ns, functions) in Functions)
+            Log.Verbose("Loaded {FunctionCount} functions to {Namespace}", functions.Count, ns);
     }
 }

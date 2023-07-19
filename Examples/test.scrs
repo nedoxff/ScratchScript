@@ -1,9 +1,12 @@
+import "scratch/looks";
 import "scratch/motion";
 
 on start {
-    setX(0);
-    setY(0);
-    goTo("random");
-    var x = getX();
-    var y = getY();
+    var steps = 0;
+    while 1 == 1 {
+        steps += 5;
+        move(steps);
+        bounceOnEdge();
+        say(steps);
+    }
 }

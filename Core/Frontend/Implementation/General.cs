@@ -146,7 +146,7 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
         if (context.Number() is { } n)
             return decimal.Parse(n.GetText());
         if (context.String() is { } s)
-            return s.GetText()[1..^1];
+            return s.GetText();
         if (context.boolean() is { } b)
             return b.GetText() == "true";
         return null;

@@ -1,4 +1,5 @@
-﻿using ScratchScript.Helpers;
+﻿using ScratchScript.Extensions;
+using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
 
@@ -22,7 +23,7 @@ public partial class ScratchScriptVisitor
             AssertType(context, second, ScratchType.Number, context.expression(1));
         }
 
-        var result = $"{op} {FormatString(first)} {FormatString(second)}";
+        var result = $"{op} {first.Format()} {second.Format()}";
         SaveType(result, ScratchType.Boolean);
         return result;
     }
@@ -36,7 +37,7 @@ public partial class ScratchScriptVisitor
         AssertType(context, first, ScratchType.Number, context.expression(0));
         AssertType(context, second, ScratchType.Number, context.expression(1));
         
-        var result = $"{op} {FormatString(first)} {FormatString(second)}";
+        var result = $"{op} {first.Format()} {second.Format()}";
         SaveType(result, ScratchType.Number);
         return result;
     }
@@ -56,7 +57,7 @@ public partial class ScratchScriptVisitor
         }
         else op = "~"; 
 
-        var result = $"{op} {FormatString(first)} {FormatString(second)}";
+        var result = $"{op} {first.Format()} {second.Format()}";
         SaveType(result, isString ? ScratchType.String: ScratchType.Number);
         return result;
     }
@@ -70,7 +71,7 @@ public partial class ScratchScriptVisitor
         AssertType(context, first, ScratchType.Boolean, context.expression(0));
         AssertType(context, second, ScratchType.Boolean, context.expression(1));
         
-        var result = $"{op} {FormatString(first)} {FormatString(second)}";
+        var result = $"{op} {first.Format()} {second.Format()}";
         SaveType(result, ScratchType.Boolean);
         return result;
     }

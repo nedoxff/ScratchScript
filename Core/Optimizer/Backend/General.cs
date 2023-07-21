@@ -31,6 +31,8 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
             return decimal.Parse(n.GetText());
         if (context.String() is { } s)
             return s.GetText()[1..^1];
+        if (context.Color() is { } c)
+            return new ScratchColor(c.GetText()[1..]);
         //if (context.boolean() is { } b)
         //    return b.GetText() == "true";
         return null;

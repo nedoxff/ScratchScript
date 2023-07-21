@@ -79,7 +79,7 @@ public partial class ScratchIRBackendVisitor
             }
         }
         
-        UpdateBlocks(block);
+        UpdateBlocks(block, condition);
         return block;
     }
 

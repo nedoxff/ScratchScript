@@ -10,7 +10,7 @@ public class ScratchInput
     private static List<object> FromObject(object o)
     {
         var type = TypeHelper.GetType(o);
-        return new List<object> {(int)ScratchShadowType.Shadow, new object[] {type, o.ToString()}};
+        return new List<object> {(int)ScratchShadowType.Shadow, new object[] {type, o.Format()}};
     }
 
     private static List<object> FromBlock(Block b, Block parent = null, bool setChild = true, bool isRegularShadow = false)

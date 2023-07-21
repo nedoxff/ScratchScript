@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using ScratchScript.Core.Diagnostics;
 using ScratchScript.Core.Reflection;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 using Spectre.Console;
 
@@ -144,7 +145,7 @@ public partial class ScratchScriptVisitor
                     if (GetType(argumentType) != ScratchType.Unknown)
                         AssertType(context, expression, argumentType, argument.expression());
                     
-                    arguments[argumentIndex] = expression.ToString();
+                    arguments[argumentIndex] = expression.Format();
                 }
 
                 var result = nativeFunction.NativeMethod.Invoke(null, arguments) as string;

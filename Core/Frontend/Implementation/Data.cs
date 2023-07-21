@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using ScratchScript.Core.Diagnostics;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -26,10 +27,15 @@ public partial class ScratchScriptVisitor
         
         var expression = Visit(context.expression());
         var expressionType = GetType(expression);
+        
+        if (expressionType is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
+        {
+            //TODO: ERROR
+        }
 
         AssertType(context, variableType, expressionType, context.expression());
 
-        return $"set v:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"v:{name}")} {FormatString(expression)}\n";
+        return $"set v:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"v:{name}")} {expression.Format(rawColor: false)}\n";
     }
 
     public override object VisitVariableDeclarationStatement(
@@ -46,9 +52,15 @@ public partial class ScratchScriptVisitor
 
         var expression = Visit(context.expression());
         var expressionType = GetType(expression);
+
+        if (expressionType is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
+        {
+            //TODO: ERROR
+        }
+        
         _currentScope.Variables.Add(new ScratchVariable(name, expressionType));
         _loadSection += $"load:{TypeHelper.ScratchTypeToString(expressionType)} {name}\n";
-        return $"set v:{name} {FormatString(expression)}\n";
+        return $"set v:{name} {expression.Format(rawColor: false)}\n";
     }
 
     public override object VisitAssignmentOperators(ScratchScriptParser.AssignmentOperatorsContext context)

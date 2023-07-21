@@ -1,4 +1,5 @@
 ﻿using ScratchScript.Core.Models;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -10,7 +11,7 @@ public partial class ScratchScriptVisitor
         var expression = Visit(context.expression());
         AssertType(context, GetType(expression), ScratchType.Boolean, context.expression());
 
-        var result = $"!{FormatString(expression)}";
+        var result = $"!{expression.Format()}";
         SaveType(result, ScratchType.Boolean);
         return result;
     }

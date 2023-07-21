@@ -56,7 +56,7 @@ boolean: True | False;
 */
 
 fragment Digit: [0-9];
-fragment HexDigit: [0-9A-F];
+fragment HexDigit: [0-9a-fA-F];
 Whitespace: (' ' | '\t') -> channel(HIDDEN);
 NewLine: ('\r'? '\n' | '\r' | '\n') -> skip;
 Semicolon: ';';

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Antlr4.Runtime.Tree.Xpath;
 using ScratchScript.Core.Models;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -12,7 +13,7 @@ public partial class ScratchScriptVisitor
         var condition = Visit(context.expression());
         AssertType(context, GetType(condition), ScratchType.Boolean, context.expression());
 
-        var scope = CreateScope(context.block().line(), "if " + FormatString(condition));
+        var scope = CreateScope(context.block().line(), "if " + condition.Format());
         var result = scope.ToString();
 
         if (context.elseIfStatement() == null) return result;

@@ -1,4 +1,5 @@
 ﻿using ScratchScript.Core.Reflection;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Blocks;
@@ -25,13 +26,13 @@ public class Motion
     public static string PointTowards(
         [ScratchArgument("towards", ScratchType.String, new object[] { "mouse", "random" })]
         string towards) =>
-        $"raw motion_pointtowards i:TOWARDS:(rawshadow motion_pointtowards_menu i:TOWARDS:\"_{towards}_\" endshadow)";
+        $"raw motion_pointtowards i:TOWARDS:(rawshadow motion_pointtowards_menu i:TOWARDS:\"_{towards.RemoveQuotes()}_\" endshadow)";
 
     [ScratchBlock("scratch/motion", "goTo", false, true)]
     public static string GoTo(
         [ScratchArgument("to", ScratchType.String, new object[] { "mouse", "random" })]
         string to) =>
-        $"raw motion_goto i:TO:(rawshadow motion_goto_menu i:TO:\"_{to}_\" endshadow)";
+        $"raw motion_goto i:TO:(rawshadow motion_goto_menu i:TO:\"_{to.RemoveQuotes()}_\" endshadow)";
 
     [ScratchBlock("scratch/motion", "goToXY", false, true)]
     public static string GoToXy([ScratchArgument("x", ScratchType.Number)] string x,
@@ -49,7 +50,7 @@ public class Motion
     public static string GlideTo(
         [ScratchArgument("to", ScratchType.String, new object[] { "mouse", "random" })]
         string to, [ScratchArgument("secs", ScratchType.Number)] string secs) =>
-        $"raw motion_glideto i:TO:(rawshadow motion_glideto_menu i:TO:\"_{to}_\" endshadow) i:SECS:{secs}";
+        $"raw motion_glideto i:TO:(rawshadow motion_glideto_menu i:TO:\"_{to.RemoveQuotes()}_\" endshadow) i:SECS:{secs}";
 
     [ScratchBlock("scratch/motion", "changeX", false, true)]
     public static string ChangeX([ScratchArgument("dx", ScratchType.Number)] string dx) =>
@@ -75,7 +76,7 @@ public class Motion
         [ScratchArgument("style", ScratchType.String,
             new object[] { "left-right", "don't rotate", "all around" })]
         string style) =>
-        $"raw motion_setrotationstyle i:STYLE:\"{style}\"";
+        $"raw motion_setrotationstyle i:STYLE:\"{style.RemoveQuotes()}\"";
 
     [ScratchBlock("scratch/motion", "getX", true, true, ScratchType.Unknown, ScratchType.Number)]
     public static string GetX() => "rawshadow motion_xposition endshadow";

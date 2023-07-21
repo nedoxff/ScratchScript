@@ -29,7 +29,8 @@ public class TypeHelper
         {typeof(int), ScratchType.Number},
         {typeof(decimal), ScratchType.Number},
         {typeof(string), ScratchType.String},
-        {typeof(bool), ScratchType.Boolean}
+        {typeof(bool), ScratchType.Boolean},
+        {typeof(ScratchColor), ScratchType.Color}
     };
 
     public static string ScratchTypeToString(ScratchType type)
@@ -38,6 +39,7 @@ public class TypeHelper
         {
             ScratchType.String => "s",
             ScratchType.Boolean => "s",
+            ScratchType.Color => "s",
             ScratchType.List => "l",
             ScratchType.Number => "n",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
@@ -50,7 +52,7 @@ public class TypeHelper
         {
             "s" => ScratchType.String,
             "l" => ScratchType.List,
-            "n" => ScratchType.Number
+            "n" => ScratchType.Number,
         };
     }
 }
@@ -69,5 +71,15 @@ public enum ScratchType
     Variable = 12,
     List = 13,
     Boolean = 15,
-    Unknown = 0
+    Unknown = 0,
+    Color = 9
+}
+
+public struct ScratchColor //TODO: workaround??? idk
+{
+    public string Value;
+    public ScratchColor(string value)
+    {
+        Value = value;
+    }
 }

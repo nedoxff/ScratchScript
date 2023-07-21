@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Antlr4.Runtime.Tree.Xpath;
 using ScratchScript.Core.Frontend.Scope;
 using ScratchScript.Core.Reflection;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -15,7 +16,7 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
     private string _proceduresSection = "";
     private string _loadSection = "";
 
-    public string Output => RemoveEmptyLines($"{_loadSection}\n{_proceduresSection}\n{_output}");
+    public string Output => $"{_loadSection}\n{_proceduresSection}\n{_output}".RemoveEmptyLines();
     public string Namespace = "global";
     
     private ScratchScriptParser _parser;
@@ -149,6 +150,8 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
             return s.GetText();
         if (context.boolean() is { } b)
             return b.GetText() == "true";
+        if (context.Color() is { } c)
+            return new ScratchColor(c.GetText()[1..]);
         return null;
     }
 
@@ -157,7 +160,7 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
         var expression = Visit(context.expression());
         var expressionType = GetType(expression);
         
-        var result = $"({FormatString(expression)})";
+        var result = $"({expression.Format()})";
         SaveType(result, expressionType);
         return result;
     }
@@ -241,9 +244,4 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
             _functions.AddRange(functions);
         return null;
     }
-
-    // Annoying workaround
-    private string FormatString(object o) => o is bool b ? $"\"{b.ToString().ToLower()}\"" : o.ToString();
-
-    private string RemoveEmptyLines(string s) => string.Join('\n', s.Split("\n").Where(x => !string.IsNullOrEmpty(x)));
 }

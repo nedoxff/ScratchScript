@@ -4,7 +4,7 @@ using Serilog;
 
 namespace ScratchScript.Core.Reflection;
 
-public class ReflectionBlockLoader
+public static class ReflectionBlockLoader
 {
     public static Dictionary<string, List<NativeScratchFunction>> Functions = new();
 

@@ -11,7 +11,7 @@ public partial class ScratchScriptVisitor
     public override object VisitIfStatement(ScratchScriptParser.IfStatementContext context)
     {
         var condition = Visit(context.expression());
-        AssertType(context, GetType(condition), ScratchType.Boolean, context.expression());
+        AssertType(context, condition, ScratchType.Boolean, context.expression());
 
         var scope = CreateScope(context.block().line(), "if " + condition.Format());
         var result = scope.ToString();

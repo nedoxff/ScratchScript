@@ -36,8 +36,16 @@ public partial class ScratchScriptVisitor
         
         AssertType(context, first, ScratchType.Number, context.expression(0));
         AssertType(context, second, ScratchType.Number, context.expression(1));
-        
-        var result = $"{op} {first.Format()} {second.Format()}";
+
+        string result;
+        if (op == "**")
+        {
+            _currentScope.Prepend += $"call __Exponent i:base:{first} i:exponent:{second}\n";
+            _currentScope.Append += PopFunctionStackCommand;
+            _currentScope.ProcedureIndex++;
+            result = $"__FunctionReturnValues#{_currentScope.ProcedureIndex}";
+        }
+        else result = $"{op} {first.Format()} {second.Format()}";
         SaveType(result, ScratchType.Number);
         return result;
     }

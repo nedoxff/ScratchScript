@@ -1,0 +1,44 @@
+﻿import "scratch/operators";
+
+@__ReturnType(4) function __TernaryNumber(condition, trueValue, falseValue) {
+    if condition {
+        return trueValue;
+    }
+    else {
+        return falseValue;
+    }
+}
+
+@__ReturnType(10) function __TernaryString(condition, trueValue, falseValue) {
+    if condition {
+        return trueValue;
+    }
+    else {
+        return falseValue;
+    }
+}
+
+@__ReturnType(15) @__ArgumentType("trueValue", 15) @__ArgumentType("falseValue", 15) function __TernaryBoolean(condition, trueValue, falseValue) {
+    if condition {
+        return trueValue;
+    }
+    else {
+        return falseValue;
+    }
+}
+
+@__ReturnType(9) function __TernaryColor(condition, trueValue, falseValue) {
+    if condition {
+        return trueValue;
+    }
+    else {
+        return falseValue;
+    }
+}
+
+
+
+function __Exponent(base, exponent) {
+    var result = exp(exponent * ln(abs(base)));
+    return __TernaryNumber(base < 0, 1 / result, result);
+}

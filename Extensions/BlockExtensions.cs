@@ -14,7 +14,7 @@ public static class BlockExtensions
     {
         Log.Verbose("[{BlockId}] Parent changed: {From} -> {To}", block.Id, string.IsNullOrEmpty(block.Parent) ? "none": block.Parent, parent.Id);
         block.Parent = parent.Id;
-        if (!block.Shadow && setChild)
+        if (!block.Shadow && !parent.Shadow && setChild)
             parent.Next = block.Id;
     }
 

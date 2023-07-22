@@ -9,10 +9,18 @@ namespace ScratchScript.Core.Optimizer.Backend;
 public partial class ScratchIRBackendVisitor
 {
     private List<ScratchVariable> _variables = new();
+
+    private ScratchVariable GetVariable(string name)
+    {
+        if(_variables.All(x => x.Name != name))
+            _variables.Add(new ScratchVariable {Id = NameHelper.New(name), Name = name});
+        return _variables.First(x => x.Name == name);
+    }
+    
     public override object VisitSetCommand(ScratchIRParser.SetCommandContext context)
     {
         var name = context.variableIdentifier().Identifier().GetText();
-        var variable = _variables.First(x => x.Name == name);
+        var variable = GetVariable(name);
         var variableBlock = Data.Variable(variable);
         var value = Visit(context.expression());
         
@@ -29,7 +37,7 @@ public partial class ScratchIRBackendVisitor
     {
         var name = context.Identifier().GetText();
         Log.Verbose("[Load] Creating a variable named {Name}", name);
-        var id = $"{Target.Name}_{name}";
+        var id = NameHelper.New(name);
         var type = TypeHelper.ScratchTypeFromString(context.Type().GetText()[1..]);
         
         _variables.Add(new ScratchVariable
@@ -46,7 +54,7 @@ public partial class ScratchIRBackendVisitor
     {
         var name = context.variableIdentifier().Identifier().GetText();
         if (context.variableIdentifier().ArgumentReporterIdentifier() == null)
-            return Data.Variable(_variables.First(x => x.Name == name));
+            return Data.Variable(GetVariable(name));
 
         var reporter = _procedures.Last().Arguments[name].Clone();
         UpdateBlocks(reporter);

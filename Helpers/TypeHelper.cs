@@ -66,13 +66,13 @@ public enum ScratchShadowType
 
 public enum ScratchType
 {
+    Unknown = 0,
     Number = 4,
+    Color = 9,
     String = 10,
     Variable = 12,
     List = 13,
-    Boolean = 15,
-    Unknown = 0,
-    Color = 9
+    Boolean = 15
 }
 
 public struct ScratchColor //TODO: workaround??? idk

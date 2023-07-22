@@ -231,18 +231,6 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProcedureArgument([NotNull] ScratchScriptParser.ProcedureArgumentContext context);
 	/// <summary>
-	/// Enter a parse tree produced by the <c>parenthesizedExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterParenthesizedExpression([NotNull] ScratchScriptParser.ParenthesizedExpressionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by the <c>parenthesizedExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitParenthesizedExpression([NotNull] ScratchScriptParser.ParenthesizedExpressionContext context);
-	/// <summary>
 	/// Enter a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
@@ -267,30 +255,6 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitIdentifierExpression([NotNull] ScratchScriptParser.IdentifierExpressionContext context);
 	/// <summary>
-	/// Enter a parse tree produced by the <c>procedureCallExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterProcedureCallExpression([NotNull] ScratchScriptParser.ProcedureCallExpressionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by the <c>procedureCallExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitProcedureCallExpression([NotNull] ScratchScriptParser.ProcedureCallExpressionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by the <c>binaryBooleanExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by the <c>binaryBooleanExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
-	/// <summary>
 	/// Enter a parse tree produced by the <c>notExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
@@ -302,18 +266,6 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitNotExpression([NotNull] ScratchScriptParser.NotExpressionContext context);
-	/// <summary>
-	/// Enter a parse tree produced by the <c>binaryCompareExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterBinaryCompareExpression([NotNull] ScratchScriptParser.BinaryCompareExpressionContext context);
-	/// <summary>
-	/// Exit a parse tree produced by the <c>binaryCompareExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitBinaryCompareExpression([NotNull] ScratchScriptParser.BinaryCompareExpressionContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>binaryMultiplyExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
@@ -339,6 +291,78 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitUnaryAddExpression([NotNull] ScratchScriptParser.UnaryAddExpressionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>arrayAccessExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArrayAccessExpression([NotNull] ScratchScriptParser.ArrayAccessExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>arrayAccessExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArrayAccessExpression([NotNull] ScratchScriptParser.ArrayAccessExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>parenthesizedExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterParenthesizedExpression([NotNull] ScratchScriptParser.ParenthesizedExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>parenthesizedExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitParenthesizedExpression([NotNull] ScratchScriptParser.ParenthesizedExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>procedureCallExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterProcedureCallExpression([NotNull] ScratchScriptParser.ProcedureCallExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>procedureCallExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitProcedureCallExpression([NotNull] ScratchScriptParser.ProcedureCallExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>binaryBooleanExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>binaryBooleanExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>binaryCompareExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterBinaryCompareExpression([NotNull] ScratchScriptParser.BinaryCompareExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>binaryCompareExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitBinaryCompareExpression([NotNull] ScratchScriptParser.BinaryCompareExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>ternaryExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterTernaryExpression([NotNull] ScratchScriptParser.TernaryExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>ternaryExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitTernaryExpression([NotNull] ScratchScriptParser.TernaryExpressionContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>binaryAddExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
@@ -350,6 +374,18 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitBinaryAddExpression([NotNull] ScratchScriptParser.BinaryAddExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>memberProcedureCallExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemberProcedureCallExpression([NotNull] ScratchScriptParser.MemberProcedureCallExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>memberProcedureCallExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemberProcedureCallExpression([NotNull] ScratchScriptParser.MemberProcedureCallExpressionContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.multiplyOperators"/>.
 	/// </summary>

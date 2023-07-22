@@ -152,13 +152,6 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProcedureArgument([NotNull] ScratchScriptParser.ProcedureArgumentContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>parenthesizedExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitParenthesizedExpression([NotNull] ScratchScriptParser.ParenthesizedExpressionContext context);
-	/// <summary>
 	/// Visit a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
@@ -173,33 +166,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitIdentifierExpression([NotNull] ScratchScriptParser.IdentifierExpressionContext context);
 	/// <summary>
-	/// Visit a parse tree produced by the <c>procedureCallExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitProcedureCallExpression([NotNull] ScratchScriptParser.ProcedureCallExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>binaryBooleanExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
-	/// <summary>
 	/// Visit a parse tree produced by the <c>notExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitNotExpression([NotNull] ScratchScriptParser.NotExpressionContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>binaryCompareExpression</c>
-	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitBinaryCompareExpression([NotNull] ScratchScriptParser.BinaryCompareExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>binaryMultiplyExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
@@ -215,12 +187,61 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitUnaryAddExpression([NotNull] ScratchScriptParser.UnaryAddExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>arrayAccessExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayAccessExpression([NotNull] ScratchScriptParser.ArrayAccessExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>parenthesizedExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitParenthesizedExpression([NotNull] ScratchScriptParser.ParenthesizedExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>procedureCallExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitProcedureCallExpression([NotNull] ScratchScriptParser.ProcedureCallExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryBooleanExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryCompareExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryCompareExpression([NotNull] ScratchScriptParser.BinaryCompareExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>ternaryExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTernaryExpression([NotNull] ScratchScriptParser.TernaryExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>binaryAddExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBinaryAddExpression([NotNull] ScratchScriptParser.BinaryAddExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>memberProcedureCallExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemberProcedureCallExpression([NotNull] ScratchScriptParser.MemberProcedureCallExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.multiplyOperators"/>.
 	/// </summary>

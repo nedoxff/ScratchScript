@@ -22,6 +22,7 @@ public class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
         if (settings.Verbose) Static.LogToConsole = true;
         
         ReflectionBlockLoader.Load();
+        StdLoader.Load(Path.Join(Environment.CurrentDirectory, "std"));
 
         var output = Path.Join(Path.GetTempPath(), $"temp_{Guid.NewGuid():N}.sb3");
         var manager = new ProjectManager(settings.File, settings.IrPath, output);

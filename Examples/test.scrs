@@ -1,6 +1,5 @@
-import 'scratch/looks';
+import "scratch/operators";
 on start {
-    var a = 1;
-    var b = 2;
-    say(a + b);
+    var a = "hey!";
+    var b = 2 ** 3 == 8 ? #ffffff: #000000;
 }

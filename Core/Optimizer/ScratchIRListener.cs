@@ -245,6 +245,18 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVariableExpression([NotNull] ScratchIRParser.VariableExpressionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>arrayExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArrayExpression([NotNull] ScratchIRParser.ArrayExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>arrayExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArrayExpression([NotNull] ScratchIRParser.ArrayExpressionContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>parenthesizedExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// </summary>
@@ -400,6 +412,16 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitVariableIdentifier([NotNull] ScratchIRParser.VariableIdentifierContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchIRParser.arrayIdentifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterArrayIdentifier([NotNull] ScratchIRParser.ArrayIdentifierContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchIRParser.arrayIdentifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitArrayIdentifier([NotNull] ScratchIRParser.ArrayIdentifierContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchIRParser.constant"/>.
 	/// </summary>

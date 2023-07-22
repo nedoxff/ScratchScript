@@ -286,6 +286,20 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVariableExpression([NotNull] ScratchIRParser.VariableExpressionContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by the <c>arrayExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArrayExpression([NotNull] ScratchIRParser.ArrayExpressionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>arrayExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArrayExpression([NotNull] ScratchIRParser.ArrayExpressionContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by the <c>parenthesizedExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -469,6 +483,18 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVariableIdentifier([NotNull] ScratchIRParser.VariableIdentifierContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchIRParser.arrayIdentifier"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterArrayIdentifier([NotNull] ScratchIRParser.ArrayIdentifierContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchIRParser.arrayIdentifier"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitArrayIdentifier([NotNull] ScratchIRParser.ArrayIdentifierContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchIRParser.constant"/>.
 	/// <para>The default implementation does nothing.</para>

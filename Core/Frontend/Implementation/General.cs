@@ -8,7 +8,7 @@ using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
 
-public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
+public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
 {
     public static ScratchScriptVisitor Instance { get; private set; }
 
@@ -18,15 +18,14 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
 
     public string Output => $"{_loadSection}\n{_proceduresSection}\n{_output}".RemoveEmptyLines();
     public string Namespace = "global";
-    
+
+    public List<DefinedScratchFunction> DefinedFunctions =>
+        _functions.Where(x => x is DefinedScratchFunction { Imported: false }).Select(x => x as DefinedScratchFunction)
+            .ToList();
+
     private ScratchScriptParser _parser;
     private Dictionary<string, ScratchType> _typeLookup = new();
     private ScopeInfo _currentScope;
-
-    private List<string> _reservedNames = new()
-    {
-        "__FunctionReturnValues"
-    };
 
     private ScratchType GetType(object o)
     {
@@ -78,26 +77,34 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
             result = Visit(context.ifStatement());
         if (context.whileStatement() != null)
             result = Visit(context.whileStatement());
-       
+
         if (context.repeatStatement() != null)
             result = Visit(context.repeatStatement());
         if (context.comment() != null)
             result = Visit(context.comment());
-        
+
         return result;
     }
 
     public override object VisitProgram(ScratchScriptParser.ProgramContext context)
     {
         _currentScope = new("", "");
+
+        // Add all global functions from the STD (if they're not used they can be optimised later)
+        if (StdLoader.Functions.TryGetValue("global", out var functions))
+        {
+            _functions.AddRange(functions);
+            _proceduresSection += functions.Select(x => x.Code).Aggregate("", (current, next) => current + "\n" + next);
+        }
+
         InitProcedure.Code += "popall __FunctionReturnValues";
-        
+
         foreach (var statement in context.topLevelStatement())
         {
             var result = Visit(statement);
             if (result is string str)
             {
-                if(statement.procedureDeclarationStatement() == null)
+                if (statement.procedureDeclarationStatement() == null)
                     _currentScope.Content.Add(str);
                 else
                 {
@@ -141,7 +148,7 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
 
         return null;
     }
-    
+
     public override object VisitConstant(ScratchScriptParser.ConstantContext context)
     {
         if (context.Number() is { } n)
@@ -159,7 +166,7 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
     {
         var expression = Visit(context.expression());
         var expressionType = GetType(expression);
-        
+
         var result = $"({expression.Format()})";
         SaveType(result, expressionType);
         return result;
@@ -175,9 +182,26 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
         if (!_currentScope.IdentifierUsed(identifier))
             return null;
         var variable = _currentScope.GetVariable(identifier);
-        var ir = $"v:{(variable.IsReporter ? "argr:" : "")}{identifier}";
+        var ir = variable.IsList ? $"arr:{identifier}" : $"var:{(variable.IsReporter ? "argr:" : "")}{identifier}";
         SaveType(ir, variable.Type);
         return ir;
+    }
+
+    public override object VisitTernaryExpression(ScratchScriptParser.TernaryExpressionContext context)
+    {
+        var condition = Visit(context.expression(0));
+        AssertType(context, condition, ScratchType.Boolean);
+        var first = Visit(context.expression(1));
+        var second = Visit(context.expression(2));
+        AssertType(context, first, second);
+
+        _currentScope.Prepend +=
+            $"call __Ternary{Enum.GetName(GetType(first))} i:condition:{condition} i:trueValue:{first.Format(rawColor: false)} i:falseValue:{second.Format(rawColor: false)}\n";
+        _currentScope.Append += PopFunctionStackCommand;
+        _currentScope.ProcedureIndex++;
+        var result = $"__FunctionReturnValues#{_currentScope.ProcedureIndex}";
+        SaveType(result, GetType(first));
+        return result;
     }
 
     public override object VisitBlock(ScratchScriptParser.BlockContext context)
@@ -185,15 +209,17 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
         var scope = CreateScope(context.line());
         return scope.ToString();
     }
-    
-    private ScopeInfo CreateScope(IEnumerable<ScratchScriptParser.LineContext> lines, string startingLine = "", IEnumerable<string> reporters = null)
+
+    private ScopeInfo CreateScope(IEnumerable<ScratchScriptParser.LineContext> lines, string startingLine = "",
+        IEnumerable<string> reporters = null)
     {
         var scope = new ScopeInfo(startingLine);
         if (reporters != null)
         {
-            foreach(var reporter in reporters)
+            foreach (var reporter in reporters)
                 scope.Variables.Add(new ScratchVariable(reporter, ScratchType.Unknown, true));
         }
+
         scope.ParentScope = _currentScope;
         scope.ProcedureIndex = _currentScope.ProcedureIndex;
         scope.Variables.AddRange(_currentScope.Variables);
@@ -203,8 +229,9 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
         {
             var result = Visit(line);
             if (result is not string resultString) continue;
-            if (line.statement()?.returnStatement() != null || line.statement()?.breakStatement() != null) // No code should be after the return statement
-                scope.Content.Add(_currentScope.Prepend + resultString); 
+            if (line.statement()?.returnStatement() != null ||
+                line.statement()?.breakStatement() != null) // No code should be after the return statement
+                scope.Content.Add(_currentScope.Prepend + resultString);
             else
                 scope.Content.Add(_currentScope.Prepend + resultString + _currentScope.Append);
             _currentScope.ProcedureIndex -= Regex.Matches(_currentScope.Append, PopFunctionStackCommand).Count;
@@ -231,17 +258,53 @@ public partial class ScratchScriptVisitor: ScratchScriptBaseVisitor<object>
     public override object VisitImportStatement(ScratchScriptParser.ImportStatementContext context)
     {
         var name = context.String().GetText()[1..^1];
-        if (context.Identifier().Length != 0)
-            throw new NotImplementedException(); //TODO: yet
+        var names = context.Identifier().Select(x => x.GetText()).ToList();
         //TODO: also add searching in other files
-        var namespaceExists = ReflectionBlockLoader.Functions.ContainsKey(name);
-        if (!namespaceExists)
+        if (ReflectionBlockLoader.Functions.TryGetValue(name, out var nativeFunctions))
         {
-            //TODO: error   
+            if (names.Count == 0)
+                _functions.AddRange(nativeFunctions);
+            else
+            {
+                foreach (var func in names)
+                {
+                    if (nativeFunctions.All(x => x.BlockInformation.Name != func))
+                    {
+                        //TODO: ERROR
+                    }
+                    else _functions.Add(nativeFunctions.First(x => x.BlockInformation.Name == func));
+                }
+            }
+
+            return null;
         }
-        
-        if(ReflectionBlockLoader.Functions.TryGetValue(name, out var functions))
-            _functions.AddRange(functions);
+
+        if (StdLoader.Functions.TryGetValue(name, out var definedFunctions))
+        {
+            if (names.Count == 0)
+            {
+                _functions.AddRange(definedFunctions);
+                _proceduresSection += definedFunctions.Select(x => x.Code)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+            }
+            else
+            {
+                foreach (var functionName in names)
+                {
+                    if (definedFunctions.All(x => x.BlockInformation.Name != functionName))
+                    {
+                        //TODO: ERROR
+                    }
+                    else
+                    {
+                        var func = definedFunctions.First(x => x.BlockInformation.Name == functionName);
+                        _functions.Add(func);
+                        _proceduresSection += func.Code + "\n";
+                    }
+                }
+            }
+        }
+
         return null;
     }
 }

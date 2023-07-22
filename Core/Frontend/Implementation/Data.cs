@@ -1,4 +1,6 @@
 ﻿using System.Net.Mime;
+using System.Security.Principal;
+using ScratchScript.Core.Blocks;
 using ScratchScript.Core.Diagnostics;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -35,7 +37,7 @@ public partial class ScratchScriptVisitor
 
         AssertType(context, variableType, expressionType, context.expression());
 
-        return $"set v:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"v:{name}")} {expression.Format(rawColor: false)}\n";
+        return $"set var:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"v:{name}")} {expression.Format(rawColor: false)}\n";
     }
 
     public override object VisitVariableDeclarationStatement(
@@ -60,7 +62,7 @@ public partial class ScratchScriptVisitor
         
         _currentScope.Variables.Add(new ScratchVariable(name, expressionType));
         _loadSection += $"load:{TypeHelper.ScratchTypeToString(expressionType)} {name}\n";
-        return $"set v:{name} {expression.Format(rawColor: false)}\n";
+        return $"set var:{name} {expression.Format(rawColor: false)}\n";
     }
 
     public override object VisitAssignmentOperators(ScratchScriptParser.AssignmentOperatorsContext context)
@@ -71,6 +73,28 @@ public partial class ScratchScriptVisitor
         if (context.MultiplicationAssignment() != null) return "*";
         if (context.DivisionAssignment() != null) return "/";
         if (context.ModulusAssignment() != null) return "%";
+        return null;
+    }
+
+    public override object VisitArrayAccessExpression(ScratchScriptParser.ArrayAccessExpressionContext context)
+    {
+        var obj = Visit(context.expression(0));
+        var index = Visit(context.expression(1));
+        Assert<string>(context, obj);
+        AssertType(context, index, ScratchType.Number);
+        
+        var objectString = (string)obj;
+        if (objectString.StartsWith("arr:"))
+        {
+            return $"{obj}#{index}";
+        }
+
+        if (GetType(obj) == ScratchType.String)
+        {
+            var result = $"rawshadow operator_letter_of i:LETTER:{index} i:STRING:{obj} endshadow";
+            SaveType(result, ScratchType.String);
+            return result;
+        }
         return null;
     }
 }

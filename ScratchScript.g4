@@ -4,15 +4,15 @@ Parser
 */
 
 program: topLevelStatement* EOF;
-topLevelStatement: attributeStatement | procedureDeclarationStatement | eventStatement | importStatement | namespaceStatement;
+topLevelStatement: procedureDeclarationStatement | attributeStatement | eventStatement | importStatement | namespaceStatement;
 line: (statement | ifStatement | whileStatement | repeatStatement | comment);
 statement: (assignmentStatement | procedureCallStatement | variableDeclarationStatement | returnStatement | breakStatement | continueStatement) Semicolon;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
 assignmentStatement: Identifier assignmentOperators expression;
 variableDeclarationStatement: VariableDeclare Identifier Assignment expression;
-procedureCallStatement: Identifier LeftParen (procedureArgument (Comma procedureArgument)*?)? RightParen;
-procedureDeclarationStatement: ProcedureDeclare Identifier LeftParen (Identifier (Comma Identifier)*?)? RightParen block; 
+procedureCallStatement: Identifier LeftParen (procedureArgument (Comma procedureArgument)*?)? RightParen; 
+procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (Identifier (Comma Identifier)*?)? RightParen block; 
 ifStatement: If expression block (Else elseIfStatement)?;
 whileStatement: While expression block;
 elseIfStatement: block | ifStatement;
@@ -30,13 +30,16 @@ expression
     : constant #constantExpression
     | Identifier #identifierExpression
     | procedureCallStatement #procedureCallExpression
+    | expression Dot procedureCallStatement #memberProcedureCallExpression
     | LeftParen expression RightParen #parenthesizedExpression
     | Not expression #notExpression
+    | expression LeftBracket expression RightBracket #arrayAccessExpression
     | addOperators expression #unaryAddExpression
     | expression multiplyOperators expression #binaryMultiplyExpression
     | expression addOperators expression #binaryAddExpression
     | expression compareOperators expression #binaryCompareExpression
     | expression booleanOperators expression #binaryBooleanExpression
+    | expression Ternary expression Colon expression #ternaryExpression
     ;
 
 multiplyOperators: Multiply | Divide | Power | Modulus;
@@ -71,6 +74,8 @@ Comma: ',';
 Not: '!';
 Arrow: '->';
 Colon: ':';
+Dot: '.';
+Ternary: '?';
 
 SingleLineCommentStart: '//';
 MultiLineCommentStart: '/*';

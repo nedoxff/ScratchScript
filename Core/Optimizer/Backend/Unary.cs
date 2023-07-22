@@ -12,7 +12,7 @@ public partial class ScratchIRBackendVisitor
 
         var block = Operators.Not();
         block.SetInput("OPERAND", ScratchInput.New(expression, block));
-        UpdateBlocks(block);
+        UpdateBlocks(block, expression);
 
         return block;
     }

@@ -34,6 +34,7 @@ block
 expression
     : constant #constantExpression
     | variableIdentifier #variableExpression
+    | arrayIdentifier #arrayExpression
     | '(' expression ')' #parenthesizedExpression
     | addOperators expression expression #binaryAddExpression
     | multiplyOperators expression expression #binaryMultiplyExpression
@@ -54,7 +55,8 @@ callProcedureArgument: procedureArgumentType Identifier ':' expression;
 
 procedureArgumentType: 'i:' | 'f:';
 
-variableIdentifier: 'v:' ArgumentReporterIdentifier? Identifier;
+variableIdentifier: 'var:' ArgumentReporterIdentifier? Identifier;
+arrayIdentifier: 'arr:' Identifier;
 constant: Number | String | Color;
 procedureArgumentTypeDeclaration: ProcedureType;
 

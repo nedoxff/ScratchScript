@@ -9,7 +9,7 @@ namespace ScratchScript.Core.Frontend.Implementation;
 
 public partial class ScratchScriptVisitor
 {
-    private const string PopFunctionStackCommand = "popat __FunctionReturnValues 1\n";
+    private const string PopFunctionStackCommand = "pop __FunctionReturnValues\n";
 
     private string PopAllProcedureCache =>
         string.Concat(Enumerable.Repeat(PopFunctionStackCommand, _currentScope.ProcedureIndex));
@@ -77,7 +77,7 @@ public partial class ScratchScriptVisitor
         if(_procedures.Last().ReturnType == ScratchType.Unknown)
             _procedures.Last().ReturnType = GetType(expression);
         return
-            $"push __FunctionReturnValues {expression}\n{_currentScope.Append}\nraw control_stop f:STOP_OPTION:\"this script\"\n";
+            $"pushat __FunctionReturnValues 1 {expression}\n{_currentScope.Append}\nraw control_stop f:STOP_OPTION:\"this script\"\n";
     }
 
     public override object VisitProcedureCallStatement(ScratchScriptParser.ProcedureCallStatementContext context)
@@ -163,9 +163,14 @@ public partial class ScratchScriptVisitor
                     arguments[argumentIndex] = expression.Format();
                 }
 
-                var result = nativeFunction.NativeMethod.Invoke(null, arguments) as string + "\n";
-                SaveType(result, nativeFunction.BlockInformation.ReturnType);
-                return result;
+                var result = nativeFunction.NativeMethod.Invoke(null, arguments);
+                if (result != null)
+                {
+                    var resultString = result as string + "\n";
+                    SaveType(resultString, nativeFunction.BlockInformation.ReturnType);
+                    return resultString;
+                }
+                 return null;
             }
             default:
                 throw new ArgumentOutOfRangeException();
@@ -176,15 +181,37 @@ public partial class ScratchScriptVisitor
         ScratchScriptParser.MemberProcedureCallExpressionContext context)
     {
         var member = Visit(context.expression());
-        var memberType = GetType(member);
         var functionName = context.procedureCallStatement().Identifier().GetText();
+        var function = FindMemberFunction(member, functionName);
+
+        if (function == null)
+        {
+            DiagnosticReporter.Error(ScratchScriptError.ProcedureNotDefined, context,
+                context.procedureCallStatement().Identifier().Symbol,
+                functionName);
+            return null;
+        }
+
+        return HandleProcedureCall(context, function, context.procedureCallStatement().procedureArgument(), member);
+    }
+
+    private ScratchFunction FindMemberFunction(object member, string functionName)
+    {
         ScratchFunction function;
         if (member.IsVariable() && GetFunction(functionName, false, ScratchType.Variable) != null)
             function = GetFunction(functionName, false, ScratchType.Variable);
         else if (member.IsList() && GetFunction(functionName, false, ScratchType.List) != null)
             function = GetFunction(functionName, false, ScratchType.List);
         else
-            function = GetFunction(functionName, false, memberType);
+            function = GetFunction(functionName, false, GetType(member));
+        return function;
+    }
+
+    public override object VisitMemberProcedureCallStatement(ScratchScriptParser.MemberProcedureCallStatementContext context)
+    {
+        var member = Visit(context.expression());
+        var functionName = context.procedureCallStatement().Identifier().GetText();
+        var function = FindMemberFunction(member, functionName);
 
         if (function == null)
         {

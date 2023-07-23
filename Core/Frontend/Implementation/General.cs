@@ -1,4 +1,5 @@
 ﻿using System.Drawing.Printing;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime.Tree.Xpath;
 using ScratchScript.Core.Frontend.Scope;
@@ -23,6 +24,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         _functions.Where(x => x is DefinedScratchFunction { Imported: false }).Select(x => x as DefinedScratchFunction)
             .ToList();
 
+    private List<string> _imports = new();
     private ScratchScriptParser _parser;
     private Dictionary<string, ScratchType> _typeLookup = new();
     private ScopeInfo _currentScope;
@@ -77,7 +79,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
             result = Visit(context.ifStatement());
         if (context.whileStatement() != null)
             result = Visit(context.whileStatement());
-
+        if (context.switchStatement() != null)
+            result = Visit(context.switchStatement());
         if (context.repeatStatement() != null)
             result = Visit(context.repeatStatement());
         if (context.comment() != null)
@@ -139,6 +142,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
             return Visit(context.assignmentStatement());
         if (context.procedureCallStatement() != null)
             return Visit(context.procedureCallStatement());
+        if (context.memberProcedureCallStatement() != null)
+            return Visit(context.memberProcedureCallStatement());
         if (context.variableDeclarationStatement() != null)
             return Visit(context.variableDeclarationStatement());
         if (context.returnStatement() != null)
@@ -152,7 +157,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
     public override object VisitConstant(ScratchScriptParser.ConstantContext context)
     {
         if (context.Number() is { } n)
-            return decimal.Parse(n.GetText());
+            return decimal.Parse(n.GetText(), CultureInfo.InvariantCulture);
         if (context.String() is { } s)
             return s.GetText();
         if (context.boolean() is { } b)
@@ -262,6 +267,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         //TODO: also add searching in other files
         if (ReflectionBlockLoader.Functions.TryGetValue(name, out var nativeFunctions))
         {
+            _imports.Add(name);
             if (names.Count == 0)
                 _functions.AddRange(nativeFunctions);
             else
@@ -281,6 +287,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
 
         if (StdLoader.Functions.TryGetValue(name, out var definedFunctions))
         {
+            _imports.Add(name);
             if (names.Count == 0)
             {
                 _functions.AddRange(definedFunctions);

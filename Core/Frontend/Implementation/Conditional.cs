@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Antlr4.Runtime.Tree.Xpath;
+using ScratchScript.Core.Frontend.Scope;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -82,6 +83,40 @@ public partial class ScratchScriptVisitor
         }
 
         return code.ToString();
+    }
+
+    public override object VisitSwitchStatement(ScratchScriptParser.SwitchStatementContext context)
+    {
+        var condition = Visit(context.expression());
+        var caseCount = context.switchBlock().@case().Length;
+        ScopeInfo defaultScope = null;
+        if (caseCount == 0)
+        {
+            //TODO: warning about the switch block being empty
+            return "";
+        }
+        
+        var cases = new List<(ScopeInfo, object)>();
+        foreach (var caseContext in context.switchBlock().@case())
+        {
+            if (caseContext.defaultCase() == null)
+            {
+                var scope = CreateScope(caseContext.block().line());
+                var expression = Visit(caseContext.constant());
+                AssertType(context, expression, condition);
+                cases.Add((scope, expression));
+            }
+            else
+                defaultScope = CreateScope(caseContext.defaultCase().block().line());
+        }
+
+        var result = "";
+        for (var i = 0; i < cases.Count; i++)
+            result += $"{(i == 0 ? "": "else")} if {GetEquationExpression("==", condition, cases[i].Item2)}\n{cases[i].Item1}\n";
+        if (defaultScope != null)
+            result += $"else\n{defaultScope}";
+
+        return result;
     }
 
     public override object VisitElseIfStatement(ScratchScriptParser.ElseIfStatementContext context)

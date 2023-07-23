@@ -1,4 +1,5 @@
-﻿using ScratchScript.Core.Blocks;
+﻿using System.Globalization;
+using ScratchScript.Core.Blocks;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -28,7 +29,7 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
     public override object VisitConstant(ScratchIRParser.ConstantContext context)
     {
         if (context.Number() is { } n)
-            return decimal.Parse(n.GetText());
+            return decimal.Parse(n.GetText(), CultureInfo.InvariantCulture);
         if (context.String() is { } s)
             return s.GetText()[1..^1];
         if (context.Color() is { } c)

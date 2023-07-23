@@ -101,6 +101,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVariableDeclarationStatement([NotNull] ScratchScriptParser.VariableDeclarationStatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.memberProcedureCallStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterMemberProcedureCallStatement([NotNull] ScratchScriptParser.MemberProcedureCallStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.memberProcedureCallStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitMemberProcedureCallStatement([NotNull] ScratchScriptParser.MemberProcedureCallStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.procedureCallStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -220,6 +230,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.switchStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterSwitchStatement([NotNull] ScratchScriptParser.SwitchStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.switchStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitSwitchStatement([NotNull] ScratchScriptParser.SwitchStatementContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// </summary>
@@ -437,6 +457,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitAssignmentOperators([NotNull] ScratchScriptParser.AssignmentOperatorsContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.case"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterCase([NotNull] ScratchScriptParser.CaseContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.case"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitCase([NotNull] ScratchScriptParser.CaseContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -446,6 +476,26 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitBlock([NotNull] ScratchScriptParser.BlockContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.switchBlock"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterSwitchBlock([NotNull] ScratchScriptParser.SwitchBlockContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.switchBlock"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitSwitchBlock([NotNull] ScratchScriptParser.SwitchBlockContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.defaultCase"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDefaultCase([NotNull] ScratchScriptParser.DefaultCaseContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.defaultCase"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDefaultCase([NotNull] ScratchScriptParser.DefaultCaseContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.constant"/>.
 	/// </summary>

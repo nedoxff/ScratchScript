@@ -5,12 +5,13 @@ Parser
 
 program: topLevelStatement* EOF;
 topLevelStatement: procedureDeclarationStatement | attributeStatement | eventStatement | importStatement | namespaceStatement;
-line: (statement | ifStatement | whileStatement | repeatStatement | comment);
-statement: (assignmentStatement | procedureCallStatement | variableDeclarationStatement | returnStatement | breakStatement | continueStatement) Semicolon;
+line: (statement | ifStatement | whileStatement | repeatStatement | switchStatement | comment);
+statement: (assignmentStatement | procedureCallStatement | memberProcedureCallStatement |  variableDeclarationStatement | returnStatement | breakStatement | continueStatement) Semicolon;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
 assignmentStatement: Identifier assignmentOperators expression;
 variableDeclarationStatement: VariableDeclare Identifier Assignment expression;
+memberProcedureCallStatement: expression Dot procedureCallStatement;
 procedureCallStatement: Identifier LeftParen (procedureArgument (Comma procedureArgument)*?)? RightParen; 
 procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (Identifier (Comma Identifier)*?)? RightParen block; 
 ifStatement: If expression block (Else elseIfStatement)?;
@@ -23,6 +24,7 @@ repeatStatement: Repeat expression block;
 breakStatement: Break;
 continueStatement: Continue;
 namespaceStatement: Namespace String Semicolon;
+switchStatement: Switch expression switchBlock;
 
 procedureArgument: (Identifier ':')? expression;
 
@@ -31,6 +33,7 @@ expression
     | Identifier #identifierExpression
     | procedureCallStatement #procedureCallExpression
     | expression Dot procedureCallStatement #memberProcedureCallExpression
+    | LeftBracket expression
     | LeftParen expression RightParen #parenthesizedExpression
     | Not expression #notExpression
     | expression LeftBracket expression RightBracket #arrayAccessExpression
@@ -42,15 +45,18 @@ expression
     | expression Ternary expression Colon expression #ternaryExpression
     ;
 
-multiplyOperators: Multiply | Divide | Power | Modulus;
+multiplyOperators: Multiply | Divide | Modulus | Power;
 addOperators: Plus | Minus;
 compareOperators: Equal | NotEqual | Greater | GreaterOrEqual | Lesser | LesserOrEqual;
 booleanOperators: And | Or | Xor;
 assignmentOperators: Assignment | AdditionAsignment | SubtractionAssignment | MultiplicationAssignment | DivisionAssignment | ModulusAssignment;
 
+case: (Case constant Colon block) | defaultCase;
 block: LeftBrace line* RightBrace;
+switchBlock: LeftBrace case* RightBrace;
+defaultCase: Default Colon block;
 
-constant: Number | String | boolean | Color | EmptyArray;
+constant: Number | String | boolean | Color;
 comment: Comment;
 boolean: True | False;
 
@@ -101,8 +107,6 @@ And: '&&';
 Or: '||';
 Xor: '^';
 
-EmptyArray: '[]';
-
 //<assoc=right>
 Greater: '>';
 Lesser: '<';
@@ -141,7 +145,10 @@ True: 'true';
 False: 'false';
 Break: 'break';
 Continue: 'continue';
+Default: 'default';
 
+Case: 'case' Whitespace+;
+Switch: 'switch' Whitespace+;
 While: 'while' Whitespace+;
 VariableDeclare: 'var' Whitespace+;
 Import: 'import' Whitespace+;

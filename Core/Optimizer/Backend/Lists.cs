@@ -15,7 +15,7 @@ public partial class ScratchIRBackendVisitor
         var block = Data.AddToList();
         block.SetField("LIST", ScratchField.New(name));
         block.SetInput("ITEM", ScratchInput.New(item, block));
-        UpdateBlocks(item);
+        UpdateBlocks(block, item);
 
         return block;
     }
@@ -30,7 +30,7 @@ public partial class ScratchIRBackendVisitor
         block.SetField("LIST", ScratchField.New(name));
         block.SetInput("INDEX", ScratchInput.New(at));
         block.SetInput("ITEM", ScratchInput.New(item, block));
-        UpdateBlocks(item);
+        UpdateBlocks(block, at, item);
         
         return block;
     }

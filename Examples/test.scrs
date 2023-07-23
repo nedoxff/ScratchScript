@@ -1,5 +1,18 @@
+//without this attribute the code below will say "a is not exactly 8"
+@useFloatEquation(0.00001)
 import "scratch/operators";
+import "scratch/looks";
 on start {
-    var a = "hey!";
-    var b = 2 ** 3 == 8 ? #ffffff: #000000;
+    var a = 2 ** 3;
+    switch a {
+        case 8: {
+            say("a is 8");
+        }
+        case 7.999999999999998: {
+            say("a is not exactly 8");
+        }
+        default: {
+            say("what");
+        }
+    }
 }

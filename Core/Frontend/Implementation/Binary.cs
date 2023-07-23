@@ -1,4 +1,5 @@
-﻿using ScratchScript.Extensions;
+﻿using ScratchScript.Core.Blocks;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -23,10 +24,13 @@ public partial class ScratchScriptVisitor
             AssertType(context, second, ScratchType.Number, context.expression(1));
         }
 
-        var result = $"{op} {first.Format()} {second.Format()}";
+        var result = isString || isBoolean ? $"{op} {first.Format()} {second.Format()}": GetEquationExpression(op, first, second);
         SaveType(result, ScratchType.Boolean);
         return result;
     }
+
+    private string GetEquationExpression(string op, object first, object second) =>
+        _useFloatEquation ? $"< {Operators.Abs($"(- {first.Format()} {second.Format()})")} {_floatingPointPrecision.Format()}": $"{op} {first.Format()} {second.Format()}"; 
 
     public override object VisitBinaryMultiplyExpression(ScratchScriptParser.BinaryMultiplyExpressionContext context)
     {

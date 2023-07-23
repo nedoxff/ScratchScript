@@ -1,4 +1,5 @@
-﻿using ScratchScript.Helpers;
+﻿using System.Globalization;
+using ScratchScript.Helpers;
 
 namespace ScratchScript.Extensions;
 
@@ -11,6 +12,7 @@ public static class StringExtensions
         return o switch
         {
             bool b => $"\"{b.ToString().ToLower()}\"",
+            decimal d => d.ToString(CultureInfo.InvariantCulture),
             ScratchColor c => rawColor ? $"#{c.Value.ToLower()}": $"\"0x{c.Value.ToLower()}\"",
             _ => o.ToString()
         };

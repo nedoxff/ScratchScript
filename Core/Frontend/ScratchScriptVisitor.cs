@@ -74,6 +74,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariableDeclarationStatement([NotNull] ScratchScriptParser.VariableDeclarationStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.memberProcedureCallStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMemberProcedureCallStatement([NotNull] ScratchScriptParser.MemberProcedureCallStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.procedureCallStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -145,6 +151,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitNamespaceStatement([NotNull] ScratchScriptParser.NamespaceStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.switchStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSwitchStatement([NotNull] ScratchScriptParser.SwitchStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// </summary>
@@ -273,11 +285,29 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAssignmentOperators([NotNull] ScratchScriptParser.AssignmentOperatorsContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.case"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCase([NotNull] ScratchScriptParser.CaseContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBlock([NotNull] ScratchScriptParser.BlockContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.switchBlock"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSwitchBlock([NotNull] ScratchScriptParser.SwitchBlockContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.defaultCase"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDefaultCase([NotNull] ScratchScriptParser.DefaultCaseContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.constant"/>.
 	/// </summary>

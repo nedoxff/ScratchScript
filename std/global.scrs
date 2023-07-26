@@ -1,6 +1,6 @@
 ﻿import "scratch/operators";
 
-@__ReturnType(4) function __TernaryNumber(condition, trueValue, falseValue) {
+@__ReturnType(4) @warp function __TernaryNumber(condition, @num trueValue, @num falseValue) {
     if condition {
         return trueValue;
     }
@@ -9,7 +9,7 @@
     }
 }
 
-@__ReturnType(10) function __TernaryString(condition, trueValue, falseValue) {
+@__ReturnType(10) @warp function __TernaryString(condition, @str trueValue, @str falseValue) {
     if condition {
         return trueValue;
     }
@@ -18,7 +18,7 @@
     }
 }
 
-@__ReturnType(15) @__ArgumentType("trueValue", 15) @__ArgumentType("falseValue", 15) function __TernaryBoolean(condition, trueValue, falseValue) {
+@__ReturnType(15) @warp function __TernaryBoolean(condition, @bool trueValue, @bool falseValue) {
     if condition {
         return trueValue;
     }
@@ -27,7 +27,7 @@
     }
 }
 
-@__ReturnType(9) function __TernaryColor(condition, trueValue, falseValue) {
+@__ReturnType(9) @warp function __TernaryColor(condition, @color trueValue, @color falseValue) {
     if condition {
         return trueValue;
     }
@@ -38,7 +38,71 @@
 
 
 
-function __Exponent(base, exponent) {
+@warp function __Exponent(base, exponent) {
     var result = exp(exponent * ln(abs(base)));
     return __TernaryNumber(base < 0, 1 / result, result);
+}
+
+@warp function __BitwiseAnd(@num x, @num y) {
+  var byteValue = 1;
+  var result = 0;
+  var x1 = x;
+  var y1 = y;
+  while x1 > 0 || y1 > 0 {
+    if x1 % 2 > 0 && y1 % 2 > 0 { 
+        result += byteValue; 
+    }
+    x1 = floor(x1 / 2);
+    y1 = floor(y1 / 2);
+    byteValue *= 2;
+  }
+  return result;
+}
+
+@warp function __BitwiseOr(@num x, @num y) {
+  var byteValue = 1;
+  var result = 0;
+  var x1 = x;
+  var y1 = y;
+  while x1 > 0 || y1 > 0 {
+    if x1 % 2 > 0 || y1 % 2 > 0 { 
+        result += byteValue; 
+    }
+    x1 = floor(x1 / 2);
+    y1 = floor(y1 / 2);
+    byteValue *= 2;
+  }
+  return result;
+}
+
+@warp function __BitwiseXor(@num x, @num y) {
+  var byteValue = 1;
+  var result = 0;
+  var x1 = x;
+  var y1 = y;
+  while x1 > 0 || y1 > 0 {
+    if (x1 % 2 > 0) != (y1 % 2 > 0) { 
+        result += byteValue; 
+    }
+    x1 = floor(x1 / 2);
+    y1 = floor(y1 / 2);
+    byteValue *= 2;
+  }
+  return result;
+}
+
+@warp function __LShift(@num n, @num shift) {
+    var n1 = n;
+    repeat shift {
+        n1 *= 2;
+    }
+    return n1;
+}
+
+@warp function __RShift(@num n, @num shift) {
+    var n1 = n;
+    repeat shift {
+        n1 = floor(n1 / 2);
+    }
+    return n1;
 }

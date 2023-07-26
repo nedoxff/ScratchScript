@@ -29,7 +29,7 @@ public class StdLoader
             if(Functions.TryGetValue(visitor.Namespace, out var functions))
                 functions.AddRange(newFunctions);
             Functions.TryAdd(visitor.Namespace, newFunctions);
-            Log.Verbose("Loaded {Count} functions to {Namespace}", visitor.DefinedFunctions.Count, visitor.Namespace);
+            Log.Verbose("Loaded {Count} functions to {Namespace}", newFunctions.Count, visitor.Namespace);
         }
     }
 }

@@ -21,7 +21,7 @@ public partial class ScratchIRBackendVisitor
                     : ScratchProcedure.ProcedureArgumentType.Boolean;
         }
 
-        var procedure = new ScratchProcedure(name, arguments);
+        var procedure = new ScratchProcedure(name, context.WarpIdentifier() != null, arguments);
         _procedures.Add(procedure);
         UpdateProcedure();
 

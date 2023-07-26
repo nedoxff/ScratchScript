@@ -37,7 +37,7 @@ public partial class ScratchScriptVisitor
 
         AssertType(context, variableType, expressionType, context.expression());
 
-        return $"set var:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"v:{name}")} {expression.Format(rawColor: false)}\n";
+        return $"set var:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"var:{name}")} {expression.Format(rawColor: false)}\n";
     }
 
     public override object VisitVariableDeclarationStatement(

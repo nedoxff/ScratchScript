@@ -20,32 +20,40 @@ public class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
         }
 
         if (settings.Verbose) Static.LogToConsole = true;
-        
-        ReflectionBlockLoader.Load();
-        StdLoader.Load(Path.Join(Environment.CurrentDirectory, "std"));
 
-        var output = Path.Join(Path.GetTempPath(), $"temp_{Guid.NewGuid():N}.sb3");
-        var manager = new ProjectManager(settings.File, settings.IrPath, output);
-        var success = manager.Build();
-
-        if (success)
+        try
         {
-            try
-            {
-                Log.Information("--- Launching the project ---");
-                await Task.Delay(500);
-                Cli.Wrap(Config.Instance.RunnerPath)
-                    .WithArguments(output)
-                    .ExecuteAsync();
-                Log.Information("Done!");
-            }
-            catch (Exception e)
-            {
-                Log.Fatal("Failed to run the project file! Reason: {Message}", e);
-            }
-        }
 
-        return success ? 0: 1;
+            ReflectionBlockLoader.Load();
+            StdLoader.Load(Path.Join(Environment.CurrentDirectory, "std"));
+
+            var output = Path.Join(Path.GetTempPath(), $"temp_{Guid.NewGuid():N}.sb3");
+            var manager = new ProjectManager(settings.File, settings.IrPath, output);
+            var success = manager.Build();
+
+            if (success)
+            {
+                try
+                {
+                    Log.Information("--- Launching the project ---");
+                    await Task.Delay(500);
+                    Cli.Wrap(Config.Instance.RunnerPath)
+                        .WithArguments(output)
+                        .ExecuteAsync();
+                    Log.Information("Done!");
+                }
+                catch (Exception e)
+                {
+                    Log.Fatal("Failed to run the project file! Reason: {Message}", e);
+                }
+            }
+
+            return success ? 0 : 1;
+        }
+        catch (Exception e)
+        {
+            return 1;
+        }
     }
 
     public class RunCommandSettings : CommandSettings

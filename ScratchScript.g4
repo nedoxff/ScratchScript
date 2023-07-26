@@ -13,7 +13,7 @@ assignmentStatement: Identifier assignmentOperators expression;
 variableDeclarationStatement: VariableDeclare Identifier Assignment expression;
 memberProcedureCallStatement: expression Dot procedureCallStatement;
 procedureCallStatement: Identifier LeftParen (procedureArgument (Comma procedureArgument)*?)? RightParen; 
-procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (Identifier (Comma Identifier)*?)? RightParen block; 
+procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (identifierWithAttribute (Comma identifierWithAttribute)*?)? RightParen block; 
 ifStatement: If expression block (Else elseIfStatement)?;
 whileStatement: While expression block;
 elseIfStatement: block | ifStatement;
@@ -25,7 +25,7 @@ breakStatement: Break;
 continueStatement: Continue;
 namespaceStatement: Namespace String Semicolon;
 switchStatement: Switch expression switchBlock;
-
+identifierWithAttribute: attributeStatement? Identifier;
 procedureArgument: (Identifier ':')? expression;
 
 expression
@@ -33,11 +33,15 @@ expression
     | Identifier #identifierExpression
     | procedureCallStatement #procedureCallExpression
     | expression Dot procedureCallStatement #memberProcedureCallExpression
-    | LeftBracket expression
+    | LeftBracket (expression (Comma expression)*?)? RightBracket #arrayInitializeExpression
     | LeftParen expression RightParen #parenthesizedExpression
     | Not expression #notExpression
     | expression LeftBracket expression RightBracket #arrayAccessExpression
     | addOperators expression #unaryAddExpression
+    | expression BitwiseOr expression #binaryBitwiseOrExpression
+    | expression BitwiseXor expression #binaryBitwiseXorExpression
+    | expression BitwiseAnd expression #binaryBitwiseAndExpression
+    | expression shiftOperators expression #binaryBitwiseShiftExpression
     | expression multiplyOperators expression #binaryMultiplyExpression
     | expression addOperators expression #binaryAddExpression
     | expression compareOperators expression #binaryCompareExpression
@@ -46,9 +50,10 @@ expression
     ;
 
 multiplyOperators: Multiply | Divide | Modulus | Power;
+shiftOperators: LeftShift | RightShift;
 addOperators: Plus | Minus;
 compareOperators: Equal | NotEqual | Greater | GreaterOrEqual | Lesser | LesserOrEqual;
-booleanOperators: And | Or | Xor;
+booleanOperators: And | Or;
 assignmentOperators: Assignment | AdditionAsignment | SubtractionAssignment | MultiplicationAssignment | DivisionAssignment | ModulusAssignment;
 
 case: (Case constant Colon block) | defaultCase;
@@ -105,7 +110,12 @@ Modulus: '%';
 
 And: '&&';
 Or: '||';
-Xor: '^';
+
+BitwiseAnd: '&';
+BitwiseOr: '|';
+BitwiseXor: '^';
+LeftShift: '<<';
+RightShift: '>>';
 
 //<assoc=right>
 Greater: '>';

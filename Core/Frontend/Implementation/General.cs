@@ -222,7 +222,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         if (reporters != null)
         {
             foreach (var reporter in reporters)
-                scope.Variables.Add(new ScratchVariable(reporter, ScratchType.Unknown, true));
+                scope.Variables.Add(new ScratchVariable(reporter, _procedures.Last().Arguments.TryGetValue(reporter, out var type) ? type: ScratchType.Unknown, true));
         }
 
         scope.ParentScope = _currentScope;

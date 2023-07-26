@@ -26,7 +26,7 @@ topLevelCommand
     : 'load' Type Identifier #loadCommand;     
  
 block
-    : 'proc' Identifier procedureArgument* command*? End #procedureBlock
+    : 'proc' WarpIdentifier? Identifier procedureArgument* command*? End #procedureBlock
     | 'on' Event command*? End #eventBlock
     | topLevelCommand #topLevelBlock;
     
@@ -74,6 +74,7 @@ ListType: ':l';
 StringNumberType: ':sn';
 BooleanType: ':b';
 ArgumentReporterIdentifier: 'argr:';
+WarpIdentifier: ':w';
 
 Hashtag: '#';
 Minus: '-';

@@ -158,11 +158,31 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitSwitchStatement([NotNull] ScratchScriptParser.SwitchStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.identifierWithAttribute"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIdentifierWithAttribute([NotNull] ScratchScriptParser.IdentifierWithAttributeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitProcedureArgument([NotNull] ScratchScriptParser.ProcedureArgumentContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryBitwiseAndExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryBitwiseAndExpression([NotNull] ScratchScriptParser.BinaryBitwiseAndExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryBitwiseOrExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryBitwiseOrExpression([NotNull] ScratchScriptParser.BinaryBitwiseOrExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
@@ -199,6 +219,20 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitUnaryAddExpression([NotNull] ScratchScriptParser.UnaryAddExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>arrayInitializeExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitArrayInitializeExpression([NotNull] ScratchScriptParser.ArrayInitializeExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryBitwiseShiftExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryBitwiseShiftExpression([NotNull] ScratchScriptParser.BinaryBitwiseShiftExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>arrayAccessExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>
@@ -226,6 +260,13 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBinaryBooleanExpression([NotNull] ScratchScriptParser.BinaryBooleanExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by the <c>binaryBitwiseXorExpression</c>
+	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitBinaryBitwiseXorExpression([NotNull] ScratchScriptParser.BinaryBitwiseXorExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>binaryCompareExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
@@ -260,6 +301,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitMultiplyOperators([NotNull] ScratchScriptParser.MultiplyOperatorsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.shiftOperators"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitShiftOperators([NotNull] ScratchScriptParser.ShiftOperatorsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.addOperators"/>.
 	/// </summary>

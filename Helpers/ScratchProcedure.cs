@@ -17,7 +17,7 @@ public class ScratchProcedure
     }
     public string Name;
     public Dictionary<string, Block> Arguments = new();
-    
+    public bool Warp;
     public Block Definition;
     public Block Prototype;
     public Block Call => _call.Clone();
@@ -25,9 +25,10 @@ public class ScratchProcedure
     private Block _call;
     private Mutation _mutation;
 
-    public ScratchProcedure(string name, Dictionary<string, ProcedureArgumentType> arguments)
+    public ScratchProcedure(string name, bool warp, Dictionary<string, ProcedureArgumentType> arguments)
     {
         Name = name;
+        Warp = warp;
         Prototype = Procedures.Prototype();
         Definition = Procedures.Definition();
         foreach (var (arg, type) in arguments)
@@ -63,7 +64,8 @@ public class ScratchProcedure
             ProcCode = proccode,
             ArgumentIds = ids,
             ArgumentNames = names,
-            ArgumentDefaults = defaults
+            ArgumentDefaults = defaults,
+            Warp = Warp
         };
         
         

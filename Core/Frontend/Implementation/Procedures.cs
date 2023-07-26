@@ -20,6 +20,7 @@ public partial class ScratchScriptVisitor
         public Dictionary<string, ScratchType> Arguments = new();
         public ScratchType ReturnType = ScratchType.Unknown;
         public string Code;
+        public bool Warp;
 
         public ScratchIrProcedure(string name, IEnumerable<string> arguments)
         {
@@ -32,7 +33,7 @@ public partial class ScratchScriptVisitor
         {
             var arguments = Arguments.Aggregate("",
                 (current, pair) => current + $"{pair.Key}:{(pair.Value == ScratchType.Boolean ? "b" : "sn")} ");
-            return $"\nproc {Name} {arguments}\n{Code}\n";
+            return $"\nproc{(Warp ? ":w": "")} {Name} {arguments}\n{Code}\n";
         }
     }
 
@@ -43,20 +44,20 @@ public partial class ScratchScriptVisitor
     public override object VisitProcedureDeclarationStatement(
         ScratchScriptParser.ProcedureDeclarationStatementContext context)
     {
-        var name = context.Identifier(0).GetText();
+        var name = context.Identifier().GetText();
         if (_currentScope.IdentifierUsed(name))
         {
-            DiagnosticReporter.Error(ScratchScriptError.IdentifierAlreadyUsed, context, context.Identifier(0).Symbol,
+            DiagnosticReporter.Error(ScratchScriptError.IdentifierAlreadyUsed, context, context.Identifier().Symbol,
                 name);
             return null;
         }
 
-        var argumentNames = context.Identifier().Skip(1).Select(x => x.GetText()).ToList();
+        var argumentNames = context.identifierWithAttribute().Select(x => x.Identifier().GetText()).ToList();
         for (var i = 0; i < argumentNames.Count; i++)
         {
             if (!_currentScope.IdentifierUsed(argumentNames[i])) continue;
             DiagnosticReporter.Error(ScratchScriptError.IdentifierAlreadyUsed, context,
-                context.Identifier(i + 1).Symbol, argumentNames[i]);
+                context.identifierWithAttribute(i + 1).Identifier().Symbol, argumentNames[i]);
             return null;
         }
 
@@ -64,6 +65,10 @@ public partial class ScratchScriptVisitor
         foreach (var attributeStatementContext in context.attributeStatement())
             HandleProcedureAttribute(attributeStatementContext, ref procedure);
         _procedures.Add(procedure);
+
+        foreach (var argument in context.identifierWithAttribute().Where(x => x.attributeStatement() != null))
+            HandleProcedureArgumentAttribute(argument.attributeStatement(), argument.Identifier().GetText(),
+                ref procedure);
 
         var scope = CreateScope(context.block().line(), reporters: argumentNames);
         procedure.Code = scope.ToString();

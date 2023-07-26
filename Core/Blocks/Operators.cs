@@ -22,6 +22,9 @@ public class Operators
 
     public static Block Not() => new("operator_not", "o!", ScratchType.Boolean, shadow: true);
 
+    [ScratchBlock("scratch/operators", "toString", true, false, ScratchType.Number, ScratchType.String)]
+    public static string ToString([ScratchArgument("num", ScratchType.Number)] string num) => $"rawshadow operator_join i:STRING1:{num} i:STRING2:\"\" endshadow";
+
     [ScratchBlock("scratch/operators", "random", true, true, ScratchType.Unknown, ScratchType.Number)]
     public static string Random([ScratchArgument("min", ScratchType.Number)] string min,
         [ScratchArgument("max", ScratchType.Number)]

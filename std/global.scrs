@@ -46,14 +46,12 @@
 @warp function __BitwiseAnd(@num x, @num y) {
   var byteValue = 1;
   var result = 0;
-  var x1 = x;
-  var y1 = y;
-  while x1 > 0 || y1 > 0 {
-    if x1 % 2 > 0 && y1 % 2 > 0 { 
+  while x > 0 || y > 0 {
+    if x % 2 > 0 && y % 2 > 0 { 
         result += byteValue; 
     }
-    x1 = floor(x1 / 2);
-    y1 = floor(y1 / 2);
+    x = floor(x / 2);
+    y = floor(y / 2);
     byteValue *= 2;
   }
   return result;
@@ -62,14 +60,12 @@
 @warp function __BitwiseOr(@num x, @num y) {
   var byteValue = 1;
   var result = 0;
-  var x1 = x;
-  var y1 = y;
-  while x1 > 0 || y1 > 0 {
-    if x1 % 2 > 0 || y1 % 2 > 0 { 
+  while x > 0 || y > 0 {
+    if x % 2 > 0 || y % 2 > 0 { 
         result += byteValue; 
     }
-    x1 = floor(x1 / 2);
-    y1 = floor(y1 / 2);
+    x = floor(x / 2);
+    y = floor(y / 2);
     byteValue *= 2;
   }
   return result;
@@ -78,31 +74,27 @@
 @warp function __BitwiseXor(@num x, @num y) {
   var byteValue = 1;
   var result = 0;
-  var x1 = x;
-  var y1 = y;
-  while x1 > 0 || y1 > 0 {
-    if (x1 % 2 > 0) != (y1 % 2 > 0) { 
+  while x > 0 || y > 0 {
+    if (x % 2 > 0) != (y % 2 > 0) { 
         result += byteValue; 
     }
-    x1 = floor(x1 / 2);
-    y1 = floor(y1 / 2);
+    x = floor(x / 2);
+    y = floor(1 / 2);
     byteValue *= 2;
   }
   return result;
 }
 
 @warp function __LShift(@num n, @num shift) {
-    var n1 = n;
     repeat shift {
-        n1 *= 2;
+        n *= 2;
     }
-    return n1;
+    return n;
 }
 
 @warp function __RShift(@num n, @num shift) {
-    var n1 = n;
     repeat shift {
-        n1 = floor(n1 / 2);
+        n = floor(n / 2);
     }
-    return n1;
+    return n;
 }

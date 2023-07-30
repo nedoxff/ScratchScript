@@ -87,7 +87,7 @@ public partial class ScratchScriptVisitor
         var expression = Visit(context.expression());
         if(Procedures.Last().ReturnType == ScratchType.Unknown)
             Procedures.Last().ReturnType = TypeHelper.GetType(expression);
-        return new($"pushat {FunctionStackName} 1 {expression}\n{Scope.Append}\n{Stack.PopArguments()}\nraw control_stop f:STOP_OPTION:\"this script\"\n");
+        return new($"push {FunctionStackName} {expression}\n{Scope.Append}\n{Stack.PopArguments()}\nraw control_stop f:STOP_OPTION:\"this script\"\n");
     }
 
     public override TypedValue? VisitProcedureCallStatement(ScratchScriptParser.ProcedureCallStatementContext context)

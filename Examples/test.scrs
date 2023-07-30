@@ -9,5 +9,5 @@ function calc(x, y, z, r) {
 }
 
 on start {
-    calc(3, 4, 5, 1);
+    calc(5, 4, 3, 100);
 }

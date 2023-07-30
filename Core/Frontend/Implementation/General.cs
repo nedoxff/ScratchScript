@@ -2,14 +2,15 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Antlr4.Runtime.Tree.Xpath;
-using ScratchScript.Core.Frontend.Scope;
+using ScratchScript.Core.Frontend.Information;
 using ScratchScript.Core.Reflection;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
+// ReSharper disable ArrangeObjectCreationWhenTypeNotEvident
 
 namespace ScratchScript.Core.Frontend.Implementation;
 
-public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
+public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?>
 {
     public static ScratchScriptVisitor Instance { get; private set; }
 
@@ -21,122 +22,107 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
     public string Namespace = "global";
 
     public List<DefinedScratchFunction> DefinedFunctions =>
-        _functions.Where(x => x is DefinedScratchFunction { Imported: false }).Select(x => x as DefinedScratchFunction)
+        Functions.Where(x => x is DefinedScratchFunction { Imported: false }).Select(x => x as DefinedScratchFunction)
             .ToList();
 
     private List<string> _imports = new();
     private ScratchScriptParser _parser;
-    private Dictionary<string, ScratchType> _typeLookup = new();
-    private ScopeInfo _currentScope;
-
-    private ScratchType GetType(object o)
-    {
-        return o switch
-        {
-            string search => _typeLookup.TryGetValue(search, out var value) ? value : ScratchType.String,
-            _ => TypeHelper.GetType(o)
-        };
-    }
-
-    private void SaveType(string s, ScratchType type) => _typeLookup[s] = type;
+    private ScopeInfo Scope { get; set; }
 
     public ScratchScriptVisitor(ScratchScriptParser parser)
     {
         _parser = parser;
         Instance = this;
+        Scope = new("", "");
     }
 
-    public override object VisitTopLevelStatement(ScratchScriptParser.TopLevelStatementContext context)
+    public override TypedValue? VisitTopLevelStatement(ScratchScriptParser.TopLevelStatementContext context)
     {
-        object result = null;
         if (context.attributeStatement() != null)
-            result = Visit(context.attributeStatement());
+            return Visit(context.attributeStatement());
         if (context.procedureDeclarationStatement() != null)
-            result = Visit(context.procedureDeclarationStatement());
+            return Visit(context.procedureDeclarationStatement());
         if (context.eventStatement() != null)
-            result = Visit(context.eventStatement());
+            return Visit(context.eventStatement());
         if (context.importStatement() != null)
             return Visit(context.importStatement());
         if (context.namespaceStatement() != null)
             return Visit(context.namespaceStatement());
-        return result;
+        return null;
     }
 
-    public override object VisitEventStatement(ScratchScriptParser.EventStatementContext context)
+    public override TypedValue? VisitEventStatement(ScratchScriptParser.EventStatementContext context)
     {
         //TODO: temporary implementation
         var startingLine = $"on {context.Identifier()}";
         var scope = CreateScope(context.block().line(), startingLine);
-        return scope.ToString();
+        return new(scope.ToString());
     }
 
-    public override object VisitLine(ScratchScriptParser.LineContext context)
+    public override TypedValue? VisitLine(ScratchScriptParser.LineContext context)
     {
-        object result = null;
         if (context.statement() != null)
-            result = Visit(context.statement());
+            return Visit(context.statement());
         if (context.ifStatement() != null)
-            result = Visit(context.ifStatement());
+            return Visit(context.ifStatement());
         if (context.whileStatement() != null)
-            result = Visit(context.whileStatement());
+            return Visit(context.whileStatement());
         if (context.switchStatement() != null)
-            result = Visit(context.switchStatement());
+            return Visit(context.switchStatement());
         if (context.repeatStatement() != null)
-            result = Visit(context.repeatStatement());
+            return Visit(context.repeatStatement());
         if (context.comment() != null)
-            result = Visit(context.comment());
+            return Visit(context.comment());
 
-        return result;
+        return null;
     }
 
-    public override object VisitProgram(ScratchScriptParser.ProgramContext context)
+    public override TypedValue? VisitProgram(ScratchScriptParser.ProgramContext context)
     {
-        _currentScope = new("", "");
-
         // Add all global functions from the STD (if they're not used they can be optimised later)
         if (StdLoader.Functions.TryGetValue("global", out var functions))
         {
-            _functions.AddRange(functions);
+            Functions.AddRange(functions);
             _proceduresSection += functions.Select(x => x.Code).Aggregate("", (current, next) => current + "\n" + next);
         }
 
-        InitProcedure.Code += "popall __FunctionReturnValues";
+        InitProcedure.Code += $"popall {FunctionStackName}\npopall {StackName}";
 
         foreach (var statement in context.topLevelStatement())
         {
             var result = Visit(statement);
-            if (result is string str)
+            if (result is { Value: string str })
             {
                 if (statement.procedureDeclarationStatement() == null)
-                    _currentScope.Content.Add(str);
+                    Scope.Content.Add(str);
                 else
                 {
                     _proceduresSection += str;
-                    _currentScope.Variables.Add(new ScratchVariable
+                    Scope.Variables.Add(new ScratchVariable
                     {
-                        Type = _procedures.Last().ReturnType,
-                        Name = _procedures.Last().Name,
+                        Type = Procedures.Last().ReturnType,
+                        Name = Procedures.Last().Name,
                     });
                 }
             }
         }
 
-        _currentScope.Content.Insert(0, InitProcedure + "end\n");
-        if (!_currentScope.Content.Any(x => x.StartsWith("on start")))
-            _currentScope.Content.Add("on start\ncall __Init\nend");
+        Scope.Content.Insert(0, InitProcedure + "end\n");
+        if (!Scope.Content.Any(x => x.StartsWith("on start")))
+            Scope.Content.Add("on start\ncall __Init\nend");
         else
         {
-            var index = _currentScope.Content.FindIndex(x => x.StartsWith("on start"));
-            var split = _currentScope.Content[index].Split("\n").ToList();
+            var index = Scope.Content.FindIndex(x => x.StartsWith("on start"));
+            var split = Scope.Content[index].Split("\n").ToList();
             split.Insert(1, "call __Init");
-            _currentScope.Content[index] = string.Join('\n', split);
+            Scope.Content[index] = string.Join('\n', split);
         }
 
-        _output += _currentScope.ToString();
+        _output += Scope.ToString();
         return null;
     }
 
-    public override object VisitStatement(ScratchScriptParser.StatementContext context)
+    public override TypedValue? VisitStatement(ScratchScriptParser.StatementContext context)
     {
         if (context.assignmentStatement() != null)
             return Visit(context.assignmentStatement());
@@ -154,65 +140,71 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         return null;
     }
 
-    public override object VisitConstant(ScratchScriptParser.ConstantContext context)
+    public override TypedValue? VisitConstant(ScratchScriptParser.ConstantContext context)
     {
         if (context.Number() is { } n)
-            return decimal.Parse(n.GetText(), CultureInfo.InvariantCulture);
+            return new(decimal.Parse(n.GetText(), CultureInfo.InvariantCulture), ScratchType.Number);
         if (context.String() is { } s)
-            return s.GetText();
+            return new(s.GetText(), ScratchType.String);
         if (context.boolean() is { } b)
-            return b.GetText() == "true";
+            return new(b.GetText() == "true", ScratchType.Boolean);
         if (context.Color() is { } c)
-            return new ScratchColor(c.GetText()[1..]);
+            return new(new ScratchColor(c.GetText()[1..]), ScratchType.Color);
         return null;
     }
 
-    public override string VisitParenthesizedExpression(ScratchScriptParser.ParenthesizedExpressionContext context)
+    public override TypedValue? VisitParenthesizedExpression(ScratchScriptParser.ParenthesizedExpressionContext context)
     {
         var expression = Visit(context.expression());
-        var expressionType = GetType(expression);
+        if (expression == null)
+        {
+            //TODO: error
+        }
 
         var result = $"({expression.Format()})";
-        SaveType(result, expressionType);
-        return result;
+        return new(result, expression.Value.Type);
     }
 
-    public override object VisitIdentifierExpression(ScratchScriptParser.IdentifierExpressionContext context)
+    public override TypedValue? VisitIdentifierExpression(ScratchScriptParser.IdentifierExpressionContext context)
     {
         return VisitIdentifierInternal(context.Identifier().GetText());
     }
 
-    private object VisitIdentifierInternal(string identifier)
+    private TypedValue? VisitIdentifierInternal(string identifier)
     {
-        if (!_currentScope.IdentifierUsed(identifier))
+        if (!Scope.IdentifierUsed(identifier))
             return null;
-        var variable = _currentScope.GetVariable(identifier);
+        var variable = Scope.GetVariable(identifier);
+        
+        if (variable.IsReporter)
+            return Stack.GetArgument(variable);
+        
         var ir = variable.IsList ? $"arr:{identifier}" : $"var:{(variable.IsReporter ? "argr:" : "")}{identifier}";
-        SaveType(ir, variable.Type);
-        return ir;
+        return new(ir, variable.Type);
     }
 
-    public override object VisitTernaryExpression(ScratchScriptParser.TernaryExpressionContext context)
+    public override TypedValue? VisitTernaryExpression(ScratchScriptParser.TernaryExpressionContext context)
     {
-        var condition = Visit(context.expression(0));
+        /*var condition = Visit(context.expression(0));
         AssertType(context, condition, ScratchType.Boolean);
         var first = Visit(context.expression(1));
         var second = Visit(context.expression(2));
         AssertType(context, first, second);
 
         _currentScope.Prepend +=
-            $"call __Ternary{Enum.GetName(GetType(first))} i:condition:{condition} i:trueValue:{first.Format(rawColor: false)} i:falseValue:{second.Format(rawColor: false)}\n";
+            $"call __Ternary{Enum.GetName(first.Value.Type)} i:condition:{condition} i:trueValue:{first.Value.Value.Format(rawColor: false)} i:falseValue:{second.Value.Value.Format(rawColor: false)}\n";
         _currentScope.Append += PopFunctionStackCommand;
         _currentScope.ProcedureIndex++;
-        var result = $"__FunctionReturnValues#{_currentScope.ProcedureIndex}";
+        var result = $"{FunctionStackName}#{_currentScope.ProcedureIndex}";
         SaveType(result, GetType(first));
-        return result;
+        return result;*/
+        return null;
     }
 
-    public override object VisitBlock(ScratchScriptParser.BlockContext context)
+    public override TypedValue? VisitBlock(ScratchScriptParser.BlockContext context)
     {
         var scope = CreateScope(context.line());
-        return scope.ToString();
+        return new(scope.ToString());
     }
 
     private ScopeInfo CreateScope(IEnumerable<ScratchScriptParser.LineContext> lines, string startingLine = "",
@@ -222,36 +214,36 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         if (reporters != null)
         {
             foreach (var reporter in reporters)
-                scope.Variables.Add(new ScratchVariable(reporter, _procedures.Last().Arguments.TryGetValue(reporter, out var type) ? type: ScratchType.Unknown, true));
+                scope.Variables.Add(new ScratchVariable(reporter, Procedures.Last().Arguments.TryGetValue(reporter, out var type) ? type: ScratchType.Unknown, true));
         }
 
-        scope.ParentScope = _currentScope;
-        scope.ProcedureIndex = _currentScope.ProcedureIndex;
-        scope.Variables.AddRange(_currentScope.Variables);
-        _currentScope = scope;
+        scope.ParentScope = Scope;
+        scope.ProcedureIndex = Scope.ProcedureIndex;
+        scope.Variables.AddRange(Scope.Variables);
+        Scope = scope;
 
         foreach (var line in lines)
         {
             var result = Visit(line);
-            if (result is not string resultString) continue;
+            if (result is not { Value: string resultString }) continue;
             if (line.statement()?.returnStatement() != null ||
                 line.statement()?.breakStatement() != null) // No code should be after the return statement
-                scope.Content.Add(_currentScope.Prepend + resultString);
+                scope.Content.Add(Scope.Prepend + resultString);
             else
-                scope.Content.Add(_currentScope.Prepend + resultString + _currentScope.Append);
-            _currentScope.ProcedureIndex -= Regex.Matches(_currentScope.Append, PopFunctionStackCommand).Count;
-            _currentScope.Append = "";
-            _currentScope.Prepend = "";
+                scope.Content.Add(Scope.Prepend + resultString + Scope.Append);
+            Scope.ProcedureIndex -= Regex.Matches(Scope.Append, PopFunctionStackCommand).Count;
+            Scope.Append = "";
+            Scope.Prepend = "";
         }
 
-        _currentScope = scope.ParentScope;
+        Scope = scope.ParentScope;
         return scope;
     }
 
-    public override object VisitNamespaceStatement(ScratchScriptParser.NamespaceStatementContext context)
+    public override TypedValue? VisitNamespaceStatement(ScratchScriptParser.NamespaceStatementContext context)
     {
         var name = context.String().GetText()[1..^1];
-        if (_procedures.Count != 0 && string.IsNullOrEmpty(Namespace))
+        if (Procedures.Count != 0 && string.IsNullOrEmpty(Namespace))
         {
             //TODO: add an error about the namespace's position in code
         }
@@ -260,7 +252,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         return null;
     }
 
-    public override object VisitImportStatement(ScratchScriptParser.ImportStatementContext context)
+    public override TypedValue? VisitImportStatement(ScratchScriptParser.ImportStatementContext context)
     {
         var name = context.String().GetText()[1..^1];
         var names = context.Identifier().Select(x => x.GetText()).ToList();
@@ -269,7 +261,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
         {
             _imports.Add(name);
             if (names.Count == 0)
-                _functions.AddRange(nativeFunctions);
+                Functions.AddRange(nativeFunctions);
             else
             {
                 foreach (var func in names)
@@ -278,7 +270,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
                     {
                         //TODO: ERROR
                     }
-                    else _functions.Add(nativeFunctions.First(x => x.BlockInformation.Name == func));
+                    else Functions.Add(nativeFunctions.First(x => x.BlockInformation.Name == func));
                 }
             }
 
@@ -290,7 +282,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
             _imports.Add(name);
             if (names.Count == 0)
             {
-                _functions.AddRange(definedFunctions);
+                Functions.AddRange(definedFunctions);
                 _proceduresSection += definedFunctions.Select(x => x.Code)
                     .Aggregate("", (current, next) => current + "\n" + next);
             }
@@ -305,7 +297,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<object>
                     else
                     {
                         var func = definedFunctions.First(x => x.BlockInformation.Name == functionName);
-                        _functions.Add(func);
+                        Functions.Add(func);
                         _proceduresSection += func.Code + "\n";
                     }
                 }

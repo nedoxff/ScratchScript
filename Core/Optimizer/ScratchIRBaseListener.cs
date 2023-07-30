@@ -286,6 +286,20 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitVariableExpression([NotNull] ScratchIRParser.VariableExpressionContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by the <c>stackIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>stackIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by the <c>arrayExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// <para>The default implementation does nothing.</para>

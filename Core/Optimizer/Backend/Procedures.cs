@@ -1,4 +1,6 @@
 ﻿using Antlr4.Runtime.Atn;
+using ScratchScript.Core.Blocks;
+using ScratchScript.Core.Frontend.Implementation;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -44,16 +46,14 @@ public partial class ScratchIRBackendVisitor
         var procedure = _procedures.First(x => x.Name == name);
         var block = procedure.Call.Clone();
 
-        foreach (var argument in context.callProcedureArgument())
+        if (procedure.StackIndexReporter != null)
         {
-            var argumentName = argument.Identifier().GetText();
-            var expression = Visit(argument.expression());
-            if (argument.procedureArgumentType().GetText() == "i:")
-                block.SetInput(procedure.Arguments[argumentName].Id, ScratchInput.New(expression, block));
-            else
-                block.SetField(procedure.Arguments[argumentName].Id, ScratchField.New(expression));
-            UpdateBlocks(expression);
+            var lengthOfStack = Data.LengthOfList();
+            lengthOfStack.SetField("LIST", ScratchField.New(ScratchScriptVisitor.StackName));
+            block.SetInput(procedure.StackIndexReporter.Id, ScratchInput.New(lengthOfStack, block));
+            UpdateBlocks(lengthOfStack);
         }
+        UpdateBlocks(block);
 
         return block;
     }
@@ -93,7 +93,7 @@ public partial class ScratchIRBackendVisitor
     {
         var procedure = _procedures.Last();
         var toUpdate = new List<object> { procedure.Definition, procedure.Prototype };
-        toUpdate.AddRange(procedure.Arguments.Select(x => x.Value));
+        if(procedure.StackIndexReporter != null) toUpdate.Add(procedure.StackIndexReporter);
         UpdateBlocks(toUpdate.ToArray());
     }
 }

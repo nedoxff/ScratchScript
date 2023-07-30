@@ -1,12 +1,13 @@
-import "std/math";
-import "scratch/operators";
-import "scratch/looks";
 import "scratch/control";
+function calc(x, y, z, r) {
+    repeat r {
+        x += 2;
+        y *= 2;
+        z = z ** 2;
+        wait(1);
+    }
+}
 
 on start {
-    var x = 2;
-    while 1 == 1 {
-        x = x << 1;
-        wait(0.01);
-    }
+    calc(3, 4, 5, 1);
 }

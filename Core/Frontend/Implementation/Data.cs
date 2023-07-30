@@ -2,6 +2,7 @@
 using System.Security.Principal;
 using ScratchScript.Core.Blocks;
 using ScratchScript.Core.Diagnostics;
+using ScratchScript.Core.Frontend.Information;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
@@ -9,43 +10,64 @@ namespace ScratchScript.Core.Frontend.Implementation;
 
 public partial class ScratchScriptVisitor
 {
-    private Dictionary<string, ScratchType> _variables = new();
-
-    public override object VisitAssignmentStatement(ScratchScriptParser.AssignmentStatementContext context)
+    public override TypedValue? VisitAssignmentStatement(ScratchScriptParser.AssignmentStatementContext context)
     {
         var name = context.Identifier().GetText();
 
-        if (!_currentScope.IdentifierUsed(name))
+        if (!Scope.IdentifierUsed(name))
         {
             DiagnosticReporter.Error(ScratchScriptError.VariableNotDefined, context, context.Identifier().Symbol, name);
             return null;
         }
 
-        var op = Visit(context.assignmentOperators());
-        Assert<string>(context, op);
-        var variableType = _currentScope.GetVariable(name).Type;
+        if (Procedures.Last().Arguments.ContainsKey(name))
+            return HandleProcedureArgumentAssignment(context);
 
-        if (variableType == ScratchType.String && (string)op == "+") op = "~";
-        
+        var op = Visit(context.assignmentOperators());
+        //Assert<string>(context, op);
+        var variableType = Scope.GetVariable(name).Type;
+
+        var opString = (string)op.Value.Value;
+        if (variableType == ScratchType.String && opString == "+") opString = "~";
+
         var expression = Visit(context.expression());
-        var expressionType = GetType(expression);
-        
-        if (expressionType is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
+
+        if (expression.Value.Type is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
         {
             //TODO: ERROR
         }
 
-        AssertType(context, variableType, expressionType, context.expression());
+        AssertType(context, variableType, expression.Value.Type, context.expression());
 
-        return $"set var:{name} {op} {(string.IsNullOrEmpty(op as string) ? "": $"var:{name}")} {expression.Format(rawColor: false)}\n";
+        return new(
+            $"set var:{name} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{name}")} {expression.Format(rawColor: false)}\n");
     }
 
-    public override object VisitVariableDeclarationStatement(
+    private TypedValue HandleProcedureArgumentAssignment(ScratchScriptParser.AssignmentStatementContext context)
+    {
+        var name = context.Identifier().GetText();
+        var variable = VisitIdentifierInternal(name);
+        var op = Visit(context.assignmentOperators());
+        var opString = op.Format();
+        var expression = Visit(context.expression());
+
+        var procedure = Procedures.Last();
+        var index = procedure.Arguments.Keys.ToList().FindIndex(s => s == name);
+
+        AssertType(context, variable, expression, context.expression());
+
+        var shift = procedure.Arguments.Count - (index + 1);
+        var ir =
+            $"raw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{(shift == 0 ? ":si:": $"(- :si: {shift})")} i:ITEM:({opString} {(string.IsNullOrEmpty(opString) ? "" : variable.Format())} {expression.Format(rawColor: false)})\n";
+        return new(ir);
+    }
+
+    public override TypedValue? VisitVariableDeclarationStatement(
         ScratchScriptParser.VariableDeclarationStatementContext context)
     {
         var name = context.Identifier().GetText();
 
-        if (_currentScope.IdentifierUsed(name))
+        if (Scope.IdentifierUsed(name))
         {
             DiagnosticReporter.Error(ScratchScriptError.IdentifierAlreadyUsed, context, context.Identifier().Symbol,
                 name);
@@ -53,48 +75,48 @@ public partial class ScratchScriptVisitor
         }
 
         var expression = Visit(context.expression());
-        var expressionType = GetType(expression);
 
-        if (expressionType is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
+        if (expression.Value.Type is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
         {
             //TODO: ERROR
         }
-        
-        _currentScope.Variables.Add(new ScratchVariable(name, expressionType));
-        _loadSection += $"load:{TypeHelper.ScratchTypeToString(expressionType)} {name}\n";
-        return $"set var:{name} {expression.Format(rawColor: false)}\n";
+
+        Scope.Variables.Add(new ScratchVariable(name, expression.Value.Type));
+        _loadSection += $"load:{TypeHelper.ScratchTypeToString(expression.Value.Type)} {name}\n";
+        return new($"set var:{name} {expression.Format(rawColor: false)}\n");
     }
 
-    public override object VisitAssignmentOperators(ScratchScriptParser.AssignmentOperatorsContext context)
+    public override TypedValue? VisitAssignmentOperators(ScratchScriptParser.AssignmentOperatorsContext context)
     {
-        if (context.Assignment() != null) return "";
-        if (context.AdditionAsignment() != null) return "+";
-        if (context.SubtractionAssignment() != null) return "-";
-        if (context.MultiplicationAssignment() != null) return "*";
-        if (context.DivisionAssignment() != null) return "/";
-        if (context.ModulusAssignment() != null) return "%";
+        if (context.Assignment() != null) return new("");
+        if (context.AdditionAsignment() != null) return new("+");
+        if (context.SubtractionAssignment() != null) return new("-");
+        if (context.MultiplicationAssignment() != null) return new("*");
+        if (context.DivisionAssignment() != null) return new("/");
+        if (context.ModulusAssignment() != null) return new("%");
+        //TODO: add **
         return null;
     }
 
-    public override object VisitArrayAccessExpression(ScratchScriptParser.ArrayAccessExpressionContext context)
+    public override TypedValue? VisitArrayAccessExpression(ScratchScriptParser.ArrayAccessExpressionContext context)
     {
         var obj = Visit(context.expression(0));
         var index = Visit(context.expression(1));
         Assert<string>(context, obj);
         AssertType(context, index, ScratchType.Number);
-        
-        var objectString = (string)obj;
-        if (objectString.StartsWith("arr:"))
+
+        var objectString = (string)obj.Value.Value;
+        if (objectString.IsList())
         {
-            return $"{obj}#{index}";
+            return new($"{obj}#{index}");
         }
 
-        if (GetType(obj) == ScratchType.String)
+        if (obj.Value.Type == ScratchType.String)
         {
             var result = $"rawshadow operator_letter_of i:LETTER:{index} i:STRING:{obj} endshadow";
-            SaveType(result, ScratchType.String);
-            return result;
+            return new(result, ScratchType.String);
         }
+
         return null;
     }
 }

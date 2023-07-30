@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using Antlr4.Runtime.Tree.Xpath;
-using ScratchScript.Core.Frontend.Scope;
+using ScratchScript.Core.Frontend.Information;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -9,7 +9,7 @@ namespace ScratchScript.Core.Frontend.Implementation;
 
 public partial class ScratchScriptVisitor
 {
-    public override object VisitIfStatement(ScratchScriptParser.IfStatementContext context)
+    public override TypedValue? VisitIfStatement(ScratchScriptParser.IfStatementContext context)
     {
         var condition = Visit(context.expression());
         AssertType(context, condition, ScratchType.Boolean, context.expression());
@@ -17,16 +17,16 @@ public partial class ScratchScriptVisitor
         var scope = CreateScope(context.block().line(), "if " + condition.Format());
         var result = scope.ToString();
 
-        if (context.elseIfStatement() == null) return result;
+        if (context.elseIfStatement() == null) return new(result);
         var elseOutput = Visit(context.elseIfStatement());
-        Assert<string>(context, elseOutput, context.elseIfStatement());
-        var elseOutputStr = (string)elseOutput;
+        //Assert<string>(context, elseOutput, context.elseIfStatement());
+        var elseOutputStr = (string)elseOutput.Value.Value;
         result += $"else\n{elseOutputStr}";
 
-        return result;
+        return new(result);
     }
 
-    public override object VisitRepeatStatement(ScratchScriptParser.RepeatStatementContext context)
+    public override TypedValue? VisitRepeatStatement(ScratchScriptParser.RepeatStatementContext context)
     {
         var condition = Visit(context.expression());
         AssertType(context, condition, ScratchType.Number, context.expression());
@@ -37,24 +37,24 @@ public partial class ScratchScriptVisitor
         {
             var name = NameHelper.New("__Repeat");
             var procedure = new ScratchIrProcedure(name, Array.Empty<string>());
-            _procedures.Add(procedure);
+            Procedures.Add(procedure);
         }
 
         var code = CreateScope(context.block().line(), $"repeat {condition}");
 
         if (hasBreaks)
         {
-            var procedure = _procedures.Last();
+            var procedure = Procedures.Last();
             procedure.Code = code + "end\n";
             _proceduresSection += $"{procedure}\n";
 
-            return $"call {procedure.Name}\n";
+            return new($"call {procedure.Name}\n");
         }
 
-        return code.ToString();
+        return new(code.ToString());
     }
 
-    public override object VisitWhileStatement(ScratchScriptParser.WhileStatementContext context)
+    public override TypedValue? VisitWhileStatement(ScratchScriptParser.WhileStatementContext context)
     {
         var condition = Visit(context.expression());
         AssertType(context, condition, ScratchType.Boolean, context.expression());
@@ -65,27 +65,27 @@ public partial class ScratchScriptVisitor
         {
             var name = NameHelper.New("__While");
             var procedure = new ScratchIrProcedure(name, Array.Empty<string>());
-            _procedures.Add(procedure);
+            Procedures.Add(procedure);
         }
 
         var code = CreateScope(context.block().line(), $"while {condition}");
         
-        code.Content.Add(_currentScope.Append); // Used for function return values
-        code.Content.Add(_currentScope.Prepend);
+        code.Content.Add(Scope.Append); // Used for function return values
+        code.Content.Add(Scope.Prepend);
 
         if (hasBreaks)
         {
-            var procedure = _procedures.Last();
+            var procedure = Procedures.Last();
             procedure.Code = code + "end\n";
             _proceduresSection += $"{procedure}\n";
 
-            return $"call {procedure.Name}\n";
+            return new($"call {procedure.Name}\n");
         }
 
-        return code.ToString();
+        return new(code.ToString());
     }
 
-    public override object VisitSwitchStatement(ScratchScriptParser.SwitchStatementContext context)
+    public override TypedValue? VisitSwitchStatement(ScratchScriptParser.SwitchStatementContext context)
     {
         var condition = Visit(context.expression());
         var caseCount = context.switchBlock().@case().Length;
@@ -93,7 +93,7 @@ public partial class ScratchScriptVisitor
         if (caseCount == 0)
         {
             //TODO: warning about the switch block being empty
-            return "";
+            return new("");
         }
         
         var cases = new List<(ScopeInfo, object)>();
@@ -116,10 +116,10 @@ public partial class ScratchScriptVisitor
         if (defaultScope != null)
             result += $"else\n{defaultScope}";
 
-        return result;
+        return new(result);
     }
 
-    public override object VisitElseIfStatement(ScratchScriptParser.ElseIfStatementContext context)
+    public override TypedValue? VisitElseIfStatement(ScratchScriptParser.ElseIfStatementContext context)
     {
         if (context.block() != null)
             return VisitBlock(context.block());
@@ -128,9 +128,8 @@ public partial class ScratchScriptVisitor
         return null;
     }
 
-    public override object VisitBreakStatement(ScratchScriptParser.BreakStatementContext context)
+    public override TypedValue? VisitBreakStatement(ScratchScriptParser.BreakStatementContext context)
     {
-        return
-            $"{PopAllProcedureCache}\nraw control_stop f:STOP_OPTION:\"this script\"\n"; //TODO: change this to stop() when built-in functions are implemented
+        return new($"{PopAllProcedureCache}\nraw control_stop f:STOP_OPTION:\"this script\"\n"); //TODO: change this to stop() when built-in functions are implemented
     }
 }

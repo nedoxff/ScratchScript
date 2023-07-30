@@ -6,6 +6,6 @@ public class Static
 
     public static List<string> ReservedNames = new()
     {
-        "__FunctionReturnValues"
+        "{FunctionStackName}"
     };
 }

@@ -28,7 +28,7 @@ public partial class ScratchIRBackendVisitor
 
         var block = Data.InsertIntoList();
         block.SetField("LIST", ScratchField.New(name));
-        block.SetInput("INDEX", ScratchInput.New(at));
+        block.SetInput("INDEX", ScratchInput.New(at, block));
         block.SetInput("ITEM", ScratchInput.New(item, block));
         UpdateBlocks(block, at, item);
         
@@ -57,8 +57,9 @@ public partial class ScratchIRBackendVisitor
 
         var block = Data.DeleteFromList();
         block.SetField("LIST", ScratchField.New(name));
-        block.SetInput("INDEX", ScratchInput.New(at));
+        block.SetInput("INDEX", ScratchInput.New(at, block));
 
+        UpdateBlocks(block, at);
         return block;
     }
 
@@ -69,6 +70,7 @@ public partial class ScratchIRBackendVisitor
         var block = Data.DeleteAllOfList();
         block.SetField("LIST", ScratchField.New(name));
         
+        UpdateBlocks(block);
         return block;
     }
 
@@ -79,8 +81,9 @@ public partial class ScratchIRBackendVisitor
 
         var block = Data.ItemOfList();
         block.SetField("LIST", ScratchField.New(name));
-        block.SetInput("INDEX", ScratchInput.New(expression));
+        block.SetInput("INDEX", ScratchInput.New(expression, block));
 
+        UpdateBlocks(block);
         return block;
     }
 }

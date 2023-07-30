@@ -12,7 +12,7 @@ command
     | ifStatement #ifCommand
     
     // Procedures
-    | 'call' Identifier callProcedureArgument*? #callCommand
+    | 'call' Identifier #callCommand
     | 'raw' Identifier callProcedureArgument*? #rawCommand
     
     // Lists
@@ -34,6 +34,7 @@ block
 expression
     : constant #constantExpression
     | variableIdentifier #variableExpression
+    | StackIndexIdentifier #stackIndexExpression
     | arrayIdentifier #arrayExpression
     | '(' expression ')' #parenthesizedExpression
     | addOperators expression expression #binaryAddExpression
@@ -55,7 +56,7 @@ callProcedureArgument: procedureArgumentType Identifier ':' expression;
 
 procedureArgumentType: 'i:' | 'f:';
 
-variableIdentifier: 'var:' ArgumentReporterIdentifier? Identifier;
+variableIdentifier: 'var:' Identifier;
 arrayIdentifier: 'arr:' Identifier;
 constant: Number | String | Color;
 procedureArgumentTypeDeclaration: ProcedureType;
@@ -73,8 +74,8 @@ StringType: ':s';
 ListType: ':l';
 StringNumberType: ':sn';
 BooleanType: ':b';
-ArgumentReporterIdentifier: 'argr:';
 WarpIdentifier: ':w';
+StackIndexIdentifier: ':si:';
 
 Hashtag: '#';
 Minus: '-';

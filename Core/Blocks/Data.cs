@@ -19,6 +19,15 @@ public static class Data
         ExpectedType = variable.Type
     };
 
+    public static Block List(ScratchVariable list) => new("data_listcontents", "dlc", shadow: true)
+    {
+        CustomData = new Dictionary<string, string>
+        {
+            {"VARIABLE_NAME", list.Name},
+            {"VARIABLE_ID", list.Id}
+        },
+    };
+
     public static Block DeleteAllOfList() => new("data_deletealloflist", "ddalol");
     public static Block DeleteFromList() => new("data_deleteoflist", "ddol"); //input INDEX, field LIST
     public static Block InsertIntoList() => new("data_insertatlist", "dial"); //input ITEM INDEX, field LIST

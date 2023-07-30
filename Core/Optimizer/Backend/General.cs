@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using ScratchScript.Core.Blocks;
+using ScratchScript.Core.Frontend.Implementation;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -15,6 +16,8 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
     public ScratchIRBackendVisitor(string name)
     {
         Target.Name = name;
+        RegisterVariable(ScratchScriptVisitor.FunctionStackName, ScratchType.List);
+        RegisterVariable(ScratchScriptVisitor.StackName, ScratchType.List);
     }
 
     private void UpdateBlocks(params object[] blocks)

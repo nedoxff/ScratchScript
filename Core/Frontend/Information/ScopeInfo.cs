@@ -1,6 +1,8 @@
-﻿using ScratchScript.Helpers;
+﻿using System.Formats.Asn1;
+using ScratchScript.Core.Frontend.Implementation;
+using ScratchScript.Helpers;
 
-namespace ScratchScript.Core.Frontend.Scope;
+namespace ScratchScript.Core.Frontend.Information;
 
 public class ScopeInfo
 {
@@ -40,5 +42,15 @@ public class ScopeInfo
         }
 
         return false;
+    }
+
+    public string CallFunction(string name, object[] arguments, bool returns)
+    {
+        foreach (var argument in arguments)
+            Prepend += Stack.PushArgument(argument);
+        Prepend += $"call {name}\n";
+        Append += ScratchScriptVisitor.PopFunctionStackCommand;
+        if(returns) ProcedureIndex++;
+        return returns ? $"{ScratchScriptVisitor.FunctionStackName}#{ProcedureIndex}": "";
     }
 }

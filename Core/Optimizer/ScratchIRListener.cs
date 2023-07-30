@@ -245,6 +245,18 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitVariableExpression([NotNull] ScratchIRParser.VariableExpressionContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>stackIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>stackIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>arrayExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// </summary>

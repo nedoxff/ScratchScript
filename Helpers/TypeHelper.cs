@@ -7,6 +7,7 @@ public class TypeHelper
     public static ScratchType GetType(object o)
     {
         if (o is ScratchType type) return type;
+        if (o is TypedValue value) return value.Type;
         if (o is not Block b) return _typeConverter[o.GetType()];
         return b.Opcode switch
         {

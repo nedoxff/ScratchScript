@@ -13,7 +13,7 @@ public partial class ScratchScriptVisitor
         {
             case "__ReturnType":
             {
-                var type = (ScratchType)Convert.ToInt32(Visit(context.constant(0)));
+                var type = (ScratchType)Convert.ToInt32(Visit(context.constant(0)).Value.Value);
                 procedure.ReturnType = type;
                 return;
             }
@@ -46,15 +46,15 @@ public partial class ScratchScriptVisitor
             {
                 _useFloatEquation = true;
                 if (context.constant(0) != null)
-                    _floatingPointPrecision = (decimal)Visit(context.constant(0));
+                    _floatingPointPrecision = (decimal)Visit(context.constant(0)).Value.Value;
                 break;
             }
         }
     }
 
-    public override object VisitAttributeStatement(ScratchScriptParser.AttributeStatementContext context)
+    public override TypedValue? VisitAttributeStatement(ScratchScriptParser.AttributeStatementContext context)
     {
-        var shouldWarn = _imports.Count != 0 || Namespace != "global" || _procedures.Count != 0;
+        var shouldWarn = _imports.Count != 0 || Namespace != "global" || Procedures.Count != 0;
         if (shouldWarn)
         {
             //TODO: warning

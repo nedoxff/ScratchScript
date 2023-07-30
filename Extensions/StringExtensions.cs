@@ -14,6 +14,7 @@ public static class StringExtensions
             bool b => $"\"{b.ToString().ToLower()}\"",
             decimal d => d.ToString(CultureInfo.InvariantCulture),
             ScratchColor c => rawColor ? $"#{c.Value.ToLower()}": $"\"0x{c.Value.ToLower()}\"",
+            TypedValue v => v.Value.Format(rawColor),
             _ => o.ToString()
         };
     }

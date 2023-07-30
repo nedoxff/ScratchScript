@@ -157,6 +157,13 @@ public interface IScratchIRVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitVariableExpression([NotNull] ScratchIRParser.VariableExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>stackIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>arrayExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
 	/// </summary>

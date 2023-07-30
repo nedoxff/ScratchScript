@@ -1,4 +1,5 @@
 ﻿using ScratchScript.Core.Blocks;
+using ScratchScript.Core.Frontend.Implementation;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
@@ -14,7 +15,7 @@ public partial class ScratchIRBackendVisitor
     {
         if(_variables.All(x => x.Name != name))
             _variables.Add(new ScratchVariable {Id = NameHelper.New(name), Name = name});
-        return _variables.First(x => x.Name == name);
+        return _variables.FirstOrDefault(x => x.Name == name);
     }
     
     public override object VisitSetCommand(ScratchIRParser.SetCommandContext context)
@@ -37,26 +38,36 @@ public partial class ScratchIRBackendVisitor
     {
         var name = context.Identifier().GetText();
         Log.Verbose("[Load] Creating a variable named {Name}", name);
-        var id = NameHelper.New(name);
         var type = TypeHelper.ScratchTypeFromString(context.Type().GetText()[1..]);
-        
+
+        RegisterVariable(name, type);
+        return null;
+    }
+
+    private void RegisterVariable(string name, ScratchType type)
+    {
+        var id = NameHelper.New(name);
         _variables.Add(new ScratchVariable
         {
             Id = id,
             Name = name,
-            Type = type
+            Type = type,
+            IsList = type == ScratchType.List
         });
-        Target.Variables[id] = new List<object> {name, ""};
-        return null;
+        if (type == ScratchType.List) Target.Lists[id] = new List<object> { name, Array.Empty<object>() };
+        else Target.Variables[id] = new List<object> {name, ""};
     }
 
     public override object VisitVariableExpression(ScratchIRParser.VariableExpressionContext context)
     {
         var name = context.variableIdentifier().Identifier().GetText();
-        if (context.variableIdentifier().ArgumentReporterIdentifier() == null)
-            return Data.Variable(GetVariable(name));
+        var variable = GetVariable(name);
+        return variable.IsList ? Data.List(variable) : Data.Variable(variable);
+    }
 
-        var reporter = _procedures.Last().Arguments[name].Clone();
+    public override object VisitStackIndexExpression(ScratchIRParser.StackIndexExpressionContext context)
+    {
+        var reporter = _procedures.Last().StackIndexReporter.Clone();
         UpdateBlocks(reporter);
         return reporter;
     }

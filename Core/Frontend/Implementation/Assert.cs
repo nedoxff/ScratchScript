@@ -7,17 +7,36 @@ namespace ScratchScript.Core.Frontend.Implementation;
 
 public partial class ScratchScriptVisitor
 {
-    public void AssertType(ParserRuleContext context, object first, object second, ParserRuleContext conflicting = null)
+    public bool AssertType(ParserRuleContext context, object first, object second, ParserRuleContext conflicting = null)
     {
-        if (first is string firstString && firstString.Contains(":argr") && GetType(first) == ScratchType.Unknown)
+        if (first is TypedValue { Value: string } firstTyped && firstTyped.Data.ContainsKey("ARGUMENT_NAME") &&
+            TypeHelper.GetType(first) == ScratchType.Unknown)
         {
-            var argumentName = firstString.Split(":")[2];
-            _procedures.Last().Arguments[argumentName] = GetType(second);
-            SaveType(firstString, GetType(second));
-            return;
+            Procedures.Last().Arguments[firstTyped.Data["ARGUMENT_NAME"]] = TypeHelper.GetType(second);
+            return false;
         }
-        if (GetType(first) != GetType(second))
-            DiagnosticReporter.Error(ScratchScriptError.TypeMismatch, context, conflicting ?? ParserRuleContext.EMPTY, first, second);
+
+        if (TypeHelper.GetType(first) != TypeHelper.GetType(second))
+        {
+            DiagnosticReporter.Error(ScratchScriptError.TypeMismatch, context, conflicting ?? ParserRuleContext.EMPTY,
+                first, second);
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool AssertNotNull(ParserRuleContext context, object obj, ParserRuleContext conflicting = null)
+    {
+        if (obj is null)
+        {
+            //DiagnosticReporter.Error(ScratchScriptError., context, conflicting ?? ParserRuleContext.EMPTY,
+            //                first, second);
+            //TODO: error
+            return true;
+        }
+
+        return false;
     }
 
     public void Assert<T>(ParserRuleContext context, object o, ParserRuleContext conflicting = null)

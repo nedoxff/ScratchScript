@@ -20,7 +20,7 @@ public partial class ScratchScriptVisitor
             return null;
         }
 
-        if (Procedures.Last().Arguments.ContainsKey(name))
+        if (Procedures.LastOrDefault()?.Arguments.ContainsKey(name) ?? false)
             return HandleProcedureArgumentAssignment(context);
 
         var op = Visit(context.assignmentOperators());
@@ -66,16 +66,12 @@ public partial class ScratchScriptVisitor
         ScratchScriptParser.VariableDeclarationStatementContext context)
     {
         var name = context.Identifier().GetText();
-
-        if (Scope.IdentifierUsed(name))
-        {
-            DiagnosticReporter.Error(ScratchScriptError.IdentifierAlreadyUsed, context, context.Identifier().Symbol,
-                name);
-            return null;
-        }
-
         var expression = Visit(context.expression());
 
+
+        if (Scope.IdentifierUsed(name))
+            return new($"set var:{name} {expression.Format(rawColor: false)}\n"); //TODO: warning
+        
         if (expression.Value.Type is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
         {
             //TODO: ERROR

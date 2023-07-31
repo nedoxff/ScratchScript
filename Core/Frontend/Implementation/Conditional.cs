@@ -85,6 +85,23 @@ public partial class ScratchScriptVisitor
         return new(code.ToString());
     }
 
+    public override TypedValue? VisitForStatement(ScratchScriptParser.ForStatementContext context)
+    {
+        var initialize = context.statement(0) != null ? Visit(context.statement(0)): null;
+        var condition = context.expression() != null ? Visit(context.expression()): null;
+        var change = context.statement(1) != null ? Visit(context.statement(1)): null;
+
+        condition ??= new("== 1 1", ScratchType.Boolean);
+        AssertType(context, condition, ScratchType.Boolean);
+        
+        var code = CreateScope(context.block().line(), $"{(initialize == null ? "": $"{initialize}\n")}while {condition}");
+        code.Content.Add(Scope.Append);
+        code.Content.Add(Scope.Prepend);
+        code.Content.Add(change.Format());
+
+        return new(code.ToString());
+    }
+
     public override TypedValue? VisitSwitchStatement(ScratchScriptParser.SwitchStatementContext context)
     {
         var condition = Visit(context.expression());

@@ -104,6 +104,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitWhileStatement([NotNull] ScratchScriptParser.WhileStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.forStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitForStatement([NotNull] ScratchScriptParser.ForStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.elseIfStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -139,12 +145,6 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitBreakStatement([NotNull] ScratchScriptParser.BreakStatementContext context);
-	/// <summary>
-	/// Visit a parse tree produced by <see cref="ScratchScriptParser.continueStatement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
 	/// </summary>

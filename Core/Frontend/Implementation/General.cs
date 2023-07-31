@@ -73,6 +73,12 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             return Visit(context.repeatStatement());
         if (context.comment() != null)
             return Visit(context.comment());
+        if (context.returnStatement() != null)
+            return Visit(context.returnStatement());
+        if (context.breakStatement() != null)
+            return Visit(context.breakStatement());
+        if (context.forStatement() != null)
+            return Visit(context.forStatement());
 
         return null;
     }
@@ -132,10 +138,6 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             return Visit(context.memberProcedureCallStatement());
         if (context.variableDeclarationStatement() != null)
             return Visit(context.variableDeclarationStatement());
-        if (context.returnStatement() != null)
-            return Visit(context.returnStatement());
-        if (context.breakStatement() != null)
-            return Visit(context.breakStatement());
 
         return null;
     }
@@ -226,8 +228,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         {
             var result = Visit(line);
             if (result is not { Value: string resultString }) continue;
-            if (line.statement()?.returnStatement() != null ||
-                line.statement()?.breakStatement() != null) // No code should be after the return statement
+            if (line.returnStatement() != null ||
+                line.breakStatement() != null) // No code should be after the return statement
                 scope.Content.Add(Scope.Prepend + resultString);
             else
                 scope.Content.Add(Scope.Prepend + resultString + Scope.Append);

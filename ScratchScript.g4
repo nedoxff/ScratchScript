@@ -5,8 +5,8 @@ Parser
 
 program: topLevelStatement* EOF;
 topLevelStatement: procedureDeclarationStatement | attributeStatement | eventStatement | importStatement | namespaceStatement;
-line: (statement | ifStatement | whileStatement | repeatStatement | switchStatement | comment);
-statement: (assignmentStatement | procedureCallStatement | memberProcedureCallStatement |  variableDeclarationStatement | returnStatement | breakStatement | continueStatement) Semicolon;
+line: ((statement Semicolon) | ifStatement | whileStatement | repeatStatement | forStatement | switchStatement | returnStatement | breakStatement | comment);
+statement: assignmentStatement | procedureCallStatement | memberProcedureCallStatement | variableDeclarationStatement;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
 assignmentStatement: Identifier assignmentOperators expression;
@@ -14,17 +14,17 @@ variableDeclarationStatement: VariableDeclare Identifier Assignment expression;
 memberProcedureCallStatement: expression Dot procedureCallStatement;
 procedureCallStatement: Identifier LeftParen (procedureArgument (Comma procedureArgument)*?)? RightParen; 
 procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (identifierWithAttribute (Comma identifierWithAttribute)*?)? RightParen block; 
-ifStatement: If expression block (Else elseIfStatement)?;
-whileStatement: While expression block;
+ifStatement: If LeftParen expression RightParen block (Else elseIfStatement)?;
+whileStatement: While LeftParen expression RightParen block;
+forStatement: For LeftParen statement? Semicolon expression? Semicolon statement? RightParen block;
 elseIfStatement: block | ifStatement;
 importStatement: Import (LeftBrace Identifier (Comma Identifier)*? RightBrace From)? String Semicolon;
 attributeStatement: At Identifier (LeftParen (constant (Comma constant)*?)? RightParen)?;
-returnStatement: Return expression;
-repeatStatement: Repeat expression block;
-breakStatement: Break;
-continueStatement: Continue;
+returnStatement: Return expression Semicolon;
+repeatStatement: Repeat LeftParen expression RightParen block;
+breakStatement: Break Semicolon;
 namespaceStatement: Namespace String Semicolon;
-switchStatement: Switch expression switchBlock;
+switchStatement: Switch LeftParen expression RightParen switchBlock;
 identifierWithAttribute: attributeStatement? Identifier;
 procedureArgument: (Identifier ':')? expression;
 
@@ -134,7 +134,7 @@ ModulusAssignment: '%=';
 /*
     Keywords
 */
-If: 'if' Whitespace+;
+If: 'if';
 
 /*Very important for newlines:
 
@@ -154,17 +154,17 @@ Else: 'else';
 True: 'true';
 False: 'false';
 Break: 'break';
-Continue: 'continue';
 Default: 'default';
 
+For: 'for';
 Case: 'case' Whitespace+;
-Switch: 'switch' Whitespace+;
-While: 'while' Whitespace+;
+Switch: 'switch';
+While: 'while';
 VariableDeclare: 'var' Whitespace+;
 Import: 'import' Whitespace+;
 ProcedureDeclare: 'function' Whitespace+;
 Return: 'return' Whitespace+;
-Repeat: 'repeat' Whitespace+;
+Repeat: 'repeat';
 Event: 'on' Whitespace+;
 From: 'from' Whitespace+;
 Namespace: 'namespace' Whitespace+;

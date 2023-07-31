@@ -1,13 +1,16 @@
-import "scratch/control";
-function calc(x, y, z, r) {
-    repeat r {
-        x += 2;
-        y *= 2;
-        z = z ** 2;
-        wait(1);
-    }
+import "scratch/looks";
+import "scratch/operators";
+
+function plus(@num x, @num y) {
+    return x + y;
 }
 
 on start {
-    calc(5, 4, 3, 100);
+    for(var i = 2; i < 1000; i = plus(i << 2 ** 3, 5)) {
+        sayTimed(i.toString(), 1);
+    }
+    
+    for(var i = 0;;i += 1) {
+        say(i);
+    }
 }

@@ -151,6 +151,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitWhileStatement([NotNull] ScratchScriptParser.WhileStatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.forStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterForStatement([NotNull] ScratchScriptParser.ForStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.forStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitForStatement([NotNull] ScratchScriptParser.ForStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.elseIfStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -210,16 +220,6 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitBreakStatement([NotNull] ScratchScriptParser.BreakStatementContext context);
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ScratchScriptParser.continueStatement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context);
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ScratchScriptParser.continueStatement"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
 	/// </summary>

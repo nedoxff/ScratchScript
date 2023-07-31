@@ -11,6 +11,7 @@ public static class StringExtensions
     {
         return o switch
         {
+            null => "",
             bool b => $"\"{b.ToString().ToLower()}\"",
             decimal d => d.ToString(CultureInfo.InvariantCulture),
             ScratchColor c => rawColor ? $"#{c.Value.ToLower()}": $"\"0x{c.Value.ToLower()}\"",

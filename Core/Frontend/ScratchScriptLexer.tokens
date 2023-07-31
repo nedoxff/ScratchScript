@@ -49,8 +49,8 @@ Else=48
 True=49
 False=50
 Break=51
-Continue=52
-Default=53
+Default=52
+For=53
 Case=54
 Switch=55
 While=56
@@ -109,9 +109,13 @@ Color=68
 '*='=44
 '/='=45
 '%='=46
+'if'=47
 'else'=48
 'true'=49
 'false'=50
 'break'=51
-'continue'=52
-'default'=53
+'default'=52
+'for'=53
+'switch'=55
+'while'=56
+'repeat'=61

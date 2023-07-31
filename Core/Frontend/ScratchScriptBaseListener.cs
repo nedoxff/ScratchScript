@@ -180,6 +180,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitWhileStatement([NotNull] ScratchScriptParser.WhileStatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.forStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterForStatement([NotNull] ScratchScriptParser.ForStatementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.forStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitForStatement([NotNull] ScratchScriptParser.ForStatementContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.elseIfStatement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -251,18 +263,6 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBreakStatement([NotNull] ScratchScriptParser.BreakStatementContext context) { }
-	/// <summary>
-	/// Enter a parse tree produced by <see cref="ScratchScriptParser.continueStatement"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by <see cref="ScratchScriptParser.continueStatement"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitContinueStatement([NotNull] ScratchScriptParser.ContinueStatementContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.namespaceStatement"/>.
 	/// <para>The default implementation does nothing.</para>

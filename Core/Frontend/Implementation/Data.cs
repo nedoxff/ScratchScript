@@ -40,7 +40,7 @@ public partial class ScratchScriptVisitor
         AssertType(context, variableType, expression.Value.Type, context.expression());
 
         return new(
-            $"set var:{name} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{name}")} {expression.Format(rawColor: false)}\n");
+            $"set var:{Scope.GetVariable(name).Id} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{Scope.GetVariable(name).Id}")} {expression.Format(rawColor: false)}\n");
     }
 
     private TypedValue HandleProcedureArgumentAssignment(ScratchScriptParser.AssignmentStatementContext context)
@@ -70,7 +70,7 @@ public partial class ScratchScriptVisitor
 
 
         if (Scope.IdentifierUsed(name))
-            return new($"set var:{name} {expression.Format(rawColor: false)}\n"); //TODO: warning
+            return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n"); //TODO: warning
         
         if (expression.Value.Type is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
         {
@@ -79,7 +79,7 @@ public partial class ScratchScriptVisitor
 
         Scope.Variables.Add(new ScratchVariable(name, expression.Value.Type));
         _loadSection += $"load:{TypeHelper.ScratchTypeToString(expression.Value.Type)} {name}\n";
-        return new($"set var:{name} {expression.Format(rawColor: false)}\n");
+        return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n");
     }
 
     public override TypedValue? VisitAssignmentOperators(ScratchScriptParser.AssignmentOperatorsContext context)
@@ -98,7 +98,7 @@ public partial class ScratchScriptVisitor
     {
         var obj = Visit(context.expression(0));
         var index = Visit(context.expression(1));
-        Assert<string>(context, obj);
+        //Assert<string>(context, obj);
         AssertType(context, index, ScratchType.Number);
 
         var objectString = (string)obj.Value.Value;
@@ -114,5 +114,14 @@ public partial class ScratchScriptVisitor
         }
 
         return null;
+    }
+
+    public override TypedValue? VisitPostIncrementStatement(ScratchScriptParser.PostIncrementStatementContext context)
+    {
+        var identifier = VisitIdentifierInternal(context.Identifier().GetText());
+        AssertNotNull(context, identifier);
+        AssertType(context, identifier, ScratchType.Variable);
+        var op = context.postIncrementOperators().GetText()[0];
+        return new($"set {identifier} {op} {identifier} 1");
     }
 }

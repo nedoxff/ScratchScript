@@ -204,6 +204,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitElseIfStatement([NotNull] ScratchScriptParser.ElseIfStatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.postIncrementStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPostIncrementStatement([NotNull] ScratchScriptParser.PostIncrementStatementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.postIncrementStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPostIncrementStatement([NotNull] ScratchScriptParser.PostIncrementStatementContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.importStatement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -635,6 +647,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAssignmentOperators([NotNull] ScratchScriptParser.AssignmentOperatorsContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.postIncrementOperators"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterPostIncrementOperators([NotNull] ScratchScriptParser.PostIncrementOperatorsContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.postIncrementOperators"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitPostIncrementOperators([NotNull] ScratchScriptParser.PostIncrementOperatorsContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.case"/>.
 	/// <para>The default implementation does nothing.</para>

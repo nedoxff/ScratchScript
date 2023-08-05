@@ -44,13 +44,13 @@ public class ScopeInfo
         return false;
     }
 
-    public string CallFunction(string name, object[] arguments, bool returns)
+    public TypedValue? CallFunction(string name, object[] arguments, ScratchType returnType)
     {
         foreach (var argument in arguments)
             Prepend += Stack.PushArgument(argument);
         Prepend += $"call {name}\n";
         Append += ScratchScriptVisitor.PopFunctionStackCommand;
-        if(returns) ProcedureIndex++;
-        return returns ? $"{ScratchScriptVisitor.FunctionStackName}#{ProcedureIndex}": "";
+        if(returnType != ScratchType.Unknown) ProcedureIndex++;
+        return returnType != ScratchType.Unknown ? new($"{ScratchScriptVisitor.FunctionStackName}#{ProcedureIndex}", returnType): null;
     }
 }

@@ -171,6 +171,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitElseIfStatement([NotNull] ScratchScriptParser.ElseIfStatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.postIncrementStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPostIncrementStatement([NotNull] ScratchScriptParser.PostIncrementStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.postIncrementStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPostIncrementStatement([NotNull] ScratchScriptParser.PostIncrementStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.importStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -536,6 +546,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitAssignmentOperators([NotNull] ScratchScriptParser.AssignmentOperatorsContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.postIncrementOperators"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterPostIncrementOperators([NotNull] ScratchScriptParser.PostIncrementOperatorsContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.postIncrementOperators"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitPostIncrementOperators([NotNull] ScratchScriptParser.PostIncrementOperatorsContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.case"/>.
 	/// </summary>

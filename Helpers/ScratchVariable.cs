@@ -11,7 +11,7 @@ public struct ScratchVariable
     public ScratchVariable(string name, ScratchType type = ScratchType.Unknown, bool isReporter = false, bool isList = false)
     {
         Name = name;
-        Id = Guid.NewGuid().ToString("N");
+        Id = NameHelper.New(name);
         Type = type;
         IsReporter = isReporter;
         IsList = false;

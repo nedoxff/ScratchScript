@@ -6,6 +6,7 @@ public partial class ScratchScriptVisitor
 {
     private decimal _floatingPointPrecision = new(0.00001);
     private bool _useFloatEquation;
+
     private void HandleProcedureAttribute(ScratchScriptParser.AttributeStatementContext context,
         ref ScratchIrProcedure procedure)
     {
@@ -22,20 +23,23 @@ public partial class ScratchScriptVisitor
                 procedure.Warp = true;
                 return;
             }
+            case "extension":
+            {
+                var type = TypeHelper.StringToScratchType(((string)Visit(context.constant(0)).Value.Value)[1..^1]);
+                procedure.CallerType = type;
+                //TODO: add a check that the function has the argument
+                return;
+            }
         }
     }
 
     private void HandleProcedureArgumentAttribute(ScratchScriptParser.AttributeStatementContext context, string name,
         ref ScratchIrProcedure procedure)
     {
-        procedure.Arguments[name] = context.Identifier().GetText() switch
-        {
-            "num" => ScratchType.Number,
-            "str" => ScratchType.String,
-            "bool" => ScratchType.Boolean,
-            "color" => ScratchType.Color,
-            _ => procedure.Arguments[name]
-        };
+        var attributeName = context.Identifier().GetText();
+        if (TypeHelper.PossibleTypes.Contains(attributeName))
+            procedure.Arguments[name] =
+                TypeHelper.StringToScratchType(attributeName);
     }
 
     private void HandleTopLevelAttribute(ScratchScriptParser.AttributeStatementContext context)
@@ -59,6 +63,7 @@ public partial class ScratchScriptVisitor
         {
             //TODO: warning
         }
+
         HandleTopLevelAttribute(context);
         return null;
     }

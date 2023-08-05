@@ -1,0 +1,39 @@
+﻿import "scratch/operators";
+namespace "std/string";
+
+@extension("str") @warp function replace(@str input, @str replace, @str replacement) {
+    var output = "";
+    for(var i = 1; i <= input.length(); i++) {
+        var doReplace = true;
+        for(var j = 0; j < replace.length(); j++) {
+            if(input[j + i] != replace[j + 1]) {
+                doReplace = false;
+            }
+        }
+        if(doReplace == true) {
+            i += replace.length() - 1;
+            output += replacement;
+        }
+        else {
+            output += input[i];
+        }
+    }
+    return output;
+}
+
+@extension("str") @warp function substring(@str input, @num s, @num e) {
+    var result = "";
+    var i = s;
+    while(i < e + 1) {
+        result += input[i];
+        i++;
+    }
+    return result;
+}
+
+@extension("str") @warp function insert(@str input, @num idx, @str item) {
+    var result = input.substring(1, idx - 1);
+    result += item;
+    result += input.substring(idx, input.length());
+    return result;
+}

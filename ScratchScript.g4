@@ -6,7 +6,7 @@ Parser
 program: topLevelStatement* EOF;
 topLevelStatement: procedureDeclarationStatement | attributeStatement | eventStatement | importStatement | namespaceStatement;
 line: ((statement Semicolon) | ifStatement | whileStatement | repeatStatement | forStatement | switchStatement | returnStatement | breakStatement | comment);
-statement: assignmentStatement | procedureCallStatement | memberProcedureCallStatement | variableDeclarationStatement;
+statement: assignmentStatement | procedureCallStatement | memberProcedureCallStatement | variableDeclarationStatement | postIncrementStatement;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
 assignmentStatement: Identifier assignmentOperators expression;
@@ -18,6 +18,7 @@ ifStatement: If LeftParen expression RightParen block (Else elseIfStatement)?;
 whileStatement: While LeftParen expression RightParen block;
 forStatement: For LeftParen statement? Semicolon expression? Semicolon statement? RightParen block;
 elseIfStatement: block | ifStatement;
+postIncrementStatement: Identifier postIncrementOperators;
 importStatement: Import (LeftBrace Identifier (Comma Identifier)*? RightBrace From)? String Semicolon;
 attributeStatement: At Identifier (LeftParen (constant (Comma constant)*?)? RightParen)?;
 returnStatement: Return expression Semicolon;
@@ -55,6 +56,7 @@ addOperators: Plus | Minus;
 compareOperators: Equal | NotEqual | Greater | GreaterOrEqual | Lesser | LesserOrEqual;
 booleanOperators: And | Or;
 assignmentOperators: Assignment | AdditionAsignment | SubtractionAssignment | MultiplicationAssignment | DivisionAssignment | ModulusAssignment;
+postIncrementOperators: PostIncrement | PostDecrement;
 
 case: (Case constant Colon block) | defaultCase;
 block: LeftBrace line* RightBrace;
@@ -116,6 +118,9 @@ BitwiseOr: '|';
 BitwiseXor: '^';
 LeftShift: '<<';
 RightShift: '>>';
+
+PostIncrement: '++';
+PostDecrement: '--';
 
 //<assoc=right>
 Greater: '>';

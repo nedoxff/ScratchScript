@@ -25,6 +25,7 @@ public partial class ScratchScriptVisitor
         public string Name;
         public Dictionary<string, ScratchType> Arguments = new();
         public ScratchType ReturnType = ScratchType.Unknown;
+        public ScratchType CallerType = ScratchType.Unknown;
         public string Code;
         public bool Warp;
 
@@ -39,7 +40,7 @@ public partial class ScratchScriptVisitor
         {
             var arguments = Arguments.Aggregate("",
                 (current, pair) => current + $"{pair.Key}:{(pair.Value == ScratchType.Boolean ? "b" : "sn")} ");
-            return $"\nproc{(Warp ? ":w": "")} {Name} {arguments}\n{Code}\n";
+            return $"\nproc{(Warp ? ":w" : "")} {Name} {arguments}\n{Code}\n";
         }
     }
 
@@ -85,9 +86,10 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitReturnStatement(ScratchScriptParser.ReturnStatementContext context)
     {
         var expression = Visit(context.expression());
-        if(Procedures.Last().ReturnType == ScratchType.Unknown)
+        if (Procedures.Last().ReturnType == ScratchType.Unknown)
             Procedures.Last().ReturnType = TypeHelper.GetType(expression);
-        return new($"push {FunctionStackName} {expression}\n{Scope.Append}\n{Stack.PopArguments()}\nraw control_stop f:STOP_OPTION:\"this script\"\n");
+        return new(
+            $"push {FunctionStackName} {expression}\n{Scope.Append}\n{Stack.PopArguments()}\nraw control_stop f:STOP_OPTION:\"this script\"\n");
     }
 
     public override TypedValue? VisitProcedureCallStatement(ScratchScriptParser.ProcedureCallStatementContext context)
@@ -122,11 +124,14 @@ public partial class ScratchScriptVisitor
             {
                 var arguments = new object[function.Arguments.Count];
                 
+                if (caller != null)
+                    arguments[0] = caller.Format();
+
                 for (var index = 0; index < procedureArguments.Length; index++)
                 {
                     var argument = procedureArguments[index];
                     var argumentName = argument.Identifier() == null
-                        ? function.Arguments.ElementAt(index).Name
+                        ? function.Arguments.ElementAt(index + isMember).Name
                         : argument.Identifier().GetText();
 
                     var expression = Visit(argument.expression());
@@ -138,9 +143,10 @@ public partial class ScratchScriptVisitor
                     arguments[argumentIndex] = expression;
                 }
 
-                var returns = context.Parent is ScratchScriptParser.ProcedureCallExpressionContext &&
-                              function.BlockInformation.ReturnType != ScratchType.Unknown;
-                return new(Scope.CallFunction(function.BlockInformation.Name, arguments, returns));
+                return Scope.CallFunction(function.BlockInformation.Name, arguments,
+                    context.Parent is ScratchScriptParser.ProcedureCallStatementContext
+                        ? ScratchType.Unknown
+                        : function.BlockInformation.ReturnType);
             }
             case NativeScratchFunction nativeFunction:
             {
@@ -148,7 +154,7 @@ public partial class ScratchScriptVisitor
 
                 if (caller != null)
                     arguments[0] = caller.Format();
-                
+
                 for (var index = 0; index < procedureArguments.Length; index++)
                 {
                     var argument = procedureArguments[index];
@@ -177,7 +183,8 @@ public partial class ScratchScriptVisitor
                     var resultString = result as string + "\n";
                     return new(resultString, nativeFunction.BlockInformation.ReturnType);
                 }
-                 return null;
+
+                return null;
             }
             default:
                 throw new ArgumentOutOfRangeException();
@@ -214,7 +221,8 @@ public partial class ScratchScriptVisitor
         return function;
     }
 
-    public override TypedValue? VisitMemberProcedureCallStatement(ScratchScriptParser.MemberProcedureCallStatementContext context)
+    public override TypedValue? VisitMemberProcedureCallStatement(
+        ScratchScriptParser.MemberProcedureCallStatementContext context)
     {
         var member = Visit(context.expression());
         var functionName = context.procedureCallStatement().Identifier().GetText();
@@ -254,7 +262,8 @@ public partial class ScratchScriptVisitor
         var function = new DefinedScratchFunction
         {
             BlockInformation = new ScratchBlockAttribute(string.IsNullOrEmpty(Namespace) ? "global" : Namespace,
-                procedure.Name, false, true, ScratchType.Unknown, procedure.ReturnType),
+                procedure.Name, procedure.ReturnType != ScratchType.Unknown,
+                procedure.CallerType == ScratchType.Unknown, procedure.CallerType, procedure.ReturnType),
             Arguments = procedure.Arguments.Select(arg => new ScratchArgumentAttribute(arg.Key, arg.Value))
                 .ToList(),
             Code = procedure.ToString(),

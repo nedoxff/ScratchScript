@@ -138,6 +138,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             return Visit(context.memberProcedureCallStatement());
         if (context.variableDeclarationStatement() != null)
             return Visit(context.variableDeclarationStatement());
+        if (context.postIncrementStatement() != null)
+            return Visit(context.postIncrementStatement());
 
         return null;
     }
@@ -181,26 +183,27 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         if (variable.IsReporter)
             return Stack.GetArgument(variable);
         
-        var ir = variable.IsList ? $"arr:{identifier}" : $"var:{(variable.IsReporter ? "argr:" : "")}{identifier}";
+        var ir = variable.IsList ? $"arr:{variable.Id}" : $"var:{(variable.IsReporter ? "argr:" : "")}{variable.Id}";
         return new(ir, variable.Type);
     }
 
     public override TypedValue? VisitTernaryExpression(ScratchScriptParser.TernaryExpressionContext context)
     {
-        /*var condition = Visit(context.expression(0));
+        var condition = Visit(context.expression(0));
         AssertType(context, condition, ScratchType.Boolean);
         var first = Visit(context.expression(1));
         var second = Visit(context.expression(2));
         AssertType(context, first, second);
 
-        _currentScope.Prepend +=
+        return Scope.CallFunction($"__Ternary{Enum.GetName(first.Value.Type)}",
+            new object[] { condition, first, second }, TypeHelper.GetType(first));
+        /*_currentScope.Prepend +=
             $"call __Ternary{Enum.GetName(first.Value.Type)} i:condition:{condition} i:trueValue:{first.Value.Value.Format(rawColor: false)} i:falseValue:{second.Value.Value.Format(rawColor: false)}\n";
         _currentScope.Append += PopFunctionStackCommand;
         _currentScope.ProcedureIndex++;
         var result = $"{FunctionStackName}#{_currentScope.ProcedureIndex}";
         SaveType(result, GetType(first));
         return result;*/
-        return null;
     }
 
     public override TypedValue? VisitBlock(ScratchScriptParser.BlockContext context)

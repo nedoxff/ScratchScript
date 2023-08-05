@@ -116,6 +116,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitElseIfStatement([NotNull] ScratchScriptParser.ElseIfStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.postIncrementStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPostIncrementStatement([NotNull] ScratchScriptParser.PostIncrementStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.importStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -331,6 +337,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitAssignmentOperators([NotNull] ScratchScriptParser.AssignmentOperatorsContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.postIncrementOperators"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPostIncrementOperators([NotNull] ScratchScriptParser.PostIncrementOperatorsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.case"/>.
 	/// </summary>

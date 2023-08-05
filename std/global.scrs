@@ -36,8 +36,6 @@
     }
 }
 
-
-
 @warp function __Exponent(base, exponent) {
     var result = exp(exponent * ln(abs(base)));
     return __TernaryNumber(base < 0, 1 / result, result);

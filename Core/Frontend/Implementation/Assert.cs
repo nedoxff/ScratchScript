@@ -1,6 +1,7 @@
 ﻿using Antlr4.Runtime;
 using ScratchScript.Core.Diagnostics;
 using ScratchScript.Core.Models;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -16,7 +17,7 @@ public partial class ScratchScriptVisitor
             return false;
         }
 
-        if (TypeHelper.GetType(first) != TypeHelper.GetType(second))
+        if ((TypeHelper.GetType(first) != TypeHelper.GetType(second)) && (first.IsVariable() && TypeHelper.GetType(second) != ScratchType.Variable))
         {
             DiagnosticReporter.Error(ScratchScriptError.TypeMismatch, context, conflicting ?? ParserRuleContext.EMPTY,
                 first, second);

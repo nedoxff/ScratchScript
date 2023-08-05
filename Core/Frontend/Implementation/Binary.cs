@@ -16,7 +16,7 @@ public partial class ScratchScriptVisitor
 
         AssertType(context, first, second);
 
-        var isString = op == "==" && first.Value.Type == ScratchType.String && second.Value.Type == ScratchType.String;
+        var isString = op is "==" or "!=" && first.Value.Type == ScratchType.String && second.Value.Type == ScratchType.String;
         var isBoolean = first.Value.Type == ScratchType.Boolean && second.Value.Type == ScratchType.Boolean;
 
         if (!isString && !isBoolean)
@@ -47,7 +47,7 @@ public partial class ScratchScriptVisitor
         AssertType(context, second, ScratchType.Number, context.expression(1));
 
         if (op == "**")
-            return new(Scope.CallFunction("__Exponent", new object[] { first, second }, true), ScratchType.Number);
+            return Scope.CallFunction("__Exponent", new object[] { first, second }, ScratchType.Number);
 
         var result = $"{op} {first.Format()} {second.Format()}";
         return new(result, ScratchType.Number);
@@ -80,9 +80,8 @@ public partial class ScratchScriptVisitor
         AssertType(context, first, ScratchType.Number, context.expression(0));
         AssertType(context, second, ScratchType.Number, context.expression(1));
 
-        return new(
-            Scope.CallFunction($"__{(context.shiftOperators().GetText() == "<<" ? "L" : "R")}Shift",
-                new object[] { first, second }, true), ScratchType.Number);
+        return Scope.CallFunction($"__{(context.shiftOperators().GetText() == "<<" ? "L" : "R")}Shift",
+            new object[] { first, second }, ScratchType.Number);
     }
 
     private TypedValue? VisitGenericBitwiseExpression(ParserRuleContext context,
@@ -94,7 +93,7 @@ public partial class ScratchScriptVisitor
         AssertType(context, first, ScratchType.Number, firstExpression);
         AssertType(context, second, ScratchType.Number, secondExpression);
 
-        return new(Scope.CallFunction($"__Bitwise{name}", new object[] { first, second }, true), ScratchType.Number);
+        return Scope.CallFunction($"__Bitwise{name}", new object[] { first, second }, ScratchType.Number);
     }
 
     public override TypedValue?

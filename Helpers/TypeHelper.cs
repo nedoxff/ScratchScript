@@ -34,6 +34,20 @@ public class TypeHelper
         {typeof(ScratchColor), ScratchType.Color}
     };
 
+    public static readonly string[] PossibleTypes = new[] {"num", "str", "bool", "color"};
+
+    public static ScratchType StringToScratchType(string str)
+    {
+        return str switch
+        {
+            "num" => ScratchType.Number,
+            "str" => ScratchType.String,
+            "bool" => ScratchType.Boolean,
+            "color" => ScratchType.Color,
+            _ => ScratchType.Unknown
+        };
+    }
+
     public static string ScratchTypeToString(ScratchType type)
     {
         return type switch

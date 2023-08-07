@@ -24,7 +24,7 @@ public partial class ScratchScriptVisitor
             return HandleProcedureArgumentAssignment(context);
 
         var op = Visit(context.assignmentOperators());
-        //Assert<string>(context, op);
+        if (AssertNotNull(context, op, context.assignmentOperators())) return null;
         var variableType = Scope.GetVariable(name).Type;
 
         var opString = (string)op.Value.Value;
@@ -37,13 +37,21 @@ public partial class ScratchScriptVisitor
             //TODO: ERROR
         }
 
-        AssertType(context, variableType, expression.Value.Type, context.expression());
+        if (AssertType(context, variableType, expression.Value.Type, context.expression())) return null;
+
+        if (opString == "**")
+        {
+            var call =  Scope.CallFunction("__Exponent", new object[] { Scope.GetVariable(name), expression },
+                ScratchType.Number);
+            return new(
+                $"set var:{Scope.GetVariable(name).Id} {call.Format()}\n");
+        }
 
         return new(
             $"set var:{Scope.GetVariable(name).Id} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{Scope.GetVariable(name).Id}")} {expression.Format(rawColor: false)}\n");
     }
 
-    private TypedValue HandleProcedureArgumentAssignment(ScratchScriptParser.AssignmentStatementContext context)
+    private TypedValue? HandleProcedureArgumentAssignment(ScratchScriptParser.AssignmentStatementContext context)
     {
         var name = context.Identifier().GetText();
         var variable = VisitIdentifierInternal(name);
@@ -54,11 +62,17 @@ public partial class ScratchScriptVisitor
         var procedure = Procedures.Last();
         var index = procedure.Arguments.Keys.ToList().FindIndex(s => s == name);
 
-        AssertType(context, variable, expression, context.expression());
+        if (AssertType(context, variable, expression, context.expression())) return null;
 
         var shift = procedure.Arguments.Count - (index + 1);
+        var stackIndex = shift == 0 ? ":si:": $"(- :si: {shift})";
+        var newItem =
+            $"({opString} {(string.IsNullOrEmpty(opString) ? "" : variable.Format())} {expression.Format(rawColor: false)})";
+        if (opString == "**")
+            newItem = Scope.CallFunction("__Exponent", new object[] { variable, expression }, ScratchType.Number).Format();
+                
         var ir =
-            $"raw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{(shift == 0 ? ":si:": $"(- :si: {shift})")} i:ITEM:({opString} {(string.IsNullOrEmpty(opString) ? "" : variable.Format())} {expression.Format(rawColor: false)})\n";
+            $"raw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{stackIndex} i:ITEM:{newItem}\n";
         return new(ir);
     }
 
@@ -67,10 +81,9 @@ public partial class ScratchScriptVisitor
     {
         var name = context.Identifier().GetText();
         var expression = Visit(context.expression());
-
-
+        
         if (Scope.IdentifierUsed(name))
-            return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n"); //TODO: warning
+            return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n");
         
         if (expression.Value.Type is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
         {
@@ -90,7 +103,7 @@ public partial class ScratchScriptVisitor
         if (context.MultiplicationAssignment() != null) return new("*");
         if (context.DivisionAssignment() != null) return new("/");
         if (context.ModulusAssignment() != null) return new("%");
-        //TODO: add **
+        if (context.PowerAssignment() != null) return new("**");
         return null;
     }
 
@@ -98,8 +111,9 @@ public partial class ScratchScriptVisitor
     {
         var obj = Visit(context.expression(0));
         var index = Visit(context.expression(1));
-        //Assert<string>(context, obj);
-        AssertType(context, index, ScratchType.Number);
+        if (AssertNotNull(context, obj, context.expression(0))) return null;
+        if (AssertNotNull(context, index, context.expression(1))) return null;
+        if (AssertType(context, index, ScratchType.Number, context.expression(1))) return null;
 
         var objectString = (string)obj.Value.Value;
         if (objectString.IsList())
@@ -119,8 +133,8 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitPostIncrementStatement(ScratchScriptParser.PostIncrementStatementContext context)
     {
         var identifier = VisitIdentifierInternal(context.Identifier().GetText());
-        AssertNotNull(context, identifier);
-        AssertType(context, identifier, ScratchType.Variable);
+        if (AssertNotNull(context, identifier, context.Identifier().Symbol)) return null;
+        if (AssertType(context, identifier, ScratchType.Variable, context.Identifier().Symbol)) return null;
         var op = context.postIncrementOperators().GetText()[0];
         return new($"set {identifier} {op} {identifier} 1");
     }

@@ -55,7 +55,7 @@ shiftOperators: LeftShift | RightShift;
 addOperators: Plus | Minus;
 compareOperators: Equal | NotEqual | Greater | GreaterOrEqual | Lesser | LesserOrEqual;
 booleanOperators: And | Or;
-assignmentOperators: Assignment | AdditionAsignment | SubtractionAssignment | MultiplicationAssignment | DivisionAssignment | ModulusAssignment;
+assignmentOperators: Assignment | AdditionAsignment | SubtractionAssignment | MultiplicationAssignment | DivisionAssignment | ModulusAssignment | PowerAssignment;
 postIncrementOperators: PostIncrement | PostDecrement;
 
 case: (Case constant Colon block) | defaultCase;
@@ -135,6 +135,7 @@ SubtractionAssignment: '-=';
 MultiplicationAssignment: '*=';
 DivisionAssignment: '/=';
 ModulusAssignment: '%=';
+PowerAssignment: '**=';
 
 /*
     Keywords

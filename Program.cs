@@ -17,7 +17,7 @@ void Run()
         var assembly = Assembly.GetExecutingAssembly();
         c.SetApplicationVersion(assembly.GetName().Version?.ToString() ?? "development");
 
-        c.AddCommand<RunCommand>("run");
+        c.AddCommand<CompileCommand>("compile");
     });
     app.Run(args);
 }

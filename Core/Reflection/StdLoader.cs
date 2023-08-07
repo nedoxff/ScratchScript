@@ -19,7 +19,7 @@ public class StdLoader
             var lexer = new ScratchScriptLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
             var parser = new ScratchScriptParser(tokenStream);
-            var visitor = new ScratchScriptVisitor(parser);
+            var visitor = new ScratchScriptVisitor(parser, file);
             visitor.Visit(parser.program());
             var newFunctions = visitor.DefinedFunctions.Select(x =>
             {

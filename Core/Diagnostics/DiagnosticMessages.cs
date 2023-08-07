@@ -1,6 +1,4 @@
-﻿using Antlr4.Runtime;
-
-namespace ScratchScript.Core.Diagnostics;
+﻿namespace ScratchScript.Core.Diagnostics;
 
 public enum ScratchScriptError
 {
@@ -11,26 +9,35 @@ public enum ScratchScriptError
     IdentifierAlreadyUsed,
     ProcedureNotDefined,
     ProcedureArgumentCountDifferent,
-    ProcedureExpressionDoesNotReturn
+    ProcedureExpressionDoesNotReturn,
+    NamespacePlacedIncorrectly,
+    UnknownIdentifier
 }
 
 public enum ScratchScriptWarning
 {
-    
+    SwitchStatementEmpty,
+    TopLevelAttributeNotAtTop
 }
 
 public class DiagnosticMessages
 {
     public static readonly List<string> Errors = new()
     {
-        "Variable with name {0} is not defined.",
-        "ICE: Expected Block, got {0}.",
-        "Type mismatch: {0} is not the same as {1}.",
-        "ICE: Expected {0}, got {1}.",
-        "Member (function or variable) with the same name ({0}) is already defined",
-        "Function with name {0} is not defined.",
-        "Function {0} requires {1} arguments, but got {2}.",
-        "Function {0} does not return a value."
+        "variable with name {0} is not defined.",
+        "(ICE) expected Block, got {0}.",
+        "expected {1}, got {0}",
+        "(ICE) expected {0}, got {1}.",
+        "member (function or variable) with the same name ({0}) is already defined",
+        "function with name {0} is not defined.",
+        "function {0} requires {1} arguments, but got {2}.",
+        "function {0} does not return a value.",
+        "namespace must be declared at the top of the file",
+        "unknown identifier \"{0}\""
     };
-    public static readonly List<string> Warnings = new() { };
+    public static readonly List<string> Warnings = new()
+    {
+        "switch statement contains no cases",
+        "top-level attributes should be declared before any function/block to avoid issues"
+    };
 }

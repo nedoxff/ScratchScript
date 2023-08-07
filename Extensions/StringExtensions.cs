@@ -20,6 +20,6 @@ public static class StringExtensions
         };
     }
 
-    public static bool IsVariable(this object o) => o is string s && s.StartsWith("var:");
-    public static bool IsList(this object o) => o is string s && s.StartsWith("arr:");
+    public static bool IsVariable(this object o) => o.Format().StartsWith("var:");
+    public static bool IsList(this object o) => o.Format().StartsWith("arr:");
 }

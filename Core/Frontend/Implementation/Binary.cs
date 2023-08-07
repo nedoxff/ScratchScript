@@ -14,15 +14,17 @@ public partial class ScratchScriptVisitor
         var second = Visit(context.expression(1));
         var op = context.compareOperators().GetText();
 
-        AssertType(context, first, second);
+        if (AssertNotNull(context, first, context.expression(0))) return null;
+        if (AssertNotNull(context, second, context.expression(1))) return null;
+        if (AssertType(context, first, second, context.expression(1))) return null;
 
         var isString = op is "==" or "!=" && first.Value.Type == ScratchType.String && second.Value.Type == ScratchType.String;
         var isBoolean = first.Value.Type == ScratchType.Boolean && second.Value.Type == ScratchType.Boolean;
 
         if (!isString && !isBoolean)
         {
-            AssertType(context, first, ScratchType.Number, context.expression(0));
-            AssertType(context, second, ScratchType.Number, context.expression(1));
+            if (AssertType(context, first, ScratchType.Number, context.expression(0))) return null;
+            if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
         }
 
         var result = isString || isBoolean
@@ -43,8 +45,8 @@ public partial class ScratchScriptVisitor
         var second = Visit(context.expression(1));
         var op = context.multiplyOperators().GetText();
 
-        AssertType(context, first, ScratchType.Number, context.expression(0));
-        AssertType(context, second, ScratchType.Number, context.expression(1));
+        if (AssertType(context, first, ScratchType.Number, context.expression(0))) return null;
+        if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
 
         if (op == "**")
             return Scope.CallFunction("__Exponent", new object[] { first, second }, ScratchType.Number);
@@ -63,8 +65,8 @@ public partial class ScratchScriptVisitor
 
         if (!isString)
         {
-            AssertType(context, first, ScratchType.Number, context.expression(0));
-            AssertType(context, second, ScratchType.Number, context.expression(1));
+            if (AssertType(context, first, ScratchType.Number, context.expression(0))) return null;
+            if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
         }
         else op = "~";
 
@@ -77,8 +79,8 @@ public partial class ScratchScriptVisitor
     {
         var first = Visit(context.expression(0));
         var second = Visit(context.expression(1));
-        AssertType(context, first, ScratchType.Number, context.expression(0));
-        AssertType(context, second, ScratchType.Number, context.expression(1));
+        if (AssertType(context, first, ScratchType.Number, context.expression(0))) return null;
+        if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
 
         return Scope.CallFunction($"__{(context.shiftOperators().GetText() == "<<" ? "L" : "R")}Shift",
             new object[] { first, second }, ScratchType.Number);
@@ -90,8 +92,8 @@ public partial class ScratchScriptVisitor
     {
         var first = Visit(firstExpression);
         var second = Visit(secondExpression);
-        AssertType(context, first, ScratchType.Number, firstExpression);
-        AssertType(context, second, ScratchType.Number, secondExpression);
+        if (AssertType(context, first, ScratchType.Number, firstExpression)) return null;
+        if (AssertType(context, second, ScratchType.Number, secondExpression)) return null;
 
         return Scope.CallFunction($"__Bitwise{name}", new object[] { first, second }, ScratchType.Number);
     }
@@ -114,8 +116,8 @@ public partial class ScratchScriptVisitor
         var second = Visit(context.expression(1));
         var op = context.booleanOperators().GetText();
 
-        AssertType(context, first, ScratchType.Boolean, context.expression(0));
-        AssertType(context, second, ScratchType.Boolean, context.expression(1));
+        if (AssertType(context, first, ScratchType.Boolean, context.expression(0))) return null;
+        if (AssertType(context, second, ScratchType.Boolean, context.expression(1))) return null;
 
         var result = $"{op} {first.Format()} {second.Format()}";
         return new(result, ScratchType.Boolean);

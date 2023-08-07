@@ -9,7 +9,8 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitNotExpression(ScratchScriptParser.NotExpressionContext context)
     {
         var expression = Visit(context.expression());
-        AssertType(context, expression.Value.Type, ScratchType.Boolean, context.expression());
+        if (AssertNotNull(context, expression, context.expression())) return null;
+        if (AssertType(context, expression.Value.Type, ScratchType.Boolean, context.expression())) return null;
 
         var result = $"!{expression.Format()}";
         return new(result, ScratchType.Boolean);
@@ -18,7 +19,8 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitUnaryAddExpression(ScratchScriptParser.UnaryAddExpressionContext context)
     {
         var expression = Visit(context.expression());
-        AssertType(context, expression.Value.Type, ScratchType.Number, context.expression());
+        if (AssertNotNull(context, expression, context.expression())) return null;
+        if (AssertType(context, expression.Value.Type, ScratchType.Number, context.expression())) return null;
 
         var op = context.addOperators().GetText();
         var multiplier = op == "-" ? -1 : 1;

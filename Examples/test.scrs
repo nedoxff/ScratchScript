@@ -1,18 +1,8 @@
-import "scratch/pen";
-import "scratch/motion";
-
-function hexagon() {
-    repeat(6) {
-        move(70);
-        turnClockwise(60);
-    }
+function power(a) {
+    a **= 3;
+    return a;
 }
 
 on start {
-    penDown();
-    repeat(72) {
-        hexagon();
-        changePenProperty("color", 10);
-        turnClockwise(5);
-    }
+    var b = power(2);
 }

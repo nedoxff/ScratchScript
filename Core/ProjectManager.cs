@@ -6,6 +6,7 @@ using ScratchScript.Core.Models;
 using ScratchScript.Core.Optimizer.Backend;
 using ScratchScript.Helpers;
 using Serilog;
+using Spectre.Console;
 
 namespace ScratchScript.Core;
 
@@ -37,12 +38,18 @@ public class ProjectManager
         Log.Information("--- Building project {Name} ---", projectName);
         try
         {
-            var ir = GetIr();
+            var (ir, success) = GetIr();
+            if (!success)
+            {
+                Log.Fatal("Frontend layer had an error, aborting");
+                AnsiConsole.MarkupLine("[red]Build failed, aborting.[/]");
+                return false;
+            }
             if (!string.IsNullOrEmpty(_irOutput)) File.WriteAllText(_irOutput, ir);
-            #if DEBUG
+#if DEBUG
             Console.WriteLine(ir);
             Console.ReadLine();
-            #endif
+#endif
 
             //INSERT MIDDLE LAYER
 
@@ -105,16 +112,16 @@ public class ProjectManager
         _outputArchive.Dispose();
     }
 
-    private string GetIr()
+    private (string, bool) GetIr()
     {
         Log.Verbose("--- Frontend ---");
         var inputStream = new AntlrFileStream(_input);
         var lexer = new ScratchScriptLexer(inputStream);
         var tokenStream = new CommonTokenStream(lexer);
         var parser = new ScratchScriptParser(tokenStream);
-        var visitor = new ScratchScriptVisitor(parser);
+        var visitor = new ScratchScriptVisitor(parser, _input);
         visitor.Visit(parser.program());
-        return visitor.Output;
+        return (visitor.Output, visitor.Success);
     }
 
     private Target GetTarget(string ir)

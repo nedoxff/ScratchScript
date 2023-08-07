@@ -1,7 +1,6 @@
-﻿using System.Drawing.Printing;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
-using Antlr4.Runtime.Tree.Xpath;
+using ScratchScript.Core.Diagnostics;
 using ScratchScript.Core.Frontend.Information;
 using ScratchScript.Core.Reflection;
 using ScratchScript.Extensions;
@@ -20,19 +19,22 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     public string Output => $"{_loadSection}\n{_proceduresSection}\n{_output}".RemoveEmptyLines();
     public string Namespace = "global";
+    public bool Success = true;
+    public string InputFile { get; }
 
     public List<DefinedScratchFunction> DefinedFunctions =>
         Functions.Where(x => x is DefinedScratchFunction { Imported: false }).Select(x => x as DefinedScratchFunction)
             .ToList();
 
-    private List<string> _imports = new();
-    private ScratchScriptParser _parser;
+    private readonly List<string> _imports = new();
+    private readonly ScratchScriptParser _parser;
     private ScopeInfo Scope { get; set; }
 
-    public ScratchScriptVisitor(ScratchScriptParser parser)
+    public ScratchScriptVisitor(ScratchScriptParser parser, string file)
     {
         _parser = parser;
         Instance = this;
+        InputFile = file;
         Scope = new("", "");
     }
 
@@ -160,10 +162,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     public override TypedValue? VisitParenthesizedExpression(ScratchScriptParser.ParenthesizedExpressionContext context)
     {
         var expression = Visit(context.expression());
-        if (expression == null)
-        {
-            //TODO: error
-        }
+        if (AssertNotNull(context, expression, context.expression())) return null;
 
         var result = $"({expression.Format()})";
         return new(result, expression.Value.Type);
@@ -171,13 +170,19 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     public override TypedValue? VisitIdentifierExpression(ScratchScriptParser.IdentifierExpressionContext context)
     {
-        return VisitIdentifierInternal(context.Identifier().GetText());
+        var result = VisitIdentifierInternal(context.Identifier().GetText());
+        if (result == null)
+        {
+            DiagnosticReporter.Error(ScratchScriptError.UnknownIdentifier, context, context.Identifier().Symbol, context.Identifier().GetText());
+        }
+        return result;
     }
 
     private TypedValue? VisitIdentifierInternal(string identifier)
     {
         if (!Scope.IdentifierUsed(identifier))
             return null;
+
         var variable = Scope.GetVariable(identifier);
         
         if (variable.IsReporter)
@@ -190,20 +195,13 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     public override TypedValue? VisitTernaryExpression(ScratchScriptParser.TernaryExpressionContext context)
     {
         var condition = Visit(context.expression(0));
-        AssertType(context, condition, ScratchType.Boolean);
+        if (AssertType(context, condition, ScratchType.Boolean, context.expression(0))) return null;
         var first = Visit(context.expression(1));
         var second = Visit(context.expression(2));
-        AssertType(context, first, second);
+        if (AssertType(context, first, second, context.expression(2))) return null;
 
         return Scope.CallFunction($"__Ternary{Enum.GetName(first.Value.Type)}",
             new object[] { condition, first, second }, TypeHelper.GetType(first));
-        /*_currentScope.Prepend +=
-            $"call __Ternary{Enum.GetName(first.Value.Type)} i:condition:{condition} i:trueValue:{first.Value.Value.Format(rawColor: false)} i:falseValue:{second.Value.Value.Format(rawColor: false)}\n";
-        _currentScope.Append += PopFunctionStackCommand;
-        _currentScope.ProcedureIndex++;
-        var result = $"{FunctionStackName}#{_currentScope.ProcedureIndex}";
-        SaveType(result, GetType(first));
-        return result;*/
     }
 
     public override TypedValue? VisitBlock(ScratchScriptParser.BlockContext context)
@@ -248,9 +246,10 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     public override TypedValue? VisitNamespaceStatement(ScratchScriptParser.NamespaceStatementContext context)
     {
         var name = context.String().GetText()[1..^1];
-        if (Procedures.Count != 0 && string.IsNullOrEmpty(Namespace))
+        if (Procedures.Count != 0 && Namespace == "global")
         {
-            //TODO: add an error about the namespace's position in code
+            DiagnosticReporter.Error(ScratchScriptError.NamespacePlacedIncorrectly, context, context);
+            return null;
         }
 
         Namespace = name;

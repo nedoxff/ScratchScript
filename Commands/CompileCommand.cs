@@ -7,17 +7,11 @@ using Spectre.Console.Cli;
 
 namespace ScratchScript.Commands;
 
-public class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
+public class CompileCommand : AsyncCommand<CompileCommand.CompileCommandSettings>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, RunCommandSettings settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, CompileCommandSettings settings)
     {
         if (!File.Exists(settings.File)) Console.WriteLine($"The specified script ({settings.File}) was not found!");
-
-        if (string.IsNullOrEmpty(Config.Instance.RunnerPath))
-        {
-            Console.WriteLine("Cannot run a script without the runner path specified!");
-            return 1;
-        }
 
         if (settings.Verbose) Static.LogToConsole = true;
 
@@ -31,7 +25,7 @@ public class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
             var manager = new ProjectManager(settings.File, settings.IrPath, output);
             var success = manager.Build();
 
-            if (success)
+            if (success && !string.IsNullOrEmpty(Config.Instance.RunnerPath) && settings.Run)
             {
                 try
                 {
@@ -56,10 +50,11 @@ public class RunCommand : AsyncCommand<RunCommand.RunCommandSettings>
         }
     }
 
-    public class RunCommandSettings : CommandSettings
+    public class CompileCommandSettings : CommandSettings
     {
         [CommandArgument(0, "[file]")] public string File { get; init; }
         [CommandOption("--ir-path")] public string IrPath { get; init; } 
         [CommandOption("-v|--verbose")] public bool Verbose { get; init; }
+        [CommandOption("-r|--run")] public bool Run { get; init; }
     }
 }

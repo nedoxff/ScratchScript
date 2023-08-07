@@ -1,4 +1,5 @@
-﻿using ScratchScript.Helpers;
+﻿using ScratchScript.Core.Diagnostics;
+using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
 
@@ -60,9 +61,7 @@ public partial class ScratchScriptVisitor
     {
         var shouldWarn = _imports.Count != 0 || Namespace != "global" || Procedures.Count != 0;
         if (shouldWarn)
-        {
-            //TODO: warning
-        }
+            DiagnosticReporter.Warning(ScratchScriptWarning.TopLevelAttributeNotAtTop, context, context);
 
         HandleTopLevelAttribute(context);
         return null;

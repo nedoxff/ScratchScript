@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Antlr4.Runtime.Tree.Xpath;
+using ScratchScript.Core.Diagnostics;
 using ScratchScript.Core.Frontend.Information;
 using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
@@ -12,14 +13,14 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitIfStatement(ScratchScriptParser.IfStatementContext context)
     {
         var condition = Visit(context.expression());
-        AssertType(context, condition, ScratchType.Boolean, context.expression());
+        if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
 
         var scope = CreateScope(context.block().line(), "if " + condition.Format());
         var result = scope.ToString();
 
         if (context.elseIfStatement() == null) return new(result);
         var elseOutput = Visit(context.elseIfStatement());
-        //Assert<string>(context, elseOutput, context.elseIfStatement());
+        if (AssertNotNull(context, elseOutput, context.elseIfStatement())) return null;
         var elseOutputStr = (string)elseOutput.Value.Value;
         result += $"else\n{elseOutputStr}";
 
@@ -29,7 +30,7 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitRepeatStatement(ScratchScriptParser.RepeatStatementContext context)
     {
         var condition = Visit(context.expression());
-        AssertType(context, condition, ScratchType.Number, context.expression());
+        if (AssertType(context, condition, ScratchType.Number, context.expression())) return null;
         
         var hasBreaks = XPath.FindAll(context, "//breakStatement", _parser).Any();
 
@@ -57,7 +58,7 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitWhileStatement(ScratchScriptParser.WhileStatementContext context)
     {
         var condition = Visit(context.expression());
-        AssertType(context, condition, ScratchType.Boolean, context.expression());
+        if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
 
         var hasBreaks = XPath.FindAll(context, "//breakStatement", _parser).Any();
         
@@ -92,7 +93,7 @@ public partial class ScratchScriptVisitor
         var change = context.statement(1) != null ? Visit(context.statement(1)): null;
 
         condition ??= new("== 1 1", ScratchType.Boolean);
-        AssertType(context, condition, ScratchType.Boolean);
+        if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
         
         var code = CreateScope(context.block().line(), $"{(initialize == null ? "": $"{initialize}\n")}while {condition}");
         code.Content.Add(Scope.Append);
@@ -109,7 +110,7 @@ public partial class ScratchScriptVisitor
         ScopeInfo defaultScope = null;
         if (caseCount == 0)
         {
-            //TODO: warning about the switch block being empty
+            DiagnosticReporter.Warning(ScratchScriptWarning.SwitchStatementEmpty, context, context.switchBlock());
             return new("");
         }
         
@@ -120,7 +121,7 @@ public partial class ScratchScriptVisitor
             {
                 var scope = CreateScope(caseContext.block().line());
                 var expression = Visit(caseContext.constant());
-                AssertType(context, expression, condition);
+                if (AssertType(context, expression, condition, context.expression())) return null;
                 cases.Add((scope, expression));
             }
             else

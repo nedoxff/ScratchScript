@@ -123,7 +123,7 @@ public partial class ScratchScriptVisitor
             case DefinedScratchFunction:
             {
                 var arguments = new object[function.Arguments.Count];
-                
+
                 if (caller != null)
                     arguments[0] = caller.Format();
 
@@ -136,8 +136,9 @@ public partial class ScratchScriptVisitor
 
                     var expression = Visit(argument.expression());
                     var argumentType = function.Arguments.First(x => x.Name == argumentName).Type;
-                    if (TypeHelper.GetType(argumentType) != ScratchType.Unknown)
-                        AssertType(context, expression, argumentType, argument.expression());
+                    if (TypeHelper.GetType(argumentType) != ScratchType.Unknown &&
+                        AssertType(context, expression, argumentType, argument.expression()))
+                        return null;
 
                     var argumentIndex = function.Arguments.FindIndex(x => x.Name == argumentName);
                     arguments[argumentIndex] = expression;
@@ -163,16 +164,23 @@ public partial class ScratchScriptVisitor
                         : argument.Identifier().GetText();
 
                     var expression = Visit(argument.expression());
+                    if (AssertNotNull(context, expression, argument.expression())) return null;
                     var argumentIndex = nativeFunction.Arguments.FindIndex(x => x.Name == argumentName);
                     var argumentType = function.Arguments.First(x => x.Name == argumentName).Type;
 
-                    if (!function.Arguments[argumentIndex].AllowedValues.Contains(expression))
+                    var allowedValues = function.Arguments[argumentIndex].AllowedValues;
+                    if (allowedValues.Length != 0 && !allowedValues.Contains(expression.Format()))
                     {
-                        //TODO: error
+                        var values = string.Join(", ",
+                            allowedValues.Select(x => x.Format(escapeStrings: true)));
+                        DiagnosticReporter.Error(ScratchScriptError.ValueNotAllowed, context, argument.expression(),
+                            values);
+                        return null;
                     }
 
-                    if (TypeHelper.GetType(argumentType) != ScratchType.Unknown)
-                        AssertType(context, expression, argumentType, argument.expression());
+                    if (TypeHelper.GetType(argumentType) != ScratchType.Unknown &&
+                        AssertType(context, expression, argumentType, argument.expression()))
+                        return null;
 
                     arguments[argumentIndex] = expression.Format();
                 }
@@ -244,7 +252,7 @@ public partial class ScratchScriptVisitor
         var statement = Visit(context.procedureCallStatement());
         var name = context.procedureCallStatement().Identifier().GetText();
         var function = GetFunction(name);
-        //Assert<string>(context, statement, context.procedureCallStatement());
+        if (AssertNotNull(context, statement, context.procedureCallStatement())) return null;
         if (function.BlockInformation.ReturnType == ScratchType.Unknown)
         {
             DiagnosticReporter.Error(ScratchScriptError.ProcedureExpressionDoesNotReturn, context,

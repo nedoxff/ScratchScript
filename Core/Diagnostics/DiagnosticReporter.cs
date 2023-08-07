@@ -22,21 +22,20 @@ public class DiagnosticReporter
             conflicting.Line, data);
     }
 
-    public static void ErrorInternal(ScratchScriptError error, ParserRuleContext start, int conflictingStart,
+    private static void ErrorInternal(ScratchScriptError error, ParserRuleContext start, int conflictingStart,
         int conflictingStop, int conflictingColumn, int conflictingLine,
         params object[] data)
     {
         ScratchScriptVisitor.Instance.Success = false;
         var inputStream = start.Start.InputStream;
-        ParserRuleContext lineContext = start.GetParent<ScratchScriptParser.LineContext>();
-        lineContext ??= start.GetParent<ScratchScriptParser.TopLevelStatementContext>();
+        ParserRuleContext lineContext = start.GetParent<ScratchScriptParser.TopLevelStatementContext>();
         var text = inputStream.GetText(new Interval(lineContext.Start.StartIndex, lineContext.Stop.StopIndex));
         var conflictingText = inputStream.GetText(new Interval(conflictingStart, conflictingStop));
 
         var startLine = lineContext.Start.Line;
         var endingLine = lineContext.Stop.Line;
         var linePadding = Math.Max(startLine, endingLine).ToString().Length;
-        var underline = new string(' ', LimitAtZero(conflictingColumn - linePadding - 3)) +
+        var underline = new string(' ', LimitAtZero(conflictingColumn)) +
                         new string('^', conflictingText.Length) + " here";
 
         var message = string.Format(DiagnosticMessages.Errors[(int)error], data);
@@ -46,6 +45,7 @@ public class DiagnosticReporter
 
         for (var i = startLine; i <= endingLine; i++)
         {
+            if (conflictingLine - i > 1 || i - conflictingLine > 1) continue;
             AnsiConsole.MarkupLine(
                 $"[grey]{i}{new string(' ', LimitAtZero(linePadding - i.ToString().Length + 1))}|[/] {text.Split("\n")[i - startLine]}");
             if (i == conflictingLine)
@@ -57,7 +57,7 @@ public class DiagnosticReporter
 
     private static int LimitAtZero(int x) => x < 0 ? 0 : x;
 
-    public static void WarningInternal(ScratchScriptWarning warning, ParserRuleContext start, int conflictingStart,
+    private static void WarningInternal(ScratchScriptWarning warning, ParserRuleContext start, int conflictingStart,
         int conflictingStop, int conflictingColumn, int conflictingLine,
         params object[] data)
     {
@@ -80,6 +80,7 @@ public class DiagnosticReporter
 
         for (var i = startLine; i <= endingLine; i++)
         {
+            if (conflictingLine - i > 1 || i - conflictingLine > 1) continue;
             AnsiConsole.MarkupLine(
                 $"[grey]{i}{new string(' ', LimitAtZero(linePadding - i.ToString().Length + 1))}|[/] {text.Split("\n")[i - startLine]}");
             if (i == conflictingLine)

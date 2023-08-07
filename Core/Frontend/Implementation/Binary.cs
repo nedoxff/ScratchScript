@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Antlr4.Runtime;
 using ScratchScript.Core.Blocks;
+using ScratchScript.Core.Diagnostics;
 using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
@@ -45,11 +46,16 @@ public partial class ScratchScriptVisitor
         var second = Visit(context.expression(1));
         var op = context.multiplyOperators().GetText();
 
+        if (AssertNotNull(context, first, context.expression(0))) return null;
+        if (AssertNotNull(context, second, context.expression(1))) return null;
         if (AssertType(context, first, ScratchType.Number, context.expression(0))) return null;
         if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
 
         if (op == "**")
             return Scope.CallFunction("__Exponent", new object[] { first, second }, ScratchType.Number);
+
+        if (op == "/" && second.Value.Value is decimal and 0)
+            DiagnosticReporter.Warning(ScratchScriptWarning.DivisionByZero, context, context.expression(1));
 
         var result = $"{op} {first.Format()} {second.Format()}";
         return new(result, ScratchType.Number);
@@ -59,6 +65,8 @@ public partial class ScratchScriptVisitor
     {
         var first = Visit(context.expression(0));
         var second = Visit(context.expression(1));
+        if (AssertNotNull(context, first, context.expression(0))) return null;
+        if (AssertNotNull(context, second, context.expression(1))) return null;
         var op = context.addOperators().GetText();
 
         var isString = op == "+" && first.Value.Type == ScratchType.String && second.Value.Type == ScratchType.String;
@@ -79,6 +87,8 @@ public partial class ScratchScriptVisitor
     {
         var first = Visit(context.expression(0));
         var second = Visit(context.expression(1));
+        if (AssertNotNull(context, first, context.expression(0))) return null;
+        if (AssertNotNull(context, second, context.expression(1))) return null;
         if (AssertType(context, first, ScratchType.Number, context.expression(0))) return null;
         if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
 
@@ -92,6 +102,8 @@ public partial class ScratchScriptVisitor
     {
         var first = Visit(firstExpression);
         var second = Visit(secondExpression);
+        if (AssertNotNull(context, first, firstExpression)) return null;
+        if (AssertNotNull(context, second, secondExpression)) return null;
         if (AssertType(context, first, ScratchType.Number, firstExpression)) return null;
         if (AssertType(context, second, ScratchType.Number, secondExpression)) return null;
 
@@ -116,6 +128,8 @@ public partial class ScratchScriptVisitor
         var second = Visit(context.expression(1));
         var op = context.booleanOperators().GetText();
 
+        if (AssertNotNull(context, first, context.expression(0))) return null;
+        if (AssertNotNull(context, second, context.expression(1))) return null;
         if (AssertType(context, first, ScratchType.Boolean, context.expression(0))) return null;
         if (AssertType(context, second, ScratchType.Boolean, context.expression(1))) return null;
 

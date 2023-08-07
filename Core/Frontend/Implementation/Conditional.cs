@@ -14,6 +14,7 @@ public partial class ScratchScriptVisitor
     {
         var condition = Visit(context.expression());
         if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
+        condition = new($"== {condition} \"true\"", ScratchType.Boolean);
 
         var scope = CreateScope(context.block().line(), "if " + condition.Format());
         var result = scope.ToString();
@@ -59,6 +60,7 @@ public partial class ScratchScriptVisitor
     {
         var condition = Visit(context.expression());
         if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
+        condition = new($"== {condition} \"true\"", ScratchType.Boolean);
 
         var hasBreaks = XPath.FindAll(context, "//breakStatement", _parser).Any();
         
@@ -92,8 +94,9 @@ public partial class ScratchScriptVisitor
         var condition = context.expression() != null ? Visit(context.expression()): null;
         var change = context.statement(1) != null ? Visit(context.statement(1)): null;
 
-        condition ??= new("== 1 1", ScratchType.Boolean);
+        condition ??= new("true", ScratchType.Boolean);
         if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
+        condition = new($"== {condition} true", ScratchType.Boolean);
         
         var code = CreateScope(context.block().line(), $"{(initialize == null ? "": $"{initialize}\n")}while {condition}");
         code.Content.Add(Scope.Append);

@@ -1,6 +1,6 @@
 ﻿import "scratch/operators";
 
-@__ReturnType(4) @warp function __TernaryNumber(condition, @num trueValue, @num falseValue) {
+@__ReturnType("num") @warp function __TernaryNumber(condition, @num trueValue, @num falseValue) {
     if(condition) {
         return trueValue;
     }
@@ -9,7 +9,7 @@
     }
 }
 
-@__ReturnType(10) @warp function __TernaryString(condition, @str trueValue, @str falseValue) {
+@__ReturnType("str") @warp function __TernaryString(condition, @str trueValue, @str falseValue) {
     if(condition) {
         return trueValue;
     }
@@ -18,7 +18,7 @@
     }
 }
 
-@__ReturnType(15) @warp function __TernaryBoolean(condition, @bool trueValue, @bool falseValue) {
+@__ReturnType("bool") @warp function __TernaryBoolean(condition, @bool trueValue, @bool falseValue) {
     if(condition) {
         return trueValue;
     }
@@ -27,7 +27,7 @@
     }
 }
 
-@__ReturnType(9) @warp function __TernaryColor(condition, @color trueValue, @color falseValue) {
+@__ReturnType("color") @warp function __TernaryColor(condition, @color trueValue, @color falseValue) {
     if(condition) {
         return trueValue;
     }

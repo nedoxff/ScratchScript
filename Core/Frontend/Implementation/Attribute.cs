@@ -15,7 +15,10 @@ public partial class ScratchScriptVisitor
         {
             case "__ReturnType":
             {
-                var type = (ScratchType)Convert.ToInt32(Visit(context.constant(0)).Value.Value);
+                var typeString = Visit(context.constant(0));
+                if (AssertNotNull(context, typeString, context.constant(0))) return;
+                if (AssertType(context, typeString, ScratchType.String, context.constant(0))) return;
+                var type = TypeHelper.StringToScratchType(((string)typeString.Value.Value)[1..^1]);
                 procedure.ReturnType = type;
                 return;
             }
@@ -26,7 +29,10 @@ public partial class ScratchScriptVisitor
             }
             case "extension":
             {
-                var type = TypeHelper.StringToScratchType(((string)Visit(context.constant(0)).Value.Value)[1..^1]);
+                var typeString = Visit(context.constant(0));
+                if (AssertNotNull(context, typeString, context.constant(0))) return;
+                if (AssertType(context, typeString, ScratchType.String, context.constant(0))) return;
+                var type = TypeHelper.StringToScratchType(((string)typeString.Value.Value)[1..^1]);
                 procedure.CallerType = type;
                 //TODO: add a check that the function has the argument
                 return;

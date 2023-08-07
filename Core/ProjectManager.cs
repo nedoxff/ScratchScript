@@ -54,7 +54,6 @@ public class ProjectManager
             //INSERT MIDDLE LAYER
 
             _compiledTarget = GetTarget(ir);
-            ConnectionChecker.Check(_compiledTarget.Blocks.Select(x => x.Value).ToList());
             _project.LayerOrder++;
             if (!_compiledTarget.IsStage) AddStageTarget();
             _compiledTarget.LayerOrder = _project.LayerOrder;

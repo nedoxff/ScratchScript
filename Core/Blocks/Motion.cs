@@ -32,7 +32,7 @@ public class Motion
     public static string GoTo(
         [ScratchArgument("to", ScratchType.String, new object[] { "mouse", "random" })]
         string to) =>
-        $"raw motion_goto i:TO:(rawshadow motion_goto_menu i:TO:\"_{to.RemoveQuotes()}_\" endshadow)";
+        $"raw motion_goto i:TO:(rawshadow motion_goto_menu f:TO:\"_{to.RemoveQuotes()}_\" endshadow)";
 
     [ScratchBlock("scratch/motion", "goToXY", false, true)]
     public static string GoToXy([ScratchArgument("x", ScratchType.Number)] string x,
@@ -50,7 +50,7 @@ public class Motion
     public static string GlideTo(
         [ScratchArgument("to", ScratchType.String, new object[] { "mouse", "random" })]
         string to, [ScratchArgument("secs", ScratchType.Number)] string secs) =>
-        $"raw motion_glideto i:TO:(rawshadow motion_glideto_menu i:TO:\"_{to.RemoveQuotes()}_\" endshadow) i:SECS:{secs}";
+        $"raw motion_glideto i:TO:(rawshadow motion_glideto_menu f:TO:\"_{to.RemoveQuotes()}_\" endshadow) i:SECS:{secs}";
 
     [ScratchBlock("scratch/motion", "changeX", false, true)]
     public static string ChangeX([ScratchArgument("dx", ScratchType.Number)] string dx) =>

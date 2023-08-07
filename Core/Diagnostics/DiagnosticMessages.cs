@@ -11,13 +11,15 @@ public enum ScratchScriptError
     ProcedureArgumentCountDifferent,
     ProcedureExpressionDoesNotReturn,
     NamespacePlacedIncorrectly,
-    UnknownIdentifier
+    UnknownIdentifier,
+    ValueNotAllowed
 }
 
 public enum ScratchScriptWarning
 {
     SwitchStatementEmpty,
-    TopLevelAttributeNotAtTop
+    TopLevelAttributeNotAtTop,
+    DivisionByZero
 }
 
 public class DiagnosticMessages
@@ -33,11 +35,13 @@ public class DiagnosticMessages
         "function {0} requires {1} arguments, but got {2}.",
         "function {0} does not return a value.",
         "namespace must be declared at the top of the file",
-        "unknown identifier \"{0}\""
+        "unknown identifier \"{0}\"",
+        "invalid argument value. expected to be one of the following: {0}"
     };
     public static readonly List<string> Warnings = new()
     {
         "switch statement contains no cases",
-        "top-level attributes should be declared before any function/block to avoid issues"
+        "top-level attributes should be declared before any function/block to avoid issues",
+        "dividing by 0 is not recommended and can lead to issues"
     };
 }

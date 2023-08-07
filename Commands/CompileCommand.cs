@@ -17,7 +17,6 @@ public class CompileCommand : AsyncCommand<CompileCommand.CompileCommandSettings
 
         try
         {
-
             ReflectionBlockLoader.Load();
             StdLoader.Load(Path.Join(Environment.CurrentDirectory, "std"));
 

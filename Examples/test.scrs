@@ -1,8 +1,5 @@
-function power(a) {
-    a **= 3;
-    return a;
-}
-
+import "scratch/motion";
+import "std/string";
 on start {
-    var b = power(2);
+    var a = 1 / 0;
 }

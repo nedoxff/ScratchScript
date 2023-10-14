@@ -18,4 +18,5 @@ public class DefinedScratchFunction : ScratchFunction
 {
     public string Code { get; set; }
     public bool Imported { get; set; }
+    public Dictionary<string, object> Attributes = new();
 }

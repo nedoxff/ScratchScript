@@ -4,7 +4,8 @@ program: block* EOF;
 
 command
     // Variables
-    : 'set' variableIdentifier expression #setCommand
+    : 'load' Type Identifier #loadCommand
+    | 'set' variableIdentifier expression #setCommand
     
     // Control flow
     | 'while' expression command*? End #whileCommand
@@ -20,21 +21,19 @@ command
     | 'pushat' Identifier expression expression #pushAtCommand
     | 'pop' Identifier #popCommand
     | 'popat' Identifier expression #popAtCommand
-    | 'popall' Identifier #popAllCommand;
-    
-topLevelCommand
-    : 'load' Type Identifier #loadCommand;     
+    | 'popall' Identifier #popAllCommand;     
  
 block
     : 'proc' WarpIdentifier? Identifier procedureArgument* command*? End #procedureBlock
     | 'on' Event command*? End #eventBlock
-    | topLevelCommand #topLevelBlock;
+    | 'flag' Identifier #flagBlock;
     
 
 expression
     : constant #constantExpression
     | variableIdentifier #variableExpression
     | StackIndexIdentifier #stackIndexExpression
+    | ProcedureIndexIdentifier #procedureIndexExpression
     | arrayIdentifier #arrayExpression
     | '(' expression ')' #parenthesizedExpression
     | addOperators expression expression #binaryAddExpression
@@ -69,13 +68,14 @@ compareOperators: '==' | '!=' | '>' | '>=' | '<' | '<=';
 
 Type: NumberType | StringType | ListType;
 ProcedureType: StringNumberType | BooleanType;
-NumberType: ':n';
-StringType: ':s';
-ListType: ':l';
+NumberType: ':number';
+StringType: ':string';
+ListType: ':list';
 StringNumberType: ':sn';
-BooleanType: ':b';
+BooleanType: ':bool';
 WarpIdentifier: ':w';
 StackIndexIdentifier: ':si:';
+ProcedureIndexIdentifier: ':pi:';
 
 Hashtag: '#';
 Minus: '-';
@@ -89,5 +89,5 @@ Whitespace: (' ' | '\t') -> channel(HIDDEN);
 NewLine: ('\r'? '\n' | '\r' | '\n') -> skip;
 Number: (Minus)? Digit+ ([.] Digit+)?; 
 Identifier: [a-zA-Z_][a-zA-Z0-9_]*;
-String: ('"' ~'"'* '"') | ('\'' ~'\''* '\'');
+String: ('"' (~('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\'))* '"') | ('\'' (~('\'' | '\\' | '\r' | '\n') | '\\' ('\'' | '\\'))* '\'');
 Color: Hashtag HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit;

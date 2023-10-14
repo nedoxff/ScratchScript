@@ -48,6 +48,20 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitProgram([NotNull] ScratchIRParser.ProgramContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by the <c>loadCommand</c>
+	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>loadCommand</c>
+	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by the <c>setCommand</c>
 	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -202,20 +216,6 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitPopAllCommand([NotNull] ScratchIRParser.PopAllCommandContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by the <c>loadCommand</c>
-	/// labeled alternative in <see cref="ScratchIRParser.topLevelCommand"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void EnterLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context) { }
-	/// <summary>
-	/// Exit a parse tree produced by the <c>loadCommand</c>
-	/// labeled alternative in <see cref="ScratchIRParser.topLevelCommand"/>.
-	/// <para>The default implementation does nothing.</para>
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	public virtual void ExitLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context) { }
-	/// <summary>
 	/// Enter a parse tree produced by the <c>procedureBlock</c>
 	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -244,19 +244,19 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitEventBlock([NotNull] ScratchIRParser.EventBlockContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by the <c>topLevelBlock</c>
+	/// Enter a parse tree produced by the <c>flagBlock</c>
 	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterTopLevelBlock([NotNull] ScratchIRParser.TopLevelBlockContext context) { }
+	public virtual void EnterFlagBlock([NotNull] ScratchIRParser.FlagBlockContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by the <c>topLevelBlock</c>
+	/// Exit a parse tree produced by the <c>flagBlock</c>
 	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitTopLevelBlock([NotNull] ScratchIRParser.TopLevelBlockContext context) { }
+	public virtual void ExitFlagBlock([NotNull] ScratchIRParser.FlagBlockContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
@@ -299,6 +299,20 @@ public partial class ScratchIRBaseListener : IScratchIRListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by the <c>procedureIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterProcedureIndexExpression([NotNull] ScratchIRParser.ProcedureIndexExpressionContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by the <c>procedureIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitProcedureIndexExpression([NotNull] ScratchIRParser.ProcedureIndexExpressionContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by the <c>arrayExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.

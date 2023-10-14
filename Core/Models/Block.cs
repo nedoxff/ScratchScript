@@ -48,14 +48,14 @@ public class Block
     [NonSerialized] public ScratchType ExpectedType;
     [NonSerialized] public Dictionary<string, string> CustomData = new();
 
-    public Block(string opcode, string shortName, ScratchType type = ScratchType.Unknown, bool shadow = false, bool topLevel = false)
+    public Block(string opcode, string shortName, ScratchType type = null, bool shadow = false, bool topLevel = false)
     {
         Opcode = opcode;
         ShortName = shortName;
         Id = NameHelper.New(shortName ?? "unset");
         Shadow = shadow;
         TopLevel = topLevel;
-        ExpectedType = type;
+        ExpectedType = type ?? ScratchType.Unknown;
     }
     
     public override string ToString()

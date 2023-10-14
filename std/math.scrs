@@ -1,9 +1,9 @@
 ﻿namespace "std/math";
 
-@warp function max(@num x, @num y) {
+@warp function max(x: number, y: number) {
     return x > y ? x: y;
 }
 
-@warp function min(@num x, @num y) {
+@warp function min(x: number, y: number) {
     return x < y ? x: y;
 }

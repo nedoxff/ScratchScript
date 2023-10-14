@@ -5,15 +5,13 @@ public struct ScratchVariable
     public string Name;
     public string Id;
     public ScratchType Type;
-    public bool IsList;
     public bool IsReporter;
 
-    public ScratchVariable(string name, ScratchType type = ScratchType.Unknown, bool isReporter = false, bool isList = false)
+    public ScratchVariable(string name, ScratchType type = null, bool isReporter = false, string id = "")
     {
         Name = name;
-        Id = NameHelper.New(name);
-        Type = type;
+        Id = string.IsNullOrEmpty(id) ? NameHelper.New(name): id;
+        Type = type ?? ScratchType.Unknown;
         IsReporter = isReporter;
-        IsList = false;
     }
 }

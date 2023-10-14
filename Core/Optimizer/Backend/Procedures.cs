@@ -53,6 +53,14 @@ public partial class ScratchIRBackendVisitor
             block.SetInput(procedure.StackIndexReporter.Id, ScratchInput.New(lengthOfStack, block));
             UpdateBlocks(lengthOfStack);
         }
+
+        if (procedure.ProcedureIndexReporter != null)
+        {
+            var lengthOfStack = Data.LengthOfList();
+            lengthOfStack.SetField("LIST", ScratchField.New(ScratchScriptVisitor.FunctionStackName));
+            block.SetInput(procedure.ProcedureIndexReporter.Id, ScratchInput.New(lengthOfStack, block));
+            UpdateBlocks(lengthOfStack);   
+        }
         UpdateBlocks(block);
 
         return block;
@@ -85,7 +93,7 @@ public partial class ScratchIRBackendVisitor
                 block.SetInput(name, ScratchInput.New(expression, block));
             else
                 block.SetField(name, ScratchField.New(expression));
-            UpdateBlocks(expression);
+            UpdateBlocks(block, expression);
         }
     }
 

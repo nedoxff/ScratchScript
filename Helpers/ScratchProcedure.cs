@@ -27,6 +27,7 @@ public class ScratchProcedure
     private Block _call;
     private Mutation _mutation;
     public readonly Block StackIndexReporter;
+    public readonly Block ProcedureIndexReporter;
 
     public ScratchProcedure(string name, bool warp, Dictionary<string, ProcedureArgumentType> arguments)
     {
@@ -40,11 +41,13 @@ public class ScratchProcedure
             StackIndexReporter = Procedures.ReporterStringNumber(ScratchScriptVisitor.StackIndexArgumentName);
             StackIndexReporter.SetParent(Prototype, false);
         }
+        ProcedureIndexReporter = Procedures.ReporterStringNumber(ScratchScriptVisitor.ProcedureIndexArgumentName);
+        ProcedureIndexReporter.SetParent(Prototype, false);
     }
 
     public void Build()
     {
-        var proccode = $"{Name} {(StackIndexReporter == null ? "": "%s")}";
+        var proccode = $"{Name} {(StackIndexReporter == null ? "": "%s")} {(ProcedureIndexReporter == null ? "": "%s")}";
         proccode = proccode.Trim();
 
         var idsArray = new JArray();
@@ -57,6 +60,9 @@ public class ScratchProcedure
             namesArray.Add(ScratchScriptVisitor.StackIndexArgumentName);
             defaultsArray.Add("");
         }
+        idsArray.Add(ProcedureIndexReporter.Id);
+        namesArray.Add(ScratchScriptVisitor.ProcedureIndexArgumentName);
+        defaultsArray.Add("");
 
         _mutation = new Mutation
         {

@@ -13,15 +13,15 @@ public class Control
     public static Block While() => new("control_while", "wh");
 
     [ScratchBlock("scratch/control", "wait", false, true)]
-    public static string Wait([ScratchArgument("seconds", ScratchType.Number)] string seconds) =>
+    public static string Wait([ScratchArgument("seconds", ScratchTypeKind.Number)] string seconds) =>
         $"raw control_wait i:DURATION:{seconds}";
 
     [ScratchBlock("scratch/control", "waitUntil", false, true)]
-    public static string WaitUntil([ScratchArgument("condition", ScratchType.Boolean)] string condition) =>
+    public static string WaitUntil([ScratchArgument("condition", ScratchTypeKind.Boolean)] string condition) =>
         $"raw control_wait_until i:CONDITION:{condition}";
 
     [ScratchBlock("scratch/control", "stop", false, true)]
     public static string Stop(
-        [ScratchArgument("what", ScratchType.String, new object[] { "all", "this script", "other scripts" })]
+        [ScratchArgument("what", ScratchTypeKind.String, new object[] { "all", "this script", "other scripts" })]
         string what) => $"raw control_stop f:STOP_OPTION:{what}";
 }

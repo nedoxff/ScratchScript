@@ -1,0 +1,83 @@
+﻿@forbidImport("unicode.scrs should not be imported directly. instead, use the @unicode attribute in your source file.")
+import 'scratch/looks';
+import 'scratch/operators';
+import 'scratch/data';
+namespace "std/string/unicode";
+
+//TODO: TEMP VERSION. UPDATE THIS LATER
+// costume number is not always guaranteed to be 3!!
+
+// 0 - lowercase
+// 1 - uppercase
+function __UnicodeCaseSensing(str: string) {
+    if(str.length() != 1) {
+        throw "Invalid string length (must be a single character)";
+    }
+
+    switchCostumeIndex(2);
+    var name = getCostumeName();
+    if(name.contains(str)) {
+        var newName = "";
+        for(var i = 1; i <= name.length(); i++) {
+            if(str == name[i]) {
+                newName += str;
+            }
+            else {
+                newName += name[i];
+            }
+        }
+        switchCostume("");
+        switchCostume(newName);
+        if(getCostumeNumber() == 2) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+    else {
+        return -1;
+    }
+}
+
+function unicodeOf(str: string) {
+    if(str.length() != 1) {
+        throw "Invalid string length (must be a single character)";
+    }
+
+    var result = 0;
+    if(__UnicodeCaseSensing(str) == __UnicodeCaseSensing(__Unicode[__Unicode.findIndex(str)])) {
+        result = __Unicode.findIndex(str);
+    }
+    else {
+        var idx = __Unicode.findIndex(str) + 1;
+        while(__Unicode[idx] != str) {
+            idx++;
+        }
+        result = idx;
+    }
+    return result;
+}
+
+function fromUnicode(num: number) {
+    if(num < 1 || num > __Unicode.length()) {
+        throw "Invalid code point number (must be between 1 and 195500)";
+    }
+    return __Unicode[num];
+}
+
+function __UnicodeCompare(str: string, str1: string) {
+    if(str.length() != str1.length()) {
+        return false;
+    }
+    
+    //TODO: for loops need to be fixed
+    var i = 0;
+    while(i < str.length()) {
+        i++;
+        if(unicodeOf(str[i]) != unicodeOf(str1[i])) {
+            return false;
+        }
+    }
+    return true;
+}

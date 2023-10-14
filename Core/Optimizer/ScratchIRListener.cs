@@ -41,6 +41,18 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProgram([NotNull] ScratchIRParser.ProgramContext context);
 	/// <summary>
+	/// Enter a parse tree produced by the <c>loadCommand</c>
+	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>loadCommand</c>
+	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>setCommand</c>
 	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
 	/// </summary>
@@ -173,18 +185,6 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitPopAllCommand([NotNull] ScratchIRParser.PopAllCommandContext context);
 	/// <summary>
-	/// Enter a parse tree produced by the <c>loadCommand</c>
-	/// labeled alternative in <see cref="ScratchIRParser.topLevelCommand"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void EnterLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context);
-	/// <summary>
-	/// Exit a parse tree produced by the <c>loadCommand</c>
-	/// labeled alternative in <see cref="ScratchIRParser.topLevelCommand"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	void ExitLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context);
-	/// <summary>
 	/// Enter a parse tree produced by the <c>procedureBlock</c>
 	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
 	/// </summary>
@@ -209,17 +209,17 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitEventBlock([NotNull] ScratchIRParser.EventBlockContext context);
 	/// <summary>
-	/// Enter a parse tree produced by the <c>topLevelBlock</c>
+	/// Enter a parse tree produced by the <c>flagBlock</c>
 	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterTopLevelBlock([NotNull] ScratchIRParser.TopLevelBlockContext context);
+	void EnterFlagBlock([NotNull] ScratchIRParser.FlagBlockContext context);
 	/// <summary>
-	/// Exit a parse tree produced by the <c>topLevelBlock</c>
+	/// Exit a parse tree produced by the <c>flagBlock</c>
 	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitTopLevelBlock([NotNull] ScratchIRParser.TopLevelBlockContext context);
+	void ExitFlagBlock([NotNull] ScratchIRParser.FlagBlockContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
@@ -256,6 +256,18 @@ public interface IScratchIRListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitStackIndexExpression([NotNull] ScratchIRParser.StackIndexExpressionContext context);
+	/// <summary>
+	/// Enter a parse tree produced by the <c>procedureIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterProcedureIndexExpression([NotNull] ScratchIRParser.ProcedureIndexExpressionContext context);
+	/// <summary>
+	/// Exit a parse tree produced by the <c>procedureIndexExpression</c>
+	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitProcedureIndexExpression([NotNull] ScratchIRParser.ProcedureIndexExpressionContext context);
 	/// <summary>
 	/// Enter a parse tree produced by the <c>arrayExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.

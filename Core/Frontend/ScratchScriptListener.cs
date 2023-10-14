@@ -91,6 +91,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitAssignmentStatement([NotNull] ScratchScriptParser.AssignmentStatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.listAssignmentStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterListAssignmentStatement([NotNull] ScratchScriptParser.ListAssignmentStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.listAssignmentStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitListAssignmentStatement([NotNull] ScratchScriptParser.ListAssignmentStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.variableDeclarationStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -221,6 +231,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitRepeatStatement([NotNull] ScratchScriptParser.RepeatStatementContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.throwStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterThrowStatement([NotNull] ScratchScriptParser.ThrowStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.throwStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitThrowStatement([NotNull] ScratchScriptParser.ThrowStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.breakStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -251,15 +271,15 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitSwitchStatement([NotNull] ScratchScriptParser.SwitchStatementContext context);
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ScratchScriptParser.identifierWithAttribute"/>.
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.typedIdentifier"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void EnterIdentifierWithAttribute([NotNull] ScratchScriptParser.IdentifierWithAttributeContext context);
+	void EnterTypedIdentifier([NotNull] ScratchScriptParser.TypedIdentifierContext context);
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ScratchScriptParser.identifierWithAttribute"/>.
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.typedIdentifier"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	void ExitIdentifierWithAttribute([NotNull] ScratchScriptParser.IdentifierWithAttributeContext context);
+	void ExitTypedIdentifier([NotNull] ScratchScriptParser.TypedIdentifierContext context);
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// </summary>
@@ -507,6 +527,26 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitShiftOperators([NotNull] ScratchScriptParser.ShiftOperatorsContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.leftShift"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterLeftShift([NotNull] ScratchScriptParser.LeftShiftContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.leftShift"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitLeftShift([NotNull] ScratchScriptParser.LeftShiftContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.rightShift"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterRightShift([NotNull] ScratchScriptParser.RightShiftContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.rightShift"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitRightShift([NotNull] ScratchScriptParser.RightShiftContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.addOperators"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -626,4 +666,14 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	void ExitBoolean([NotNull] ScratchScriptParser.BooleanContext context);
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.type"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterType([NotNull] ScratchScriptParser.TypeContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.type"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitType([NotNull] ScratchScriptParser.TypeContext context);
 }

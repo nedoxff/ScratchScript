@@ -16,8 +16,8 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
     public ScratchIRBackendVisitor(string name)
     {
         Target.Name = name;
-        RegisterVariable(ScratchScriptVisitor.FunctionStackName, ScratchType.List);
-        RegisterVariable(ScratchScriptVisitor.StackName, ScratchType.List);
+        RegisterVariable(ScratchScriptVisitor.FunctionStackName, ScratchType.List(ScratchType.Any));
+        RegisterVariable(ScratchScriptVisitor.StackName, ScratchType.List(ScratchType.Any));
     }
 
     private void UpdateBlocks(params object[] blocks)
@@ -39,12 +39,6 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
             return new ScratchColor(c.GetText()[1..]);
         //if (context.boolean() is { } b)
         //    return b.GetText() == "true";
-        return null;
-    }
-
-    public override object VisitTopLevelBlock(ScratchIRParser.TopLevelBlockContext context)
-    {
-        Visit(context.topLevelCommand());
         return null;
     }
 
@@ -100,5 +94,36 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
         }
 
         return resultBlocks;
+    }
+
+    public override object VisitFlagBlock(ScratchIRParser.FlagBlockContext context)
+    {
+        switch (context.Identifier().GetText())
+        {
+            case "UNICODE":
+            {
+                var characters = File.ReadAllLines(Path.Join(Environment.CurrentDirectory, "std", "unicode.txt"));
+                var symbols = File.ReadAllText(Path.Join(Environment.CurrentDirectory, "std", "symbols.txt"));
+                Target.Lists.Add("__Unicode", new List<object>
+                {
+                    "__Unicode",
+                    characters
+                });
+                Target.Variables.Add("__Symbols", new List<object>
+                {
+                    "__Symbols",
+                    symbols
+                });
+                var emptyCostume = CostumeHelper.GetEmptyCostume();
+                emptyCostume.Name = "";
+                Target.Costumes.Add(emptyCostume);
+                var uppercaseCostume = CostumeHelper.GetEmptyCostume();
+                uppercaseCostume.Name = File.ReadAllText(Path.Join(Environment.CurrentDirectory, "std", "uppercase.txt"));
+                Target.Costumes.Add(uppercaseCostume);
+                break;
+            }
+        }
+
+        return null;
     }
 }

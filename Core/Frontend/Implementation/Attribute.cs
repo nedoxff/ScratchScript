@@ -1,4 +1,5 @@
 ﻿using ScratchScript.Core.Diagnostics;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Implementation;
@@ -7,19 +8,18 @@ public partial class ScratchScriptVisitor
 {
     private decimal _floatingPointPrecision = new(0.00001);
     private bool _useFloatEquation;
+    private bool _useUnicode;
+
+    private Dictionary<string, string> _forbiddenImports = new();
 
     private void HandleProcedureAttribute(ScratchScriptParser.AttributeStatementContext context,
         ref ScratchIrProcedure procedure)
     {
         switch (context.Identifier().GetText())
         {
-            case "__ReturnType":
+            case "__DisableTypeCheck":
             {
-                var typeString = Visit(context.constant(0));
-                if (AssertNotNull(context, typeString, context.constant(0))) return;
-                if (AssertType(context, typeString, ScratchType.String, context.constant(0))) return;
-                var type = TypeHelper.StringToScratchType(((string)typeString.Value.Value)[1..^1]);
-                procedure.ReturnType = type;
+                procedure.Attributes.Add("DISABLE_TYPE_CHECK", "");
                 return;
             }
             case "warp":
@@ -29,24 +29,14 @@ public partial class ScratchScriptVisitor
             }
             case "extension":
             {
-                var typeString = Visit(context.constant(0));
-                if (AssertNotNull(context, typeString, context.constant(0))) return;
-                if (AssertType(context, typeString, ScratchType.String, context.constant(0))) return;
-                var type = TypeHelper.StringToScratchType(((string)typeString.Value.Value)[1..^1]);
-                procedure.CallerType = type;
+                var type = Visit(context.constant(0));
+                if (AssertNotNull(context, type, context.constant(0))) return;
+                if (AssertType(context, type, ScratchType.Type, context.constant(0))) return;
+                procedure.CallerType = type.Value.Value as ScratchType;
                 //TODO: add a check that the function has the argument
                 return;
             }
         }
-    }
-
-    private void HandleProcedureArgumentAttribute(ScratchScriptParser.AttributeStatementContext context, string name,
-        ref ScratchIrProcedure procedure)
-    {
-        var attributeName = context.Identifier().GetText();
-        if (TypeHelper.PossibleTypes.Contains(attributeName))
-            procedure.Arguments[name] =
-                TypeHelper.StringToScratchType(attributeName);
     }
 
     private void HandleTopLevelAttribute(ScratchScriptParser.AttributeStatementContext context)
@@ -58,6 +48,21 @@ public partial class ScratchScriptVisitor
                 _useFloatEquation = true;
                 if (context.constant(0) != null)
                     _floatingPointPrecision = (decimal)Visit(context.constant(0)).Value.Value;
+                break;
+            }
+            case "unicode":
+            {
+                _useUnicode = true;
+                EnableUnicode();
+                break;
+            }
+            case "forbidImport":
+            {
+                if (AssertNotNull(context, context.constant(0), context.constant(0))) return;
+                var message = Visit(context.constant(0));
+                if (AssertType(context, message, ScratchType.String, context.constant(0))) return;
+
+                _forbiddenImports[Path.GetFileNameWithoutExtension(InputFile)!] = (string)message?.Value;
                 break;
             }
         }

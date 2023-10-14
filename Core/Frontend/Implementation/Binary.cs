@@ -28,16 +28,19 @@ public partial class ScratchScriptVisitor
             if (AssertType(context, second, ScratchType.Number, context.expression(1))) return null;
         }
 
-        var result = isString || isBoolean
-            ? $"{op} {first.Format()} {second.Format()}"
-            : GetEquationExpression(op, first, second);
+        var result = new TypedValue($"{op} {first.Format()} {second.Format()}", ScratchType.Boolean);
+        if (isString) result = GetStringEquationExpression(op, first, second);
+        if (!isString && !isBoolean) result = GetNumberEquationExpression(op, first, second);
         return new(result, ScratchType.Boolean);
     }
 
-    private string GetEquationExpression(string op, object first, object second) =>
-        _useFloatEquation
+    private TypedValue GetStringEquationExpression(string op, object first, object second) =>
+        _useUnicode ? Scope.CallFunction("__UnicodeCompare", new [] {first, second}, ScratchType.Boolean) : new TypedValue($"{op} {first.Format()} {second.Format()}", ScratchType.Boolean);
+
+    private TypedValue GetNumberEquationExpression(string op, object first, object second) =>
+        new TypedValue(_useFloatEquation
             ? $"< {Operators.Abs($"(- {first.Format()} {second.Format()})")} {_floatingPointPrecision.Format()}"
-            : $"{op} {first.Format()} {second.Format()}";
+            : $"{op} {first.Format()} {second.Format()}", ScratchType.Boolean);
 
     public override TypedValue? VisitBinaryMultiplyExpression(
         ScratchScriptParser.BinaryMultiplyExpressionContext context)

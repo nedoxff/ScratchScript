@@ -1,7 +1,7 @@
 ﻿import "scratch/operators";
 namespace "std/string";
 
-@extension("str") @warp function replace(@str input, @str replace, @str replacement) {
+@extension(string) @warp function replace(input: string, replace: string, replacement: string) {
     var output = "";
     for(var i = 1; i <= input.length(); i++) {
         var doReplace = true;
@@ -21,17 +21,17 @@ namespace "std/string";
     return output;
 }
 
-@extension("str") @warp function substring(@str input, @num s, @num e) {
+@extension(string) @warp function substring(input: string, startIndex: number, endIndex: number) {
     var result = "";
-    var i = s;
-    while(i < e + 1) {
+    var i = startIndex;
+    while(i < endIndex + 1) {
         result += input[i];
         i++;
     }
     return result;
 }
 
-@extension("str") @warp function insert(@str input, @num idx, @str item) {
+@extension(string) @warp function insert(input: string, idx: number, item: string) {
     var result = input.substring(1, idx - 1);
     result += item;
     result += input.substring(idx, input.length());

@@ -82,8 +82,8 @@ public partial class ScratchIRBackendVisitor
         var block = Data.ItemOfList();
         block.SetField("LIST", ScratchField.New(name));
         block.SetInput("INDEX", ScratchInput.New(expression, block));
-
-        UpdateBlocks(block);
+        
+        UpdateBlocks(block, expression);
         return block;
     }
 }

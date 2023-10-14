@@ -1,6 +1,9 @@
 ﻿import "scratch/operators";
+import "scratch/looks";
+import "scratch/control";
+import "scratch/sensing";
 
-@__ReturnType("num") @warp function __TernaryNumber(condition, @num trueValue, @num falseValue) {
+@__DisableTypeCheck @warp function __Ternary(condition: bool, trueValue: any, falseValue: any) {
     if(condition) {
         return trueValue;
     }
@@ -9,39 +12,12 @@
     }
 }
 
-@__ReturnType("str") @warp function __TernaryString(condition, @str trueValue, @str falseValue) {
-    if(condition) {
-        return trueValue;
-    }
-    else {
-        return falseValue;
-    }
-}
-
-@__ReturnType("bool") @warp function __TernaryBoolean(condition, @bool trueValue, @bool falseValue) {
-    if(condition) {
-        return trueValue;
-    }
-    else {
-        return falseValue;
-    }
-}
-
-@__ReturnType("color") @warp function __TernaryColor(condition, @color trueValue, @color falseValue) {
-    if(condition) {
-        return trueValue;
-    }
-    else {
-        return falseValue;
-    }
-}
-
-@warp function __Exponent(base, exponent) {
+@warp function __Exponent(base: number, exponent: number) {
     var result = exp(exponent * ln(abs(base)));
-    return __TernaryNumber(base < 0, 1 / result, result);
+    return __Ternary(base < 0, 1 / result, result);
 }
 
-@warp function __BitwiseAnd(@num x, @num y) {
+@warp function __BitwiseAnd(x: number, y: number) {
   var byteValue = 1;
   var result = 0;
   while(x > 0 || y > 0) {
@@ -55,7 +31,7 @@
   return result;
 }
 
-@warp function __BitwiseOr(@num x, @num y) {
+@warp function __BitwiseOr(x: number, y: number) {
   var byteValue = 1;
   var result = 0;
   while(x > 0 || y > 0) {
@@ -69,7 +45,7 @@
   return result;
 }
 
-@warp function __BitwiseXor(@num x, @num y) {
+@warp function __BitwiseXor(x: number, y: number) {
   var byteValue = 1;
   var result = 0;
   while(x > 0 || y > 0) {
@@ -83,16 +59,56 @@
   return result;
 }
 
-@warp function __LShift(@num n, @num shift) {
+@warp function __LShift(n: number, shift: number) {
     repeat(shift) {
         n *= 2;
     }
     return n;
 }
 
-@warp function __RShift(@num n, @num shift) {
+@warp function __RShift(n: number, shift: number) {
     repeat(shift) {
         n = floor(n / 2);
     }
     return n;
+}
+
+@warp function __Throw(message: string) {
+    ask(message);
+    stop("all");
+}
+
+@warp function __WriteListValue(list: string, value: any)
+{
+    var v = toString(value);
+    for(var idx = 1; idx <= v.length(); idx++) {
+        var c = v[idx];
+        if("|\\".contains(c)) {
+            list += "\\";
+        }
+        list += c;
+    }
+    list += '|';
+    return list;
+}
+
+@__DisableTypeCheck @warp function __ReadListValue(list: string, index: number) {
+    var value = "";
+    var currentIndex = 1;
+    var i = 1;
+    while(true)
+    {
+        var c = list[i];
+        i++;
+        if("|".contains(c)) {
+            if(currentIndex == index) {
+                return value;
+            }
+            currentIndex++;
+            value = "";
+        }
+        else if(c != '\\') {
+            value += c;
+        }
+    }
 }

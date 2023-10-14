@@ -108,6 +108,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitAssignmentStatement([NotNull] ScratchScriptParser.AssignmentStatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.listAssignmentStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterListAssignmentStatement([NotNull] ScratchScriptParser.ListAssignmentStatementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.listAssignmentStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitListAssignmentStatement([NotNull] ScratchScriptParser.ListAssignmentStatementContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.variableDeclarationStatement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -264,6 +276,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitRepeatStatement([NotNull] ScratchScriptParser.RepeatStatementContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.throwStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterThrowStatement([NotNull] ScratchScriptParser.ThrowStatementContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.throwStatement"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitThrowStatement([NotNull] ScratchScriptParser.ThrowStatementContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.breakStatement"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -300,17 +324,17 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitSwitchStatement([NotNull] ScratchScriptParser.SwitchStatementContext context) { }
 	/// <summary>
-	/// Enter a parse tree produced by <see cref="ScratchScriptParser.identifierWithAttribute"/>.
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.typedIdentifier"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void EnterIdentifierWithAttribute([NotNull] ScratchScriptParser.IdentifierWithAttributeContext context) { }
+	public virtual void EnterTypedIdentifier([NotNull] ScratchScriptParser.TypedIdentifierContext context) { }
 	/// <summary>
-	/// Exit a parse tree produced by <see cref="ScratchScriptParser.identifierWithAttribute"/>.
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.typedIdentifier"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
-	public virtual void ExitIdentifierWithAttribute([NotNull] ScratchScriptParser.IdentifierWithAttributeContext context) { }
+	public virtual void ExitTypedIdentifier([NotNull] ScratchScriptParser.TypedIdentifierContext context) { }
 	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.procedureArgument"/>.
 	/// <para>The default implementation does nothing.</para>
@@ -600,6 +624,30 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitShiftOperators([NotNull] ScratchScriptParser.ShiftOperatorsContext context) { }
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.leftShift"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterLeftShift([NotNull] ScratchScriptParser.LeftShiftContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.leftShift"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitLeftShift([NotNull] ScratchScriptParser.LeftShiftContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.rightShift"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterRightShift([NotNull] ScratchScriptParser.RightShiftContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.rightShift"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitRightShift([NotNull] ScratchScriptParser.RightShiftContext context) { }
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.addOperators"/>.
 	/// <para>The default implementation does nothing.</para>
 	/// </summary>
@@ -743,6 +791,18 @@ public partial class ScratchScriptBaseListener : IScratchScriptListener {
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	public virtual void ExitBoolean([NotNull] ScratchScriptParser.BooleanContext context) { }
+	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.type"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void EnterType([NotNull] ScratchScriptParser.TypeContext context) { }
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.type"/>.
+	/// <para>The default implementation does nothing.</para>
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	public virtual void ExitType([NotNull] ScratchScriptParser.TypeContext context) { }
 
 	/// <inheritdoc/>
 	/// <remarks>The default implementation does nothing.</remarks>

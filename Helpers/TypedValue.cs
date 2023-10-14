@@ -8,9 +8,9 @@ public struct TypedValue
     public object Value;
     public Dictionary<string, string> Data;
 
-    public TypedValue(object value, ScratchType type = ScratchType.Unknown, Dictionary<string, string> data = null)
+    public TypedValue(object value, ScratchType type = null, Dictionary<string, string> data = null)
     {
-        Type = type;
+        Type = type ?? ScratchType.Unknown;
         Value = value;
         Data = data ?? new();
     }

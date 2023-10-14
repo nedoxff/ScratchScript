@@ -1,5 +1,17 @@
-import "scratch/motion";
-import "std/string";
+@unicode
+import 'scratch/looks';
+import 'scratch/operators';
 on start {
-    var a = 1 / 0;
+    if(fromUnicode(65) == "A") {
+        sayTimed("fromUnicode works!", 5);
+    }
+    var converted = unicodeOf("Ъ");
+    sayTimed("unicodeOf of Ъ is: " + toString(converted), 5);
+    
+    if("hey" == "heY") {
+        throw "something went horribly wrong";
+    }
+    else {
+        sayTimed("unicode string comparison works!", 5);
+    }
 }

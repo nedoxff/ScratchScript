@@ -13,7 +13,20 @@ public class ScratchBlockAttribute: Attribute
     public ScratchType ReturnType;
     public ScratchType CallerType;
 
-    public ScratchBlockAttribute(string ns, string name, bool isShadow, bool isStatic, ScratchType callerType = ScratchType.Unknown, ScratchType returnType = ScratchType.Unknown)
+    public ScratchBlockAttribute(string ns, string name, bool isShadow, bool isStatic, ScratchTypeKind callerType = ScratchTypeKind.Unknown, ScratchTypeKind returnType = ScratchTypeKind.Unknown)
+    {
+        Namespace = ns;
+        Name = name;
+        IsShadow = isShadow;
+        IsStatic = isStatic;
+        ReturnType = new(returnType);
+        CallerType = new(callerType);
+        
+        if(callerType == ScratchTypeKind.Unknown && !isStatic)
+            Log.Error("Cannot declare a non-static block on an object with unknown type!");
+    }
+    
+    public ScratchBlockAttribute(string ns, string name, bool isShadow, bool isStatic, ScratchType callerType, ScratchType returnType)
     {
         Namespace = ns;
         Name = name;
@@ -22,7 +35,7 @@ public class ScratchBlockAttribute: Attribute
         ReturnType = returnType;
         CallerType = callerType;
         
-        if(callerType == ScratchType.Unknown && !isStatic)
+        if(callerType.Kind == ScratchTypeKind.Unknown && !isStatic)
             Log.Error("Cannot declare a non-static block on an object with unknown type!");
     }
 }

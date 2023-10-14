@@ -19,7 +19,7 @@ public partial class ScratchScriptVisitor
 
         return error;
     }
-    
+
     public bool AssertType(ParserRuleContext context, object first, object second, IToken conflicting)
     {
         var error = AssertTypeInternal(first, second);
@@ -34,19 +34,17 @@ public partial class ScratchScriptVisitor
 
     private bool AssertTypeInternal(object first, object second)
     {
-        if (first is TypedValue { Value: string } firstTyped && firstTyped.Data.ContainsKey("ARGUMENT_NAME") &&
-            TypeHelper.GetType(first) == ScratchType.Unknown)
+        return TypeHelper.GetType(first) != TypeHelper.GetType(second) && TypeHelper.GetType(first) != ScratchType.Any &&
+               TypeHelper.GetType(second) != ScratchType.Any;
+    }
+
+    public bool AssertVariable(ParserRuleContext context, object obj, IToken identifier)
+    {
+        if (!obj.IsVariable())
         {
-            Procedures.Last().Arguments[firstTyped.Data["ARGUMENT_NAME"]] = TypeHelper.GetType(second);
-            return false;
-        }
-
-        if ((first.IsVariable() && TypeHelper.GetType(second) == ScratchType.Variable) ||
-            (second.IsVariable() && TypeHelper.GetType(first) == ScratchType.Variable))
-            return false;
-
-        if (TypeHelper.GetType(first) != TypeHelper.GetType(second))
+            DiagnosticReporter.Error(ScratchScriptError.VariableIdentifierExpected, context, identifier);
             return true;
+        }
 
         return false;
     }
@@ -63,7 +61,7 @@ public partial class ScratchScriptVisitor
 
         return false;
     }
-    
+
     public bool AssertNotNull(ParserRuleContext context, object obj, IToken conflicting)
     {
         if (obj is null)

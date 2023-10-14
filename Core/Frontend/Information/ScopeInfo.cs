@@ -1,5 +1,6 @@
 ﻿using System.Formats.Asn1;
 using ScratchScript.Core.Frontend.Implementation;
+using ScratchScript.Extensions;
 using ScratchScript.Helpers;
 
 namespace ScratchScript.Core.Frontend.Information;
@@ -44,13 +45,30 @@ public class ScopeInfo
         return false;
     }
 
-    public TypedValue? CallFunction(string name, object[] arguments, ScratchType returnType)
+    public TypedValue CallFunction(string name, object[] arguments, ScratchType returnType)
     {
         foreach (var argument in arguments)
             Prepend += Stack.PushArgument(argument);
         Prepend += $"call {name}\n";
-        Append += ScratchScriptVisitor.PopFunctionStackCommand;
-        if(returnType != ScratchType.Unknown) ProcedureIndex++;
-        return returnType != ScratchType.Unknown ? new($"{ScratchScriptVisitor.FunctionStackName}#{ProcedureIndex}", returnType): null;
+        if (returnType != ScratchType.Unknown)
+        {
+            ProcedureIndex++;
+            Append += ScratchScriptVisitor.PopFunctionStackCommand;
+        }
+        return returnType != ScratchType.Unknown
+            ? new($"{ScratchScriptVisitor.FunctionStackName}#(+ :pi: {ProcedureIndex})", returnType)
+            : new("");
+    }
+
+    public TypedValue? PackList(IEnumerable<object> values, ScratchType expectedType)
+    {
+        Prepend += "set var:__CopyList \"\"";
+        foreach (var value in values)
+        {
+            var newList = CallFunction("__WriteListValue", new[] { "var:__CopyList", value }, ScratchType.String);
+            Prepend += $"set var:__CopyList {newList.Format()}\n";
+        }
+
+        return new("var:__CopyList", ScratchType.List(expectedType));
     }
 }

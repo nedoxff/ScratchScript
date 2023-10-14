@@ -12,7 +12,9 @@ public enum ScratchScriptError
     ProcedureExpressionDoesNotReturn,
     NamespacePlacedIncorrectly,
     UnknownIdentifier,
-    ValueNotAllowed
+    ValueNotAllowed,
+    UnknownNamespace,
+    VariableIdentifierExpected
 }
 
 public enum ScratchScriptWarning
@@ -36,7 +38,9 @@ public class DiagnosticMessages
         "function {0} does not return a value.",
         "namespace must be declared at the top of the file",
         "unknown identifier \"{0}\"",
-        "invalid argument value. expected to be one of the following: {0}"
+        "invalid argument value. expected to be one of the following: {0}",
+        "unknown namespace \"{0}\"",
+        "expected a variable identifier"
     };
     public static readonly List<string> Warnings = new()
     {

@@ -15,9 +15,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     private string _output = "";
     private string _proceduresSection = "";
-    private string _loadSection = "";
 
-    public string Output => $"{_loadSection}\n{_proceduresSection}\n{_output}".RemoveEmptyLines();
+    public string Output => $"{_proceduresSection}\n{_output}".RemoveEmptyLines();
     public string Namespace = "global";
     public bool Success = true;
     public string InputFile { get; }
@@ -28,7 +27,17 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     private readonly List<string> _imports = new();
     private readonly ScratchScriptParser _parser;
-    private ScopeInfo Scope { get; set; }
+    public ScopeInfo Scope { get; set; }
+
+    private ScopeInfo GlobalScope
+    {
+        get
+        {
+            var cur = Scope;
+            while (cur.ParentScope != null) cur = cur.ParentScope;
+            return cur;
+        }
+    }
 
     public ScratchScriptVisitor(ScratchScriptParser parser, string file)
     {
@@ -36,6 +45,10 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         Instance = this;
         InputFile = file;
         Scope = new("", "");
+        var list = new ScratchVariable("__Unicode", new ScratchType(ScratchTypeKind.List, ScratchType.String), false, "__Unicode");
+        var symbols = new ScratchVariable("__Symbols", new ScratchType(ScratchTypeKind.String), false, "__Symbols");
+        Scope.Variables.Add(list);
+        Scope.Variables.Add(symbols);
     }
 
     public override TypedValue? VisitTopLevelStatement(ScratchScriptParser.TopLevelStatementContext context)
@@ -81,6 +94,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             return Visit(context.breakStatement());
         if (context.forStatement() != null)
             return Visit(context.forStatement());
+        if (context.throwStatement() != null)
+            return Visit(context.throwStatement());
 
         return null;
     }
@@ -156,6 +171,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             return new(b.GetText() == "true", ScratchType.Boolean);
         if (context.Color() is { } c)
             return new(new ScratchColor(c.GetText()[1..]), ScratchType.Color);
+        if (context.type() is { } t)
+            return new(CreateType(t), ScratchType.Type);
         return null;
     }
 
@@ -188,7 +205,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         if (variable.IsReporter)
             return Stack.GetArgument(variable);
         
-        var ir = variable.IsList ? $"arr:{variable.Id}" : $"var:{(variable.IsReporter ? "argr:" : "")}{variable.Id}";
+        var ir = variable.Type.Kind == ScratchTypeKind.List ? $"arr:{variable.Id}" : $"var:{(variable.IsReporter ? "argr:" : "")}{variable.Id}";
         return new(ir, variable.Type);
     }
 
@@ -200,7 +217,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         var second = Visit(context.expression(2));
         if (AssertType(context, first, second, context.expression(2))) return null;
 
-        return Scope.CallFunction($"__Ternary{Enum.GetName(first.Value.Type)}",
+        return Scope.CallFunction("__Ternary",
             new object[] { condition, first, second }, TypeHelper.GetType(first));
     }
 
@@ -217,7 +234,11 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         if (reporters != null)
         {
             foreach (var reporter in reporters)
-                scope.Variables.Add(new ScratchVariable(reporter, Procedures.Last().Arguments.TryGetValue(reporter, out var type) ? type: ScratchType.Unknown, true));
+            {
+                if (!Procedures.Last().Arguments.TryGetValue(reporter, out var type)) continue;
+                scope.Variables.Add(new ScratchVariable(reporter,
+                     type, true));
+            }
         }
 
         scope.ParentScope = Scope;
@@ -306,8 +327,27 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
                     }
                 }
             }
+
+            return null;
         }
 
+        DiagnosticReporter.Error(ScratchScriptError.UnknownNamespace, context, context.String().Symbol, name);
         return null;
+    }
+
+    // no try/catch (for now) because its complicated
+    public override TypedValue? VisitThrowStatement(ScratchScriptParser.ThrowStatementContext context) => Scope.CallFunction("__Throw", new object[] { context.String().GetText() }, ScratchType.Unknown);
+
+    public ScratchType CreateType(ScratchScriptParser.TypeContext context)
+    {
+        var type = new ScratchType(context.Type().GetText());
+        if (context.type() != null)
+        {
+            var childType = CreateType(context.type());
+            childType.ParentType = type;
+            type.ChildType = childType;
+        }
+
+        return type;
     }
 }

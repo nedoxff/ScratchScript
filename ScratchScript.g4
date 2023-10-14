@@ -5,15 +5,16 @@ Parser
 
 program: topLevelStatement* EOF;
 topLevelStatement: procedureDeclarationStatement | attributeStatement | eventStatement | importStatement | namespaceStatement;
-line: ((statement Semicolon) | ifStatement | whileStatement | repeatStatement | forStatement | switchStatement | returnStatement | breakStatement | comment);
-statement: assignmentStatement | procedureCallStatement | memberProcedureCallStatement | variableDeclarationStatement | postIncrementStatement;
+line: ((statement Semicolon) | ifStatement | whileStatement | repeatStatement | forStatement | switchStatement | returnStatement | breakStatement | throwStatement | comment);
+statement: assignmentStatement | listAssignmentStatement | procedureCallStatement | memberProcedureCallStatement | variableDeclarationStatement | postIncrementStatement;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
 assignmentStatement: Identifier assignmentOperators expression;
+listAssignmentStatement: Identifier LeftBracket expression RightBracket;
 variableDeclarationStatement: VariableDeclare Identifier Assignment expression;
 memberProcedureCallStatement: expression Dot procedureCallStatement;
 procedureCallStatement: Identifier LeftParen (procedureArgument (Comma procedureArgument)*?)? RightParen; 
-procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (identifierWithAttribute (Comma identifierWithAttribute)*?)? RightParen block; 
+procedureDeclarationStatement: attributeStatement*? ProcedureDeclare Identifier LeftParen (typedIdentifier (Comma typedIdentifier)*?)? RightParen block; 
 ifStatement: If LeftParen expression RightParen block (Else elseIfStatement)?;
 whileStatement: While LeftParen expression RightParen block;
 forStatement: For LeftParen statement? Semicolon expression? Semicolon statement? RightParen block;
@@ -23,10 +24,11 @@ importStatement: Import (LeftBrace Identifier (Comma Identifier)*? RightBrace Fr
 attributeStatement: At Identifier (LeftParen (constant (Comma constant)*?)? RightParen)?;
 returnStatement: Return expression Semicolon;
 repeatStatement: Repeat LeftParen expression RightParen block;
+throwStatement: Throw String Semicolon;
 breakStatement: Break Semicolon;
 namespaceStatement: Namespace String Semicolon;
 switchStatement: Switch LeftParen expression RightParen switchBlock;
-identifierWithAttribute: attributeStatement? Identifier;
+typedIdentifier: Identifier Colon type;
 procedureArgument: (Identifier ':')? expression;
 
 expression
@@ -51,7 +53,11 @@ expression
     ;
 
 multiplyOperators: Multiply | Divide | Modulus | Power;
-shiftOperators: LeftShift | RightShift;
+
+shiftOperators: leftShift | rightShift;
+leftShift: first=Lesser second=Lesser {$first.index + 1 == $second.index}?;
+rightShift: first=Greater second=Greater {$first.index + 1 == $second.index}?;
+
 addOperators: Plus | Minus;
 compareOperators: Equal | NotEqual | Greater | GreaterOrEqual | Lesser | LesserOrEqual;
 booleanOperators: And | Or;
@@ -63,9 +69,10 @@ block: LeftBrace line* RightBrace;
 switchBlock: LeftBrace case* RightBrace;
 defaultCase: Default Colon block;
 
-constant: Number | String | boolean | Color;
+constant: Number | String | boolean | Color | type;
 comment: Comment;
 boolean: True | False;
+type: Type | 'List' '<' type '>';
 
 /*
     Lexer fragments
@@ -94,11 +101,8 @@ SingleLineCommentStart: '//';
 MultiLineCommentStart: '/*';
 MultiLineCommentEnd: '*/';
 
-Comment
-    :   ( SingleLineCommentStart (~[\r\n]|Whitespace)* 
-        | MultiLineCommentStart .*? MultiLineCommentEnd
-        )
-    ;
+Comment: MultiLineCommentStart .*? MultiLineCommentEnd -> skip;
+LineComment: SingleLineCommentStart ~[\r\n]* -> skip;
 
 At: '@';
 Hashtag: '#';
@@ -116,8 +120,6 @@ Or: '||';
 BitwiseAnd: '&';
 BitwiseOr: '|';
 BitwiseXor: '^';
-LeftShift: '<<';
-RightShift: '>>';
 
 PostIncrement: '++';
 PostDecrement: '--';
@@ -170,15 +172,17 @@ VariableDeclare: 'var' Whitespace+;
 Import: 'import' Whitespace+;
 ProcedureDeclare: 'function' Whitespace+;
 Return: 'return' Whitespace+;
+Throw: 'throw' Whitespace+;
 Repeat: 'repeat';
 Event: 'on' Whitespace+;
 From: 'from' Whitespace+;
 Namespace: 'namespace' Whitespace+;
+Type: 'number' | 'string' | 'bool' | 'color' | 'any';
 
 /*
     Lexer rules
 */
 Number: Digit+ ([.] Digit+)?; 
 Identifier: [a-zA-Z_][a-zA-Z0-9_]*;
-String: ('"' ~'"'* '"') | ('\'' ~'\''* '\'');
+String: ('"' (~('"' | '\\' | '\r' | '\n') | '\\' ('"' | '\\'))* '"') | ('\'' (~('\'' | '\\' | '\r' | '\n') | '\\' ('\'' | '\\'))* '\'');
 Color: Hashtag HexDigit HexDigit HexDigit HexDigit HexDigit HexDigit;

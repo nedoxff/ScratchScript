@@ -29,7 +29,7 @@ public class DiagnosticReporter
         ScratchScriptVisitor.Instance.Success = false;
         var inputStream = start.Start.InputStream;
         ParserRuleContext lineContext = start.GetParent<ScratchScriptParser.TopLevelStatementContext>();
-        var text = inputStream.GetText(new Interval(lineContext.Start.StartIndex, lineContext.Stop.StopIndex));
+        var text = inputStream.GetText(new Interval(lineContext.Start.StartIndex, lineContext.Stop.StopIndex)).Replace("[", "[[").Replace("]", "]]");
         var conflictingText = inputStream.GetText(new Interval(conflictingStart, conflictingStop));
 
         var startLine = lineContext.Start.Line;
@@ -64,7 +64,7 @@ public class DiagnosticReporter
         var inputStream = start.Start.InputStream;
         ParserRuleContext lineContext = start.GetParent<ScratchScriptParser.LineContext>();
         lineContext ??= start.GetParent<ScratchScriptParser.TopLevelStatementContext>();
-        var text = inputStream.GetText(new Interval(lineContext.Start.StartIndex, lineContext.Stop.StopIndex));
+        var text = inputStream.GetText(new Interval(lineContext.Start.StartIndex, lineContext.Stop.StopIndex)).Replace("[", "[[").Replace("]", "]]");
         var conflictingText = inputStream.GetText(new Interval(conflictingStart, conflictingStop));
 
         var startLine = lineContext.Start.Line;

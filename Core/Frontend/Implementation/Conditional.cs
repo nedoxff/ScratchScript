@@ -96,7 +96,7 @@ public partial class ScratchScriptVisitor
 
         condition ??= new("true", ScratchType.Boolean);
         if (AssertType(context, condition, ScratchType.Boolean, context.expression())) return null;
-        condition = new($"== {condition} true", ScratchType.Boolean);
+        condition = new($"== {condition} \"true\"", ScratchType.Boolean);
         
         var code = CreateScope(context.block().line(), $"{(initialize == null ? "": $"{initialize}\n")}while {condition}");
         code.Content.Add(Scope.Append);
@@ -132,8 +132,9 @@ public partial class ScratchScriptVisitor
         }
 
         var result = "";
+        //TODO: should number equation be used here (or a string one? can we do strings in switch? probably)
         for (var i = 0; i < cases.Count; i++)
-            result += $"{(i == 0 ? "": "else")} if {GetEquationExpression("==", condition, cases[i].Item2)}\n{cases[i].Item1}\n";
+            result += $"{(i == 0 ? "": "else")} if {GetNumberEquationExpression("==", condition, cases[i].Item2)}\n{cases[i].Item1}\n";
         if (defaultScope != null)
             result += $"else\n{defaultScope}";
 

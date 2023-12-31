@@ -1,9 +1,11 @@
 ﻿using Antlr4.Runtime;
+using CliWrap;
 using Ionic.Zip;
 using Newtonsoft.Json;
 using ScratchScript.Core.Frontend.Implementation;
 using ScratchScript.Core.Models;
 using ScratchScript.Core.Optimizer.Backend;
+using ScratchScript.Core.Reflection;
 using ScratchScript.Helpers;
 using Serilog;
 using Spectre.Console;
@@ -47,11 +49,17 @@ public class ProjectManager
             }
             if (!string.IsNullOrEmpty(_irOutput)) File.WriteAllText(_irOutput, ir);
 #if DEBUG
-            Console.WriteLine(ir);
-            Console.ReadLine();
+            if (Static.DeveloperMode && !string.IsNullOrEmpty(_irOutput))
+            {
+                Cli.Wrap(Config.Instance.DeveloperEditorPath)
+                    .WithArguments(_irOutput)
+                    .ExecuteAsync();
+                Console.WriteLine("The IR was opened in your editor. Press any key to continue compilation.");
+                Console.ReadLine();
+            }
 #endif
 
-            //INSERT MIDDLE LAYER
+            //TODO: INSERT MIDDLE LAYER
 
             _compiledTarget = GetTarget(ir);
             _project.LayerOrder++;
@@ -120,7 +128,7 @@ public class ProjectManager
         var parser = new ScratchScriptParser(tokenStream);
         var visitor = new ScratchScriptVisitor(parser, _input);
         visitor.Visit(parser.program());
-        return (visitor.Output, visitor.Success);
+        return (StdLoader.Variables + visitor.Output, visitor.Success); // TODO: again, StdLoader.Variables is a hack here
     }
 
     private Target GetTarget(string ir)

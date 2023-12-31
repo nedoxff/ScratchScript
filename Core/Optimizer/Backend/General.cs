@@ -16,8 +16,10 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
     public ScratchIRBackendVisitor(string name)
     {
         Target.Name = name;
-        RegisterVariable(ScratchScriptVisitor.FunctionStackName, ScratchType.List(ScratchType.Any));
         RegisterVariable(ScratchScriptVisitor.StackName, ScratchType.List(ScratchType.Any));
+        RegisterVariable("__CopyList", ScratchType.String);
+        RegisterVariable("__TempValue", ScratchType.Any);
+        RegisterVariable("__CleanupCounter", ScratchType.Number);
     }
 
     private void UpdateBlocks(params object[] blocks)
@@ -37,8 +39,6 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
             return s.GetText()[1..^1];
         if (context.Color() is { } c)
             return new ScratchColor(c.GetText()[1..]);
-        //if (context.boolean() is { } b)
-        //    return b.GetText() == "true";
         return null;
     }
 
@@ -96,7 +96,7 @@ public partial class ScratchIRBackendVisitor: ScratchIRBaseVisitor<object>
         return resultBlocks;
     }
 
-    public override object VisitFlagBlock(ScratchIRParser.FlagBlockContext context)
+    public override object VisitFlagTopLevelStatement(ScratchIRParser.FlagTopLevelStatementContext context)
     {
         switch (context.Identifier().GetText())
         {

@@ -7,12 +7,14 @@ public class Config
 {
     private static readonly Config Default = new()
     {
-        RunnerPath = ""
+        RunnerPath = "",
+        DeveloperEditorPath = ""
     };
 
     public static Config Instance = Default;
 
     public string RunnerPath;
+    public string DeveloperEditorPath;
 
     private static void SaveDefault()
     {

@@ -2,10 +2,10 @@
 namespace "std/string";
 
 @extension(string) @warp function replace(input: string, replace: string, replacement: string) {
-    var output = "";
-    for(var i = 1; i <= input.length(); i++) {
-        var doReplace = true;
-        for(var j = 0; j < replace.length(); j++) {
+    let output = "";
+    for(let i = 1; i <= input.length(); i++) {
+        let doReplace = true;
+        for(let j = 0; j < replace.length(); j++) {
             if(input[j + i] != replace[j + 1]) {
                 doReplace = false;
             }
@@ -22,8 +22,8 @@ namespace "std/string";
 }
 
 @extension(string) @warp function substring(input: string, startIndex: number, endIndex: number) {
-    var result = "";
-    var i = startIndex;
+    let result = "";
+    let i = startIndex;
     while(i < endIndex + 1) {
         result += input[i];
         i++;
@@ -32,7 +32,7 @@ namespace "std/string";
 }
 
 @extension(string) @warp function insert(input: string, idx: number, item: string) {
-    var result = input.substring(1, idx - 1);
+    let result = input.substring(1, idx - 1);
     result += item;
     result += input.substring(idx, input.length());
     return result;

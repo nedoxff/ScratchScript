@@ -291,6 +291,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitProcedureArgument([NotNull] ScratchScriptParser.ProcedureArgumentContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.debuggerStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterDebuggerStatement([NotNull] ScratchScriptParser.DebuggerStatementContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.debuggerStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitDebuggerStatement([NotNull] ScratchScriptParser.DebuggerStatementContext context);
+	/// <summary>
 	/// Enter a parse tree produced by the <c>binaryBitwiseAndExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>

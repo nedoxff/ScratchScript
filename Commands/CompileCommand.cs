@@ -14,6 +14,7 @@ public class CompileCommand : AsyncCommand<CompileCommand.CompileCommandSettings
         if (!File.Exists(settings.File)) Console.WriteLine($"The specified script ({settings.File}) was not found!");
 
         if (settings.Verbose) Static.LogToConsole = true;
+        if(settings.DevelopmentMode) Static.DeveloperMode = true;
 
         try
         {
@@ -53,7 +54,8 @@ public class CompileCommand : AsyncCommand<CompileCommand.CompileCommandSettings
     {
         [CommandArgument(0, "[file]")] public string File { get; init; }
         [CommandOption("--ir-path")] public string IrPath { get; init; } 
-        [CommandOption("-v|--verbose")] public bool Verbose { get; init; }
+        [CommandOption("-b|--verbose")] public bool Verbose { get; init; } //TODO: temporary change, -v is reserved by accident and displays the version (https://github.com/spectreconsole/spectre.console/issues/1400)
         [CommandOption("-r|--run")] public bool Run { get; init; }
+        [CommandOption("-d|--developer")] public bool DevelopmentMode { get; init; }
     }
 }

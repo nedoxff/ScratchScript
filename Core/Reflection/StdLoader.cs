@@ -9,7 +9,7 @@ namespace ScratchScript.Core.Reflection;
 public class StdLoader
 {
     public static Dictionary<string, List<DefinedScratchFunction>> Functions = new();
-
+    public static string Variables = ""; //TODO: ideally this class should not exist at all and be rewritten as an on-demand importer
     public static void Load(string stdPath)
     {
         Log.Verbose("--- StdLoader ---");
@@ -32,6 +32,7 @@ public class StdLoader
                 if (Functions.TryGetValue(visitor.Namespace, out var functions))
                     functions.AddRange(newFunctions);
                 Functions.TryAdd(visitor.Namespace, newFunctions);
+                Variables += visitor.LoadSection;
                 Log.Verbose("Loaded {Count} functions to {Namespace}", newFunctions.Count, visitor.Namespace);
             }
         }

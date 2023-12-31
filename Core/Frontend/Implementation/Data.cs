@@ -23,9 +23,9 @@ public partial class ScratchScriptVisitor
             return null;
         }
 
-        if (Procedures.LastOrDefault()?.Arguments.ContainsKey(name) ?? false)
+        if (Scope.GetVariable(name).IsReporter)
             return HandleProcedureArgumentAssignment(context);
-
+        
         var op = Visit(context.assignmentOperators());
         if (AssertNotNull(context, op, context.assignmentOperators())) return null;
         var variableType = Scope.GetVariable(name).Type;
@@ -33,6 +33,7 @@ public partial class ScratchScriptVisitor
         var opString = (string)op.Value.Value;
         if (variableType == ScratchType.String && opString == "+") opString = "~";
 
+        var stackCapture = CurrentStackLength;
         var expression = Visit(context.expression());
         if (AssertType(context, variableType, expression.Value.Type, context.expression())) return null;
 
@@ -41,11 +42,11 @@ public partial class ScratchScriptVisitor
             var call = Scope.CallFunction("__Exponent", new object[] { Scope.GetVariable(name), expression },
                 ScratchType.Number);
             return new(
-                $"set var:{Scope.GetVariable(name).Id} {call.Format()}\n");
+                $"set var:{Scope.GetVariable(name).Id} {call.Format()}\n{GetCleanupCode(stackCapture)}");
         }
 
         return new(
-            $"set var:{Scope.GetVariable(name).Id} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{Scope.GetVariable(name).Id}")} {expression.Format(rawColor: false)}\n");
+            $"set var:{Scope.GetVariable(name).Id} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{Scope.GetVariable(name).Id}")} {expression.Format(rawColor: false)}\n{GetCleanupCode(stackCapture)}");
     }
 
     private TypedValue? HandleProcedureArgumentAssignment(ScratchScriptParser.AssignmentStatementContext context)
@@ -53,6 +54,7 @@ public partial class ScratchScriptVisitor
         var name = context.Identifier().GetText();
         var variable = VisitIdentifierInternal(name);
         var op = Visit(context.assignmentOperators());
+        var stackCapture = CurrentStackLength;
         var expression = Visit(context.expression());
 
         var procedure = Procedures.Last();
@@ -72,7 +74,7 @@ public partial class ScratchScriptVisitor
                 .Format();
 
         var ir =
-            $"raw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{stackIndex} i:ITEM:{newItem}\n";
+            $"raw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{stackIndex} i:ITEM:{newItem}\n{GetCleanupCode(stackCapture)}";
         return new(ir);
     }
 
@@ -80,6 +82,8 @@ public partial class ScratchScriptVisitor
         ScratchScriptParser.VariableDeclarationStatementContext context)
     {
         var name = context.Identifier().GetText();
+
+        var stackCapture = CurrentStackLength;
         var expression = Visit(context.expression());
 
         if (Scope.IdentifierUsed(name))
@@ -92,7 +96,7 @@ public partial class ScratchScriptVisitor
 
         var variable = new ScratchVariable(name, expression.Value.Type);
         Scope.Variables.Add(variable);
-        Scope.Content.Add($"load:{GetIRType(expression.Value.Type)} {variable.Id}\n");
+        LoadSection += $"load:{GetIRType(expression.Value.Type)} {variable.Id}\n";
 
         if (expression.Value.Type.Kind == ScratchTypeKind.List)
         {
@@ -101,7 +105,7 @@ public partial class ScratchScriptVisitor
             return push;
         }
 
-        return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n");
+        return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n{GetCleanupCode(stackCapture)}");
     }
 
     private string GetIRType(ScratchType type)
@@ -140,7 +144,7 @@ public partial class ScratchScriptVisitor
         {
             _imports.Add("std/string/unicode");
             Functions.AddRange(functions);
-            _proceduresSection += functions.Select(x => x.Code)
+            ProceduresSection += functions.Select(x => x.Code)
                 .Aggregate("", (current, next) => current + "\n" + next);
         }
 

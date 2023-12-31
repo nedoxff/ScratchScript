@@ -7,9 +7,9 @@ public class ScratchType
     private static readonly Dictionary<ScratchTypeKind, string> _kindConverter = new()
     {
         { ScratchTypeKind.Any, "any" },
-        { ScratchTypeKind.Boolean, "bool" },
+        { ScratchTypeKind.Boolean, "boolean" },
         { ScratchTypeKind.Color, "color" },
-        { ScratchTypeKind.List, "list" },
+        { ScratchTypeKind.List, "List" },
         { ScratchTypeKind.Number, "number" },
         { ScratchTypeKind.String, "string" },
         

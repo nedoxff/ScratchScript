@@ -188,6 +188,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitProcedureArgument([NotNull] ScratchScriptParser.ProcedureArgumentContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.debuggerStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitDebuggerStatement([NotNull] ScratchScriptParser.DebuggerStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>binaryBitwiseAndExpression</c>
 	/// labeled alternative in <see cref="ScratchScriptParser.expression"/>.
 	/// </summary>

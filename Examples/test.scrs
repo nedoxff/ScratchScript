@@ -1,17 +1,14 @@
-@unicode
+@useFloatEquation(0.01)
 import 'scratch/looks';
 import 'scratch/operators';
+
+function d(x: number, y: number)
+{
+    return x + y;
+}
+
 on start {
-    if(fromUnicode(65) == "A") {
-        sayTimed("fromUnicode works!", 5);
-    }
-    var converted = unicodeOf("Ъ");
-    sayTimed("unicodeOf of Ъ is: " + toString(converted), 5);
-    
-    if("hey" == "heY") {
-        throw "something went horribly wrong";
-    }
-    else {
-        sayTimed("unicode string comparison works!", 5);
+    for(let i = d(1, 1); i < d(5, 5); i = d(i, 1)) {
+        sayTimed(toString(i), 1);
     }
 }

@@ -4,8 +4,7 @@ program: block* EOF;
 
 command
     // Variables
-    : 'load' Type Identifier #loadCommand
-    | 'set' variableIdentifier expression #setCommand
+    : 'set' variableIdentifier expression #setCommand
     
     // Control flow
     | 'while' expression command*? End #whileCommand
@@ -26,14 +25,14 @@ command
 block
     : 'proc' WarpIdentifier? Identifier procedureArgument* command*? End #procedureBlock
     | 'on' Event command*? End #eventBlock
-    | 'flag' Identifier #flagBlock;
+    | 'flag' Identifier #flagTopLevelStatement
+    | 'load' Type Identifier #loadTopLevelStatement;
     
 
 expression
     : constant #constantExpression
     | variableIdentifier #variableExpression
     | StackIndexIdentifier #stackIndexExpression
-    | ProcedureIndexIdentifier #procedureIndexExpression
     | arrayIdentifier #arrayExpression
     | '(' expression ')' #parenthesizedExpression
     | addOperators expression expression #binaryAddExpression
@@ -72,10 +71,9 @@ NumberType: ':number';
 StringType: ':string';
 ListType: ':list';
 StringNumberType: ':sn';
-BooleanType: ':bool';
+BooleanType: ':boolean';
 WarpIdentifier: ':w';
 StackIndexIdentifier: ':si:';
-ProcedureIndexIdentifier: ':pi:';
 
 Hashtag: '#';
 Minus: '-';

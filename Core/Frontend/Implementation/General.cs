@@ -14,9 +14,10 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     public static ScratchScriptVisitor Instance { get; private set; }
 
     private string _output = "";
-    private string _proceduresSection = "";
+    public string ProceduresSection = "";
+    public string LoadSection = "";
 
-    public string Output => $"{_proceduresSection}\n{_output}".RemoveEmptyLines();
+    public string Output => $"{LoadSection}\n{ProceduresSection}\n{_output}".RemoveEmptyLines();
     public string Namespace = "global";
     public bool Success = true;
     public string InputFile { get; }
@@ -28,6 +29,19 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     private readonly List<string> _imports = new();
     private readonly ScratchScriptParser _parser;
     public ScopeInfo Scope { get; set; }
+    public int CurrentStackLength => Scope.PendingItemsCount;
+
+    public string GetCleanupCode(int prev, bool modify = true)
+    {
+        var count = Scope.PendingItemsCount - prev;
+        if(modify) Scope.PendingItemsCount -= count;
+        return count switch
+        {
+            0 => "",
+            1 => PopStackCommand,
+            _ => $"repeat {count}\n{PopStackCommand}\nend"
+        };
+    }
 
     private ScopeInfo GlobalScope
     {
@@ -92,6 +106,8 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             return Visit(context.returnStatement());
         if (context.breakStatement() != null)
             return Visit(context.breakStatement());
+        if (context.debuggerStatement() != null)
+            return Visit(context.debuggerStatement());
         if (context.forStatement() != null)
             return Visit(context.forStatement());
         if (context.throwStatement() != null)
@@ -106,10 +122,10 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         if (StdLoader.Functions.TryGetValue("global", out var functions))
         {
             Functions.AddRange(functions);
-            _proceduresSection += functions.Select(x => x.Code).Aggregate("", (current, next) => current + "\n" + next);
+            ProceduresSection += functions.Select(x => x.Code).Aggregate("", (current, next) => current + "\n" + next);
         }
 
-        InitProcedure.Code += $"popall {FunctionStackName}\npopall {StackName}";
+        //TODO: InitProcedure.Code += $"popall {FunctionStackName}\npopall {StackName}";
 
         foreach (var statement in context.topLevelStatement())
         {
@@ -120,7 +136,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
                     Scope.Content.Add(str);
                 else
                 {
-                    _proceduresSection += str;
+                    ProceduresSection += str;
                     Scope.Variables.Add(new ScratchVariable
                     {
                         Type = Procedures.Last().ReturnType,
@@ -130,14 +146,15 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             }
         }
 
-        Scope.Content.Insert(0, InitProcedure + "end\n");
+        //TODO: why was there an Init procedure?
+        //Scope.Content.Insert(0, InitProcedure + "end\n");
         if (!Scope.Content.Any(x => x.StartsWith("on start")))
-            Scope.Content.Add("on start\ncall __Init\nend");
+            Scope.Content.Add($"on start\npopall {StackName}\nend");
         else
         {
             var index = Scope.Content.FindIndex(x => x.StartsWith("on start"));
             var split = Scope.Content[index].Split("\n").ToList();
-            split.Insert(1, "call __Init");
+            split.Insert(1, $"popall {StackName}");
             Scope.Content[index] = string.Join('\n', split);
         }
 
@@ -228,9 +245,9 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     }
 
     private ScopeInfo CreateScope(IEnumerable<ScratchScriptParser.LineContext> lines, string startingLine = "",
-        IEnumerable<string> reporters = null)
+        IEnumerable<string> reporters = null, bool isFunctionScope = false)
     {
-        var scope = new ScopeInfo(startingLine);
+        var scope = new ScopeInfo(startingLine, isFunctionScope: isFunctionScope);
         if (reporters != null)
         {
             foreach (var reporter in reporters)
@@ -242,7 +259,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         }
 
         scope.ParentScope = Scope;
-        scope.ProcedureIndex = Scope.ProcedureIndex;
+        //TODO: scope.ProcedureIndex = Scope.ProcedureIndex;
         scope.Variables.AddRange(Scope.Variables);
         Scope = scope;
 
@@ -255,7 +272,6 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
                 scope.Content.Add(Scope.Prepend + resultString);
             else
                 scope.Content.Add(Scope.Prepend + resultString + Scope.Append);
-            Scope.ProcedureIndex -= Regex.Matches(Scope.Append, PopFunctionStackCommand).Count;
             Scope.Append = "";
             Scope.Prepend = "";
         }
@@ -308,7 +324,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
             if (names.Count == 0)
             {
                 Functions.AddRange(definedFunctions);
-                _proceduresSection += definedFunctions.Select(x => x.Code)
+                ProceduresSection += definedFunctions.Select(x => x.Code)
                     .Aggregate("", (current, next) => current + "\n" + next);
             }
             else
@@ -323,7 +339,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
                     {
                         var func = definedFunctions.First(x => x.BlockInformation.Name == functionName);
                         Functions.Add(func);
-                        _proceduresSection += func.Code + "\n";
+                        ProceduresSection += func.Code + "\n";
                     }
                 }
             }
@@ -340,7 +356,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     public ScratchType CreateType(ScratchScriptParser.TypeContext context)
     {
-        var type = new ScratchType(context.Type().GetText());
+        var type = new ScratchType(context.Type() == null ? "List": context.Type().GetText());
         if (context.type() != null)
         {
             var childType = CreateType(context.type());

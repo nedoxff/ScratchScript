@@ -29,7 +29,7 @@ public partial class ScratchIRBackendVisitor
         return block;
     }
 
-    public override object VisitLoadCommand(ScratchIRParser.LoadCommandContext context)
+    public override object VisitLoadTopLevelStatement(ScratchIRParser.LoadTopLevelStatementContext context)
     {
         var name = context.Identifier().GetText();
         Log.Verbose("[Load] Creating a variable named {Name}", name);
@@ -69,13 +69,6 @@ public partial class ScratchIRBackendVisitor
     public override object VisitStackIndexExpression(ScratchIRParser.StackIndexExpressionContext context)
     {
         var reporter = _procedures.Last().StackIndexReporter.Clone();
-        UpdateBlocks(reporter);
-        return reporter;
-    }
-
-    public override object VisitProcedureIndexExpression(ScratchIRParser.ProcedureIndexExpressionContext context)
-    {
-        var reporter = _procedures.Last().ProcedureIndexReporter.Clone();
         UpdateBlocks(reporter);
         return reporter;
     }

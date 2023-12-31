@@ -6,11 +6,8 @@ public class NameHelper
 
     public static string New(string start)
     {
-        if (!_counter.ContainsKey(start))
-        {
-            _counter.Add(start, 0);
+        if (_counter.TryAdd(start, 0))
             return start;
-        }
 
         _counter[start]++;
         return start + _counter[start];

@@ -5,7 +5,7 @@ Parser
 
 program: topLevelStatement* EOF;
 topLevelStatement: procedureDeclarationStatement | attributeStatement | eventStatement | importStatement | namespaceStatement;
-line: ((statement Semicolon) | ifStatement | whileStatement | repeatStatement | forStatement | switchStatement | returnStatement | breakStatement | throwStatement | comment);
+line: ((statement Semicolon) | ifStatement | whileStatement | repeatStatement | forStatement | switchStatement | returnStatement | breakStatement | debuggerStatement | throwStatement | comment);
 statement: assignmentStatement | listAssignmentStatement | procedureCallStatement | memberProcedureCallStatement | variableDeclarationStatement | postIncrementStatement;
 
 eventStatement: Event Identifier (LeftParen (expression (Comma expression)*?) RightParen)? block;
@@ -30,6 +30,7 @@ namespaceStatement: Namespace String Semicolon;
 switchStatement: Switch LeftParen expression RightParen switchBlock;
 typedIdentifier: Identifier Colon type;
 procedureArgument: (Identifier ':')? expression;
+debuggerStatement: Debugger Semicolon;
 
 expression
     : constant #constantExpression
@@ -163,12 +164,13 @@ True: 'true';
 False: 'false';
 Break: 'break';
 Default: 'default';
+Debugger: 'debugger';
 
 For: 'for';
 Case: 'case' Whitespace+;
 Switch: 'switch';
 While: 'while';
-VariableDeclare: 'var' Whitespace+;
+VariableDeclare: 'let' Whitespace+;
 Import: 'import' Whitespace+;
 ProcedureDeclare: 'function' Whitespace+;
 Return: 'return' Whitespace+;
@@ -177,7 +179,7 @@ Repeat: 'repeat';
 Event: 'on' Whitespace+;
 From: 'from' Whitespace+;
 Namespace: 'namespace' Whitespace+;
-Type: 'number' | 'string' | 'bool' | 'color' | 'any';
+Type: 'number' | 'string' | 'boolean' | 'color' | 'any';
 
 /*
     Lexer rules

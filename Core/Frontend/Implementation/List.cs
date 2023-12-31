@@ -74,7 +74,7 @@ public partial class ScratchScriptVisitor
 
         if (obj.Value.Data.ContainsKey("ARGUMENT_NAME") && Scope.GetVariable(obj.Value.Data["ARGUMENT_NAME"]).Type.Kind == ScratchTypeKind.List)
             return Scope.CallFunction("__ReadListValue", new object[] { objectString, index },
-                Scope.GetVariable(obj.Value.Data["ARGUMENT_NAME"]).Type);
+                Scope.GetVariable(obj.Value.Data["ARGUMENT_NAME"]).Type.ChildType);
 
         if (obj.Value.Type == ScratchType.String)
         {
@@ -88,7 +88,13 @@ public partial class ScratchScriptVisitor
     public override TypedValue? VisitArrayInitializeExpression(
         ScratchScriptParser.ArrayInitializeExpressionContext context)
     {
-        return new(context.expression().ToList(), ScratchType.List(ScratchType.Unknown),
+        var type = ScratchType.Unknown;
+        if (context.expression().Length != 0)
+        {
+            var firstValue = Visit(context.expression(0));
+            if (firstValue.HasValue) type = firstValue.Value.Type;
+        }
+        return new(context.expression().ToList(), ScratchType.List(type),
             new Dictionary<string, string> { { "LIST_TYPE", "ARRAY_EXPRESSION" } });
     }
 }

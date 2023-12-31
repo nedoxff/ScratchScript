@@ -1,6 +1,8 @@
 ﻿using ScratchScript.Core.Models;
 using ScratchScript.Extensions;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ScratchScript.Helpers;
 

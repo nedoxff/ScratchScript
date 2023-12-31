@@ -15,10 +15,10 @@ function __UnicodeCaseSensing(str: string) {
     }
 
     switchCostumeIndex(2);
-    var name = getCostumeName();
+    let name = getCostumeName();
     if(name.contains(str)) {
-        var newName = "";
-        for(var i = 1; i <= name.length(); i++) {
+        let newName = "";
+        for(let i = 1; i <= name.length(); i++) {
             if(str == name[i]) {
                 newName += str;
             }
@@ -45,12 +45,12 @@ function unicodeOf(str: string) {
         throw "Invalid string length (must be a single character)";
     }
 
-    var result = 0;
+    let result = 0;
     if(__UnicodeCaseSensing(str) == __UnicodeCaseSensing(__Unicode[__Unicode.findIndex(str)])) {
         result = __Unicode.findIndex(str);
     }
     else {
-        var idx = __Unicode.findIndex(str) + 1;
+        let idx = __Unicode.findIndex(str) + 1;
         while(__Unicode[idx] != str) {
             idx++;
         }
@@ -72,7 +72,7 @@ function __UnicodeCompare(str: string, str1: string) {
     }
     
     //TODO: for loops need to be fixed
-    var i = 0;
+    let i = 0;
     while(i < str.length()) {
         i++;
         if(unicodeOf(str[i]) != unicodeOf(str1[i])) {

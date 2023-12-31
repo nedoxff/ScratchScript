@@ -3,7 +3,7 @@ import "scratch/looks";
 import "scratch/control";
 import "scratch/sensing";
 
-@__DisableTypeCheck @warp function __Ternary(condition: bool, trueValue: any, falseValue: any) {
+@__DisableTypeCheck @warp function __Ternary(condition: boolean, trueValue: any, falseValue: any) {
     if(condition) {
         return trueValue;
     }
@@ -13,13 +13,13 @@ import "scratch/sensing";
 }
 
 @warp function __Exponent(base: number, exponent: number) {
-    var result = exp(exponent * ln(abs(base)));
+    let result = exp(exponent * ln(abs(base)));
     return __Ternary(base < 0, 1 / result, result);
 }
 
 @warp function __BitwiseAnd(x: number, y: number) {
-  var byteValue = 1;
-  var result = 0;
+  let byteValue = 1;
+  let result = 0;
   while(x > 0 || y > 0) {
     if(x % 2 > 0 && y % 2 > 0) { 
         result += byteValue; 
@@ -32,8 +32,8 @@ import "scratch/sensing";
 }
 
 @warp function __BitwiseOr(x: number, y: number) {
-  var byteValue = 1;
-  var result = 0;
+  let byteValue = 1;
+  let result = 0;
   while(x > 0 || y > 0) {
     if(x % 2 > 0 || y % 2 > 0) { 
         result += byteValue; 
@@ -46,8 +46,8 @@ import "scratch/sensing";
 }
 
 @warp function __BitwiseXor(x: number, y: number) {
-  var byteValue = 1;
-  var result = 0;
+  let byteValue = 1;
+  let result = 0;
   while(x > 0 || y > 0) {
     if((x % 2 > 0) != (y % 2 > 0)) { 
         result += byteValue; 
@@ -80,9 +80,9 @@ import "scratch/sensing";
 
 @warp function __WriteListValue(list: string, value: any)
 {
-    var v = toString(value);
-    for(var idx = 1; idx <= v.length(); idx++) {
-        var c = v[idx];
+    let v = toString(value);
+    for(let idx = 1; idx <= v.length(); idx++) {
+        let c = v[idx];
         if("|\\".contains(c)) {
             list += "\\";
         }
@@ -93,12 +93,12 @@ import "scratch/sensing";
 }
 
 @__DisableTypeCheck @warp function __ReadListValue(list: string, index: number) {
-    var value = "";
-    var currentIndex = 1;
-    var i = 1;
+    let value = "";
+    let currentIndex = 1;
+    let i = 1;
     while(true)
     {
-        var c = list[i];
+        let c = list[i];
         i++;
         if("|".contains(c)) {
             if(currentIndex == index) {

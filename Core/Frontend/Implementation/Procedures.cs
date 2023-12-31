@@ -10,15 +10,9 @@ namespace ScratchScript.Core.Frontend.Implementation;
 
 public partial class ScratchScriptVisitor
 {
-    public const string FunctionStackName = "__FunctionStack";
     public const string StackName = "__Stack";
-    public const string PopFunctionStackCommand = $"pop {FunctionStackName}\n";
     public const string PopStackCommand = $"pop {StackName}\n";
     public const string StackIndexArgumentName = "si";
-    public const string ProcedureIndexArgumentName = "pi";
-
-    private string PopAllProcedureCache =>
-        string.Concat(Enumerable.Repeat(PopFunctionStackCommand, Scope.ProcedureIndex));
 
 
     public class ScratchIrProcedure
@@ -41,12 +35,12 @@ public partial class ScratchScriptVisitor
         public override string ToString()
         {
             var arguments = Arguments.Aggregate("",
-                (current, pair) => current + $"{pair.Key}:{(pair.Value == ScratchType.Boolean ? "bool" : "sn")} ");
+                (current, pair) => current + $"{pair.Key}:{(pair.Value == ScratchType.Boolean ? "boolean" : "sn")} ");
             return $"\nproc{(Warp ? ":w" : "")} {Name} {arguments}\n{Code}\n";
         }
     }
 
-    private ScratchIrProcedure InitProcedure = new("__Init", Array.Empty<string>());
+    //private ScratchIrProcedure InitProcedure = new("__Init", Array.Empty<string>());
     public List<ScratchIrProcedure> Procedures = new();
     public List<ScratchFunction> Functions = new();
 
@@ -79,7 +73,9 @@ public partial class ScratchScriptVisitor
             HandleProcedureAttribute(attributeStatementContext, ref procedure);
         Procedures.Add(procedure);
 
-        var scope = CreateScope(context.block().line(), reporters: argumentNames);
+        var scope = CreateScope(context.block().line(), reporters: argumentNames, isFunctionScope: true);
+        if (procedure.ReturnType == ScratchType.Unknown)
+            procedure.Code += Stack.PopFunctionArguments();
         procedure.Code = scope.ToString();
         DefineFunction(procedure);
         return new(procedure.ToString());
@@ -87,11 +83,16 @@ public partial class ScratchScriptVisitor
 
     public override TypedValue? VisitReturnStatement(ScratchScriptParser.ReturnStatementContext context)
     {
+        var stackCapture = CurrentStackLength;
         var expression = Visit(context.expression());
         if (Procedures.Last().ReturnType == ScratchType.Unknown)
             Procedures.Last().ReturnType = TypeHelper.GetType(expression);
         return new(
-            $"{Stack.PopFunctionArguments()}\npush {FunctionStackName} {expression}\n{Scope.Append}\n{Stack.PopArguments()}\nraw control_stop f:STOP_OPTION:\"this script\"\n");
+            @$"set var:__TempValue {expression}
+{GetCleanupCode(stackCapture)}
+{Stack.PopFunctionArguments()}
+push {StackName} var:__TempValue
+raw control_stop f:STOP_OPTION:""this script""");
     }
 
     public override TypedValue? VisitProcedureCallStatement(ScratchScriptParser.ProcedureCallStatementContext context)
@@ -269,10 +270,10 @@ public partial class ScratchScriptVisitor
 
         var callResult =
             HandleProcedureCall(context, function, false, context.procedureCallStatement().procedureArgument());
-        var isNative = function is NativeScratchFunction;
-        var result = isNative ? callResult.Format() : $"{FunctionStackName}#(+ :pi: {Scope.ProcedureIndex})";
-        return new(result, function.BlockInformation.ReturnType);
+        return new(callResult.Format(), function.BlockInformation.ReturnType);
     }
+
+    public override TypedValue? VisitDebuggerStatement(ScratchScriptParser.DebuggerStatementContext context) => new("raw sensing_askandwait i:QUESTION:\"\"");
 
     private void DefineFunction(ScratchIrProcedure procedure)
     {

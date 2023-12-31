@@ -23,8 +23,13 @@ public static class Stack
     public static string PushArgument(object expression) =>
         $"push {ScratchScriptVisitor.StackName} {expression.Format()}\n";
 
-    public static string PopArguments() =>
-        $"repeat {ScratchScriptVisitor.Instance.Procedures.Last().Arguments.Count}\n{ScratchScriptVisitor.PopStackCommand}\nend";
-    
-    public static string PopFunctionArguments() => ScratchScriptVisitor.Instance.Scope.ProcedureIndex == 0 ? "": $"repeat {ScratchScriptVisitor.Instance.Scope.ProcedureIndex}\n{ScratchScriptVisitor.PopFunctionStackCommand}\nend";
+    public static string PopFunctionArguments()
+    {
+        //$"repeat {ScratchScriptVisitor.Instance.Procedures.Last().Arguments.Count}\n{ScratchScriptVisitor.PopStackCommand}\nend";
+        return @$"set var:__CleanupCounter :si:
+repeat {ScratchScriptVisitor.Instance.Procedures.Last().Arguments.Count}
+popat __Stack var:__CleanupCounter
+set var:__CleanupCounter (- var:__CleanupCounter 1)
+end";
+    }
 }

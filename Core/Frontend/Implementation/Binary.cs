@@ -38,8 +38,8 @@ public partial class ScratchScriptVisitor
         _useUnicode ? Scope.CallFunction("__UnicodeCompare", new [] {first, second}, ScratchType.Boolean) : new TypedValue($"{op} {first.Format()} {second.Format()}", ScratchType.Boolean);
 
     private TypedValue GetNumberEquationExpression(string op, object first, object second) =>
-        new TypedValue(_useFloatEquation
-            ? $"< {Operators.Abs($"(- {first.Format()} {second.Format()})")} {_floatingPointPrecision.Format()}"
+        new(_useFloatEquation && op is "==" or "!="
+            ? $"{(op is "==" ? "<": ">")} {Operators.Abs($"(- {first.Format()} {second.Format()})")} {_floatingPointPrecision.Format()}"
             : $"{op} {first.Format()} {second.Format()}", ScratchType.Boolean);
 
     public override TypedValue? VisitBinaryMultiplyExpression(

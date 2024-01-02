@@ -45,6 +45,13 @@ public interface IScratchIRVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitSetCommand([NotNull] ScratchIRParser.SetCommandContext context);
 	/// <summary>
+	/// Visit a parse tree produced by the <c>loadCommand</c>
+	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLoadCommand([NotNull] ScratchIRParser.LoadCommandContext context);
+	/// <summary>
 	/// Visit a parse tree produced by the <c>whileCommand</c>
 	/// labeled alternative in <see cref="ScratchIRParser.command"/>.
 	/// </summary>
@@ -135,13 +142,6 @@ public interface IScratchIRVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitFlagTopLevelStatement([NotNull] ScratchIRParser.FlagTopLevelStatementContext context);
-	/// <summary>
-	/// Visit a parse tree produced by the <c>loadTopLevelStatement</c>
-	/// labeled alternative in <see cref="ScratchIRParser.block"/>.
-	/// </summary>
-	/// <param name="context">The parse tree.</param>
-	/// <return>The visitor result.</return>
-	Result VisitLoadTopLevelStatement([NotNull] ScratchIRParser.LoadTopLevelStatementContext context);
 	/// <summary>
 	/// Visit a parse tree produced by the <c>constantExpression</c>
 	/// labeled alternative in <see cref="ScratchIRParser.expression"/>.

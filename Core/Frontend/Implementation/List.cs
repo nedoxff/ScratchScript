@@ -9,8 +9,7 @@ public partial class ScratchScriptVisitor
     private TypedValue? HandleListAssignment(ParserRuleContext context, TypedValue list, ref ScratchVariable variable)
     {
         if (!list.Data.ContainsKey("LIST_TYPE")) return null;
-
-        Scope.Prepend += $"popall {variable.Id}\n";
+        
         switch (list.Data["LIST_TYPE"])
         {
             case "ARRAY_EXPRESSION":
@@ -18,7 +17,7 @@ public partial class ScratchScriptVisitor
                 if (list.Value is not List<ScratchScriptParser.ExpressionContext> items || items.Count == 0)
                     return null;
                 var type = ScratchType.Unknown;
-                var push = "";
+                var push = $"popall {variable.Id}\n";
                 foreach (var expression in items)
                 {
                     var item = Visit(expression);
@@ -30,7 +29,7 @@ public partial class ScratchScriptVisitor
                     }
                     else if (AssertType(context, item, type, expression)) return null;
 
-                    push += $"push {variable.Id} {item.Format()}\n";
+                    push += $"{item?.Before}\npush {variable.Id} {item.Format()}\n{item?.After}";
                 }
 
                 return new(push);
@@ -65,16 +64,20 @@ public partial class ScratchScriptVisitor
         if (AssertNotNull(context, index, context.expression(1))) return null;
         if (AssertType(context, index, ScratchType.Number, context.expression(1))) return null;
 
-        var objectString = (string)obj.Value.Value;
+        var objectString = (string)obj!.Value.Value;
         if (objectString.IsList())
         {
             //TODO: what is this
             return new($"{obj.Format().Replace("arr:", "")}#{index}", obj.Value.Type.ChildType);
         }
 
-        if (obj.Value.Data.ContainsKey("ARGUMENT_NAME") && Scope.GetVariable(obj.Value.Data["ARGUMENT_NAME"]).Type.Kind == ScratchTypeKind.List)
+        if (obj.Value.Data.ContainsKey("ARGUMENT_NAME") &&
+            Scope.GetVariable(obj.Value.Data["ARGUMENT_NAME"]).Type.Kind == ScratchTypeKind.List)
+        {
+            RequireFunction("__ReadListValue", context);
             return Scope.CallFunction("__ReadListValue", new object[] { objectString, index },
                 Scope.GetVariable(obj.Value.Data["ARGUMENT_NAME"]).Type.ChildType);
+        }
 
         if (obj.Value.Type == ScratchType.String)
         {

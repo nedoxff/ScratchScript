@@ -11,9 +11,7 @@ public class ScopeInfo
 
     public string StartingLine;
     public string EndingLine;
-
-    public string Append = "";
-    public string Prepend = "";
+    
     public int PendingItemsCount = 0;
     public bool IsFunctionScope;
 
@@ -60,25 +58,25 @@ public class ScopeInfo
 
     public TypedValue CallFunction(string name, object[] arguments, ScratchType returnType)
     {
-        foreach (var argument in arguments)
-            Prepend += Stack.PushArgument(argument);
-        Prepend += $"call {name}\n";
+        var before = arguments.Aggregate("", (current, argument) => current + Stack.PushArgument(argument));
+        before += $"call {name}\n";
         if (returnType != ScratchType.Unknown) PendingItemsCount++;
         return returnType != ScratchType.Unknown
-            ? new($"{ScratchScriptVisitor.StackName}#{(IsInsideFunction() ? $"(+ :si: {PendingItemsCount})": PendingItemsCount)}", returnType)
-            : new("");
+            ? new($"{ScratchScriptVisitor.StackName}#{(IsInsideFunction() ? $"(+ :si: {PendingItemsCount})": PendingItemsCount)}", returnType, before: before)
+            : new(before);
     }
 
     public TypedValue? PackList(IEnumerable<object> values, ScratchType expectedType)
     {
-        Prepend += "set var:__CopyList \"\"\n";
+        var before = "";
+        before += "set var:__CopyList \"\"\n";
         foreach (var value in values)
         {
             var stackCapture = ScratchScriptVisitor.Instance.CurrentStackLength;
             var newList = CallFunction("__WriteListValue", new[] { "var:__CopyList", value }, ScratchType.String);
-            Prepend += $"set var:__CopyList {newList.Format()}\n{ScratchScriptVisitor.Instance.GetCleanupCode(stackCapture)}";
+            before += $"set var:__CopyList {newList.Format()}\n{ScratchScriptVisitor.Instance.GetCleanupCode(stackCapture)}";
         }
 
-        return new("var:__CopyList", ScratchType.List(expectedType));
+        return new("var:__CopyList", ScratchType.List(expectedType), before: before);
     }
 }

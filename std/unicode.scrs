@@ -1,7 +1,4 @@
 ﻿@forbidImport("unicode.scrs should not be imported directly. instead, use the @unicode attribute in your source file.")
-import 'scratch/looks';
-import 'scratch/operators';
-import 'scratch/data';
 namespace "std/string/unicode";
 
 //TODO: TEMP VERSION. UPDATE THIS LATER
@@ -71,10 +68,8 @@ function __UnicodeCompare(str: string, str1: string) {
         return false;
     }
     
-    //TODO: for loops need to be fixed
-    let i = 0;
-    while(i < str.length()) {
-        i++;
+    for(let i = 1; i <= str.length(); i++)
+    {
         if(unicodeOf(str[i]) != unicodeOf(str1[i])) {
             return false;
         }

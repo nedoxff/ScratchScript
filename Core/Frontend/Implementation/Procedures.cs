@@ -19,6 +19,7 @@ public partial class ScratchScriptVisitor
     {
         public string Name;
         public Dictionary<string, ScratchType> Arguments = new();
+        public List<string> Dependencies = new();
         public ScratchType ReturnType = ScratchType.Unknown;
         public ScratchType CallerType = ScratchType.Unknown;
         public string Code;
@@ -39,8 +40,7 @@ public partial class ScratchScriptVisitor
             return $"\nproc{(Warp ? ":w" : "")} {Name} {arguments}\n{Code}\n";
         }
     }
-
-    //private ScratchIrProcedure InitProcedure = new("__Init", Array.Empty<string>());
+    
     public List<ScratchIrProcedure> Procedures = new();
     public List<ScratchFunction> Functions = new();
 
@@ -88,7 +88,10 @@ public partial class ScratchScriptVisitor
         if (Procedures.Last().ReturnType == ScratchType.Unknown)
             Procedures.Last().ReturnType = TypeHelper.GetType(expression);
         return new(
-            @$"set var:__TempValue {expression}
+            @$"
+{expression?.Before}
+set var:__TempValue {expression}
+{expression?.After}
 {GetCleanupCode(stackCapture)}
 {Stack.PopFunctionArguments()}
 push {StackName} var:__TempValue
@@ -110,9 +113,9 @@ raw control_stop f:STOP_OPTION:""this script""");
     }
 
     private TypedValue? HandleProcedureCall(ParserRuleContext context, ScratchFunction function, bool isStatement,
-        ScratchScriptParser.ProcedureArgumentContext[] procedureArguments, object caller = null)
+        ScratchScriptParser.ProcedureArgumentContext[] procedureArguments, TypedValue? caller = null)
     {
-        var isMember = caller != null ? 1 : 0;
+        var isMember = caller != null && caller.Value.Type != ScratchType.Identifier ? 1 : 0;
         if (function.Arguments.Count != procedureArguments.Length + isMember)
         {
             DiagnosticReporter.Error(ScratchScriptError.ProcedureArgumentCountDifferent, context,
@@ -149,6 +152,7 @@ raw control_stop f:STOP_OPTION:""this script""");
                     arguments[argumentIndex] = expression;
                 }
 
+                RequireFunction(function.BlockInformation.Name, context);
                 return Scope.CallFunction(function.BlockInformation.Name, arguments,
                     isStatement
                         ? ScratchType.Unknown
@@ -209,7 +213,7 @@ raw control_stop f:STOP_OPTION:""this script""");
     {
         var member = Visit(context.expression());
         var functionName = context.procedureCallStatement().Identifier().GetText();
-        var function = FindMemberFunction(member, functionName);
+        var function = FindMemberFunction(context.expression(), context, member, functionName);
 
         if (function == null)
         {
@@ -223,10 +227,22 @@ raw control_stop f:STOP_OPTION:""this script""");
             member);
     }
 
-    private ScratchFunction FindMemberFunction(object member, string functionName)
+    private ScratchFunction FindMemberFunction(ParserRuleContext memberContext, ParserRuleContext context, TypedValue? member, string functionName)
     {
         ScratchFunction function;
-        if (member.IsVariable() && GetFunction(functionName, false, new(ScratchTypeKind.Variable)) != null)
+        if (member?.Type == ScratchType.Identifier)
+        {
+            var namespaceName = (string)member!.Value.Value;
+            if (FunctionNamespaces[namespaceName].Item2.All(f => f.BlockInformation.Name != functionName))
+            {
+                DiagnosticReporter.Error(ScratchScriptError.FunctionNamespaceDoesNotIncludeFunction, context, memberContext, namespaceName, functionName);
+                DiagnosticReporter.Note(ScratchScriptNote.FunctionNamespaceDeclared, FunctionNamespaces[namespaceName].Item1, FunctionNamespaces[namespaceName].Item1, namespaceName);
+                return null;
+            }
+
+            function = FunctionNamespaces[namespaceName].Item2.First(f => f.BlockInformation.Name == functionName);
+        }
+        else if (member.IsVariable() && GetFunction(functionName, false, new(ScratchTypeKind.Variable)) != null)
             function = GetFunction(functionName, false, new(ScratchTypeKind.Variable));
         else if (member.IsList() && GetFunction(functionName, false, new(ScratchTypeKind.List)) != null)
             function = GetFunction(functionName, false, new(ScratchTypeKind.List));
@@ -240,7 +256,7 @@ raw control_stop f:STOP_OPTION:""this script""");
     {
         var member = Visit(context.expression());
         var functionName = context.procedureCallStatement().Identifier().GetText();
-        var function = FindMemberFunction(member, functionName);
+        var function = FindMemberFunction(context.expression(), context, member, functionName);
 
         if (function == null)
         {
@@ -257,6 +273,7 @@ raw control_stop f:STOP_OPTION:""this script""");
     public override TypedValue? VisitProcedureCallExpression(ScratchScriptParser.ProcedureCallExpressionContext context)
     {
         var name = context.procedureCallStatement().Identifier().GetText();
+        RequireFunction(name, context);
         var function = GetFunction(name);
 
         var disableCheck = function is DefinedScratchFunction definedFunction &&
@@ -270,7 +287,7 @@ raw control_stop f:STOP_OPTION:""this script""");
 
         var callResult =
             HandleProcedureCall(context, function, false, context.procedureCallStatement().procedureArgument());
-        return new(callResult.Format(), function.BlockInformation.ReturnType);
+        return new(callResult.Format(), function.BlockInformation.ReturnType, before: callResult?.Before, after: callResult?.After);
     }
 
     public override TypedValue? VisitDebuggerStatement(ScratchScriptParser.DebuggerStatementContext context) => new("raw sensing_askandwait i:QUESTION:\"\"");
@@ -286,8 +303,8 @@ raw control_stop f:STOP_OPTION:""this script""");
                     new ScratchArgumentAttribute(arg.Key, arg.Value))
                 .ToList(),
             Code = procedure.ToString(),
-            Imported = false,
-            Attributes = procedure.Attributes
+            Attributes = procedure.Attributes,
+            Dependencies = procedure.Dependencies
         };
         Functions.Add(function);
     }

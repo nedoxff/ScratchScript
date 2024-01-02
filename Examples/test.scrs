@@ -1,14 +1,6 @@
-@useFloatEquation(0.01)
-import 'scratch/looks';
-import 'scratch/operators';
+import * as ma from 'std/math';
 
-function d(x: number, y: number)
+on start
 {
-    return x + y;
-}
-
-on start {
-    for(let i = d(1, 1); i < d(5, 5); i = d(i, 1)) {
-        sayTimed(toString(i), 1);
-    }
+    let i = ma.teehee(1,2);
 }

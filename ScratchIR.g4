@@ -5,6 +5,7 @@ program: block* EOF;
 command
     // Variables
     : 'set' variableIdentifier expression #setCommand
+    | 'load' Type Identifier #loadCommand
     
     // Control flow
     | 'while' expression command*? End #whileCommand
@@ -25,9 +26,7 @@ command
 block
     : 'proc' WarpIdentifier? Identifier procedureArgument* command*? End #procedureBlock
     | 'on' Event command*? End #eventBlock
-    | 'flag' Identifier #flagTopLevelStatement
-    | 'load' Type Identifier #loadTopLevelStatement;
-    
+    | 'flag' Identifier #flagTopLevelStatement;
 
 expression
     : constant #constantExpression

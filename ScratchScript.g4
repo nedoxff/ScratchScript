@@ -20,7 +20,7 @@ whileStatement: While LeftParen expression RightParen block;
 forStatement: For LeftParen statement? Semicolon expression? Semicolon statement? RightParen block;
 elseIfStatement: block | ifStatement;
 postIncrementStatement: Identifier postIncrementOperators;
-importStatement: Import (LeftBrace Identifier (Comma Identifier)*? RightBrace From)? String Semicolon;
+importStatement: Import ((LeftBrace Identifier (Comma Identifier)*? RightBrace) | importAll) From String Semicolon;
 attributeStatement: At Identifier (LeftParen (constant (Comma constant)*?)? RightParen)?;
 returnStatement: Return expression Semicolon;
 repeatStatement: Repeat LeftParen expression RightParen block;
@@ -69,6 +69,7 @@ case: (Case constant Colon block) | defaultCase;
 block: LeftBrace line* RightBrace;
 switchBlock: LeftBrace case* RightBrace;
 defaultCase: Default Colon block;
+importAll: '*' (As Identifier)?;
 
 constant: Number | String | boolean | Color | type;
 comment: Comment;
@@ -166,6 +167,7 @@ Break: 'break';
 Default: 'default';
 Debugger: 'debugger';
 
+As: 'as' Whitespace+;
 For: 'for';
 Case: 'case' Whitespace+;
 Switch: 'switch';

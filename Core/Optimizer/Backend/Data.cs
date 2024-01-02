@@ -29,7 +29,7 @@ public partial class ScratchIRBackendVisitor
         return block;
     }
 
-    public override object VisitLoadTopLevelStatement(ScratchIRParser.LoadTopLevelStatementContext context)
+    public override object VisitLoadCommand(ScratchIRParser.LoadCommandContext context)
     {
         var name = context.Identifier().GetText();
         Log.Verbose("[Load] Creating a variable named {Name}", name);

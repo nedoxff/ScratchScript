@@ -15,7 +15,8 @@ public class ScratchType
         
         { ScratchTypeKind.Unknown, "unknown" },
         { ScratchTypeKind.Type, "type" },
-        { ScratchTypeKind.Variable , "var" }
+        { ScratchTypeKind.Variable , "var" },
+        { ScratchTypeKind.Identifier , "identifier" }
     };
     
     public static readonly ScratchType Unknown = new(ScratchTypeKind.Unknown);
@@ -26,6 +27,7 @@ public class ScratchType
     // Custom types for the compiler
     public static readonly ScratchType Any = new(ScratchTypeKind.Any);
     public static readonly ScratchType Type = new(ScratchTypeKind.Type);
+    public static readonly ScratchType Identifier = new(ScratchTypeKind.Identifier);
 
     public static ScratchType List(ScratchType innerType)
     {
@@ -79,7 +81,8 @@ public enum ScratchTypeKind
     Boolean = 15,
     // These should NEVER we encoded to scratch blocks, they're only used in the compiler
     Any,
-    Type
+    Type,
+    Identifier
 }
 
 public class TypeHelper

@@ -46,7 +46,7 @@ public partial class ScratchScriptVisitor
         }
 
         return new(
-            $"set var:{Scope.GetVariable(name).Id} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{Scope.GetVariable(name).Id}")} {expression.Format(rawColor: false)}\n{GetCleanupCode(stackCapture)}");
+            $"{expression?.Before}\nset var:{Scope.GetVariable(name).Id} {opString} {(string.IsNullOrEmpty(opString) ? "" : $"var:{Scope.GetVariable(name).Id}")} {expression.Format(rawColor: false)}\n{expression?.After}\n{GetCleanupCode(stackCapture)}");
     }
 
     private TypedValue? HandleProcedureArgumentAssignment(ScratchScriptParser.AssignmentStatementContext context)
@@ -74,7 +74,7 @@ public partial class ScratchScriptVisitor
                 .Format();
 
         var ir =
-            $"raw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{stackIndex} i:ITEM:{newItem}\n{GetCleanupCode(stackCapture)}";
+            $"{expression?.Before}\nraw data_replaceitemoflist f:LIST:\"{StackName}\" i:INDEX:{stackIndex} i:ITEM:{newItem}\n{expression?.After}\n{GetCleanupCode(stackCapture)}";
         return new(ir);
     }
 
@@ -88,15 +88,11 @@ public partial class ScratchScriptVisitor
 
         if (Scope.IdentifierUsed(name))
             return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n");
-
-        /*if (expression.Value.Type is ScratchType.Color or ScratchType.Variable or ScratchType.Unknown)
-        {
-            //TODO: ERROR
-        }*/
+        
+        if (AssertNotNull(context, expression, context.Identifier().Symbol)) return null;
 
         var variable = new ScratchVariable(name, expression.Value.Type);
         Scope.Variables.Add(variable);
-        LoadSection += $"load:{GetIRType(expression.Value.Type)} {variable.Id}\n";
 
         if (expression.Value.Type.Kind == ScratchTypeKind.List)
         {
@@ -105,7 +101,11 @@ public partial class ScratchScriptVisitor
             return push;
         }
 
-        return new($"set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}\n{GetCleanupCode(stackCapture)}");
+        return new(@$"load:{GetIRType(expression.Value.Type)} {variable.Id}
+{expression?.Before}
+set var:{Scope.GetVariable(name).Id} {expression.Format(rawColor: false)}
+{expression?.After}
+{GetCleanupCode(stackCapture)}");
     }
 
     private string GetIRType(ScratchType type)
@@ -139,15 +139,7 @@ public partial class ScratchScriptVisitor
     {
         var global = GlobalScope;
         global.Content.Insert(0, "flag UNICODE");
-
-        if (StdLoader.Functions.TryGetValue("std/string/unicode", out var functions))
-        {
-            _imports.Add("std/string/unicode");
-            Functions.AddRange(functions);
-            ProceduresSection += functions.Select(x => x.Code)
-                .Aggregate("", (current, next) => current + "\n" + next);
-        }
-
+        ImportInternal("std/unicode");
         Log.Information("Unicode (enhanced string handling) mode enabled");
     }
 }

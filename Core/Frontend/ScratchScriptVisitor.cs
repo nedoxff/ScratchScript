@@ -398,6 +398,12 @@ public interface IScratchScriptVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDefaultCase([NotNull] ScratchScriptParser.DefaultCaseContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="ScratchScriptParser.importAll"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitImportAll([NotNull] ScratchScriptParser.ImportAllContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="ScratchScriptParser.constant"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

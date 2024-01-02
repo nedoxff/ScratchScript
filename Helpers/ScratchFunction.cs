@@ -17,6 +17,6 @@ public class NativeScratchFunction : ScratchFunction
 public class DefinedScratchFunction : ScratchFunction
 {
     public string Code { get; set; }
-    public bool Imported { get; set; }
+    public List<string> Dependencies = new();
     public Dictionary<string, object> Attributes = new();
 }

@@ -70,7 +70,7 @@ public partial class ScratchScriptVisitor
 
     public override TypedValue? VisitAttributeStatement(ScratchScriptParser.AttributeStatementContext context)
     {
-        var shouldWarn = _imports.Count != 0 || Namespace != "global" || Procedures.Count != 0;
+        var shouldWarn = Imports.Count > 1 ||  Namespace != "global" || Procedures.Count != 0;
         if (shouldWarn)
             DiagnosticReporter.Warning(ScratchScriptWarning.TopLevelAttributeNotAtTop, context, context);
 

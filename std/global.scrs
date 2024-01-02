@@ -1,9 +1,4 @@
-﻿import "scratch/operators";
-import "scratch/looks";
-import "scratch/control";
-import "scratch/sensing";
-
-@__DisableTypeCheck @warp function __Ternary(condition: boolean, trueValue: any, falseValue: any) {
+﻿@__DisableTypeCheck @warp function __Ternary(condition: boolean, trueValue: any, falseValue: any) {
     if(condition) {
         return trueValue;
     }

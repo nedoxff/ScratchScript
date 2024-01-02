@@ -1,5 +1,4 @@
 ﻿using System.Globalization;
-using System.Text.RegularExpressions;
 using ScratchScript.Core.Diagnostics;
 using ScratchScript.Core.Frontend.Information;
 using ScratchScript.Core.Reflection;
@@ -15,18 +14,13 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     private string _output = "";
     public string ProceduresSection = "";
-    public string LoadSection = "";
+    public string ImportedProceduresSection = "";
 
-    public string Output => $"{LoadSection}\n{ProceduresSection}\n{_output}".RemoveEmptyLines();
+    public string Output => $"{ImportedProceduresSection}\n{ProceduresSection}\n{_output}".RemoveEmptyLines();
     public string Namespace = "global";
     public bool Success = true;
     public string InputFile { get; }
-
-    public List<DefinedScratchFunction> DefinedFunctions =>
-        Functions.Where(x => x is DefinedScratchFunction { Imported: false }).Select(x => x as DefinedScratchFunction)
-            .ToList();
-
-    private readonly List<string> _imports = new();
+    
     private readonly ScratchScriptParser _parser;
     public ScopeInfo Scope { get; set; }
     public int CurrentStackLength => Scope.PendingItemsCount;
@@ -56,13 +50,19 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
     public ScratchScriptVisitor(ScratchScriptParser parser, string file)
     {
         _parser = parser;
-        Instance = this;
         InputFile = file;
-        Scope = new("", "");
+        Scope = new("", ""); // global scope
+        
+        Functions.AddRange(ReflectionBlockLoader.Functions.Values.SelectMany(f => f)); // imports all native scratch blocks
+        if (!InputFile.EndsWith("std/global.scrs") && !Imports.ContainsKey("std/global"))
+            ImportInternal("std/global");
+        
         var list = new ScratchVariable("__Unicode", new ScratchType(ScratchTypeKind.List, ScratchType.String), false, "__Unicode");
         var symbols = new ScratchVariable("__Symbols", new ScratchType(ScratchTypeKind.String), false, "__Symbols");
         Scope.Variables.Add(list);
         Scope.Variables.Add(symbols);
+        
+        Instance = this;
     }
 
     public override TypedValue? VisitTopLevelStatement(ScratchScriptParser.TopLevelStatementContext context)
@@ -118,15 +118,6 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     public override TypedValue? VisitProgram(ScratchScriptParser.ProgramContext context)
     {
-        // Add all global functions from the STD (if they're not used they can be optimised later)
-        if (StdLoader.Functions.TryGetValue("global", out var functions))
-        {
-            Functions.AddRange(functions);
-            ProceduresSection += functions.Select(x => x.Code).Aggregate("", (current, next) => current + "\n" + next);
-        }
-
-        //TODO: InitProcedure.Code += $"popall {FunctionStackName}\npopall {StackName}";
-
         foreach (var statement in context.topLevelStatement())
         {
             var result = Visit(statement);
@@ -214,6 +205,9 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
 
     private TypedValue? VisitIdentifierInternal(string identifier)
     {
+        if (FunctionNamespaces.ContainsKey(identifier))
+            return new(identifier, ScratchType.Identifier);
+        
         if (!Scope.IdentifierUsed(identifier))
             return null;
 
@@ -234,6 +228,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         var second = Visit(context.expression(2));
         if (AssertType(context, first, second, context.expression(2))) return null;
 
+        RequireFunction("__Ternary", context);
         return Scope.CallFunction("__Ternary",
             new object[] { condition, first, second }, TypeHelper.GetType(first));
     }
@@ -259,7 +254,6 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         }
 
         scope.ParentScope = Scope;
-        //TODO: scope.ProcedureIndex = Scope.ProcedureIndex;
         scope.Variables.AddRange(Scope.Variables);
         Scope = scope;
 
@@ -267,13 +261,7 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         {
             var result = Visit(line);
             if (result is not { Value: string resultString }) continue;
-            if (line.returnStatement() != null ||
-                line.breakStatement() != null) // No code should be after the return statement
-                scope.Content.Add(Scope.Prepend + resultString);
-            else
-                scope.Content.Add(Scope.Prepend + resultString + Scope.Append);
-            Scope.Append = "";
-            Scope.Prepend = "";
+            scope.Content.Add(resultString);
         }
 
         Scope = scope.ParentScope;
@@ -293,66 +281,12 @@ public partial class ScratchScriptVisitor : ScratchScriptBaseVisitor<TypedValue?
         return null;
     }
 
-    public override TypedValue? VisitImportStatement(ScratchScriptParser.ImportStatementContext context)
+    //TODO: no try/catch (for now) because its complicated
+    public override TypedValue? VisitThrowStatement(ScratchScriptParser.ThrowStatementContext context)
     {
-        var name = context.String().GetText()[1..^1];
-        var names = context.Identifier().Select(x => x.GetText()).ToList();
-        //TODO: also add searching in other files
-        if (ReflectionBlockLoader.Functions.TryGetValue(name, out var nativeFunctions))
-        {
-            _imports.Add(name);
-            if (names.Count == 0)
-                Functions.AddRange(nativeFunctions);
-            else
-            {
-                foreach (var func in names)
-                {
-                    if (nativeFunctions.All(x => x.BlockInformation.Name != func))
-                    {
-                        //TODO: ERROR
-                    }
-                    else Functions.Add(nativeFunctions.First(x => x.BlockInformation.Name == func));
-                }
-            }
-
-            return null;
-        }
-
-        if (StdLoader.Functions.TryGetValue(name, out var definedFunctions))
-        {
-            _imports.Add(name);
-            if (names.Count == 0)
-            {
-                Functions.AddRange(definedFunctions);
-                ProceduresSection += definedFunctions.Select(x => x.Code)
-                    .Aggregate("", (current, next) => current + "\n" + next);
-            }
-            else
-            {
-                foreach (var functionName in names)
-                {
-                    if (definedFunctions.All(x => x.BlockInformation.Name != functionName))
-                    {
-                        //TODO: ERROR
-                    }
-                    else
-                    {
-                        var func = definedFunctions.First(x => x.BlockInformation.Name == functionName);
-                        Functions.Add(func);
-                        ProceduresSection += func.Code + "\n";
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        DiagnosticReporter.Error(ScratchScriptError.UnknownNamespace, context, context.String().Symbol, name);
-        return null;
+        RequireFunction("__Throw", context);
+        return Scope.CallFunction("__Throw", new object[] { context.String().GetText() }, ScratchType.Unknown);
     }
-
-    // no try/catch (for now) because its complicated
-    public override TypedValue? VisitThrowStatement(ScratchScriptParser.ThrowStatementContext context) => Scope.CallFunction("__Throw", new object[] { context.String().GetText() }, ScratchType.Unknown);
 
     public ScratchType CreateType(ScratchScriptParser.TypeContext context)
     {

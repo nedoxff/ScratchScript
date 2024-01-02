@@ -19,7 +19,6 @@ public class CompileCommand : AsyncCommand<CompileCommand.CompileCommandSettings
         try
         {
             ReflectionBlockLoader.Load();
-            StdLoader.Load(Path.Join(Environment.CurrentDirectory, "std"));
 
             var output = Path.Join(Path.GetTempPath(), $"temp_{Guid.NewGuid():N}.sb3");
             var manager = new ProjectManager(settings.File, settings.IrPath, output);

@@ -10,21 +10,21 @@ public partial class ScratchScriptVisitor
     {
         var expression = Visit(context.expression());
         if (AssertNotNull(context, expression, context.expression())) return null;
-        if (AssertType(context, expression.Value.Type, ScratchType.Boolean, context.expression())) return null;
+        if (AssertType(context, expression!.Value.Type, ScratchType.Boolean, context.expression())) return null;
 
         var result = $"!{expression.Format()}";
-        return new(result, ScratchType.Boolean);
+        return HydrateValue(new(result, ScratchType.Boolean), expression);
     }
 
     public override TypedValue? VisitUnaryAddExpression(ScratchScriptParser.UnaryAddExpressionContext context)
     {
         var expression = Visit(context.expression());
         if (AssertNotNull(context, expression, context.expression())) return null;
-        if (AssertType(context, expression.Value.Type, ScratchType.Number, context.expression())) return null;
+        if (AssertType(context, expression!.Value.Type, ScratchType.Number, context.expression())) return null;
 
         var op = context.addOperators().GetText();
         var multiplier = op == "-" ? -1 : 1;
         var result = $"* {multiplier} {expression}";
-        return new(result, ScratchType.Number);
+        return HydrateValue(new(result, ScratchType.Number), expression);
     }
 }

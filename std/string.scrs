@@ -1,5 +1,4 @@
-﻿import "scratch/operators";
-namespace "std/string";
+﻿namespace "std/string";
 
 @extension(string) @warp function replace(input: string, replace: string, replacement: string) {
     let output = "";

@@ -25,7 +25,6 @@ public static class Stack
 
     public static string PopFunctionArguments()
     {
-        //$"repeat {ScratchScriptVisitor.Instance.Procedures.Last().Arguments.Count}\n{ScratchScriptVisitor.PopStackCommand}\nend";
         return @$"set var:__CleanupCounter :si:
 repeat {ScratchScriptVisitor.Instance.Procedures.Last().Arguments.Count}
 popat __Stack var:__CleanupCounter

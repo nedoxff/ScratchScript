@@ -22,8 +22,20 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Core\Frontend\Builders\" />
       <Folder Include="Core\Optimizer\MiddleEnd" />
+      <Folder Include="Writerside\topics\" />
     </ItemGroup>
 
+    <ItemGroup>
+        <None Update="std\**\*.*">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Remove="Writerside\c.list" />
+        <None Remove="Writerside\redirection-rules.xml" />
+        <None Remove="Writerside\scrs.tree" />
+        <None Remove="Writerside\v.list" />
+        <None Remove="Writerside\writerside.cfg" />
+        <None Remove="Writerside\topics\Welcome.md" />
+    </ItemGroup>
+    
 </Project>

@@ -46,9 +46,9 @@ public partial class ScratchScriptParser : Parser {
 		LesserOrEqual=41, Equal=42, NotEqual=43, AdditionAsignment=44, SubtractionAssignment=45, 
 		MultiplicationAssignment=46, DivisionAssignment=47, ModulusAssignment=48, 
 		PowerAssignment=49, If=50, Else=51, True=52, False=53, Break=54, Default=55, 
-		Debugger=56, For=57, Case=58, Switch=59, While=60, VariableDeclare=61, 
-		Import=62, ProcedureDeclare=63, Return=64, Throw=65, Repeat=66, Event=67, 
-		From=68, Namespace=69, Type=70, Number=71, Identifier=72, String=73, Color=74;
+		Debugger=56, As=57, For=58, Case=59, Switch=60, While=61, VariableDeclare=62, 
+		Import=63, ProcedureDeclare=64, Return=65, Throw=66, Repeat=67, Event=68, 
+		From=69, Namespace=70, Type=71, Number=72, Identifier=73, String=74, Color=75;
 	public const int
 		RULE_program = 0, RULE_topLevelStatement = 1, RULE_line = 2, RULE_statement = 3, 
 		RULE_eventStatement = 4, RULE_assignmentStatement = 5, RULE_listAssignmentStatement = 6, 
@@ -63,8 +63,8 @@ public partial class ScratchScriptParser : Parser {
 		RULE_shiftOperators = 29, RULE_leftShift = 30, RULE_rightShift = 31, RULE_addOperators = 32, 
 		RULE_compareOperators = 33, RULE_booleanOperators = 34, RULE_assignmentOperators = 35, 
 		RULE_postIncrementOperators = 36, RULE_case = 37, RULE_block = 38, RULE_switchBlock = 39, 
-		RULE_defaultCase = 40, RULE_constant = 41, RULE_comment = 42, RULE_boolean = 43, 
-		RULE_type = 44;
+		RULE_defaultCase = 40, RULE_importAll = 41, RULE_constant = 42, RULE_comment = 43, 
+		RULE_boolean = 44, RULE_type = 45;
 	public static readonly string[] ruleNames = {
 		"program", "topLevelStatement", "line", "statement", "eventStatement", 
 		"assignmentStatement", "listAssignmentStatement", "variableDeclarationStatement", 
@@ -75,8 +75,8 @@ public partial class ScratchScriptParser : Parser {
 		"typedIdentifier", "procedureArgument", "debuggerStatement", "expression", 
 		"multiplyOperators", "shiftOperators", "leftShift", "rightShift", "addOperators", 
 		"compareOperators", "booleanOperators", "assignmentOperators", "postIncrementOperators", 
-		"case", "block", "switchBlock", "defaultCase", "constant", "comment", 
-		"boolean", "type"
+		"case", "block", "switchBlock", "defaultCase", "importAll", "constant", 
+		"comment", "boolean", "type"
 	};
 
 	private static readonly string[] _LiteralNames = {
@@ -86,8 +86,8 @@ public partial class ScratchScriptParser : Parser {
 		"'%'", "'&&'", "'||'", "'&'", "'|'", "'^'", "'++'", "'--'", "'>'", "'<'", 
 		"'>='", "'<='", "'=='", "'!='", "'+='", "'-='", "'*='", "'/='", "'%='", 
 		"'**='", "'if'", "'else'", "'true'", "'false'", "'break'", "'default'", 
-		"'debugger'", "'for'", null, "'switch'", "'while'", null, null, null, 
-		null, null, "'repeat'"
+		"'debugger'", null, "'for'", null, "'switch'", "'while'", null, null, 
+		null, null, null, "'repeat'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, null, "Whitespace", "NewLine", "Semicolon", "LeftParen", "RightParen", 
@@ -99,9 +99,9 @@ public partial class ScratchScriptParser : Parser {
 		"PostDecrement", "Greater", "Lesser", "GreaterOrEqual", "LesserOrEqual", 
 		"Equal", "NotEqual", "AdditionAsignment", "SubtractionAssignment", "MultiplicationAssignment", 
 		"DivisionAssignment", "ModulusAssignment", "PowerAssignment", "If", "Else", 
-		"True", "False", "Break", "Default", "Debugger", "For", "Case", "Switch", 
-		"While", "VariableDeclare", "Import", "ProcedureDeclare", "Return", "Throw", 
-		"Repeat", "Event", "From", "Namespace", "Type", "Number", "Identifier", 
+		"True", "False", "Break", "Default", "Debugger", "As", "For", "Case", 
+		"Switch", "While", "VariableDeclare", "Import", "ProcedureDeclare", "Return", 
+		"Throw", "Repeat", "Event", "From", "Namespace", "Type", "Number", "Identifier", 
 		"String", "Color"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
@@ -175,21 +175,21 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 93;
+			State = 95;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while (((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & 89610197663745L) != 0)) {
+			while (((((_la - 23)) & ~0x3f) == 0 && ((1L << (_la - 23)) & 179220395327489L) != 0)) {
 				{
 				{
-				State = 90;
+				State = 92;
 				topLevelStatement();
 				}
 				}
-				State = 95;
+				State = 97;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 96;
+			State = 98;
 			Match(Eof);
 			}
 		}
@@ -248,41 +248,41 @@ public partial class ScratchScriptParser : Parser {
 		TopLevelStatementContext _localctx = new TopLevelStatementContext(Context, State);
 		EnterRule(_localctx, 2, RULE_topLevelStatement);
 		try {
-			State = 103;
+			State = 105;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,1,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 98;
+				State = 100;
 				procedureDeclarationStatement();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 99;
+				State = 101;
 				attributeStatement();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 100;
+				State = 102;
 				eventStatement();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 101;
+				State = 103;
 				importStatement();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 102;
+				State = 104;
 				namespaceStatement();
 				}
 				break;
@@ -364,7 +364,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 118;
+			State = 120;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case T__0:
@@ -383,70 +383,70 @@ public partial class ScratchScriptParser : Parser {
 			case Color:
 				{
 				{
-				State = 105;
+				State = 107;
 				statement();
-				State = 106;
+				State = 108;
 				Match(Semicolon);
 				}
 				}
 				break;
 			case If:
 				{
-				State = 108;
+				State = 110;
 				ifStatement();
 				}
 				break;
 			case While:
 				{
-				State = 109;
+				State = 111;
 				whileStatement();
 				}
 				break;
 			case Repeat:
 				{
-				State = 110;
+				State = 112;
 				repeatStatement();
 				}
 				break;
 			case For:
 				{
-				State = 111;
+				State = 113;
 				forStatement();
 				}
 				break;
 			case Switch:
 				{
-				State = 112;
+				State = 114;
 				switchStatement();
 				}
 				break;
 			case Return:
 				{
-				State = 113;
+				State = 115;
 				returnStatement();
 				}
 				break;
 			case Break:
 				{
-				State = 114;
+				State = 116;
 				breakStatement();
 				}
 				break;
 			case Debugger:
 				{
-				State = 115;
+				State = 117;
 				debuggerStatement();
 				}
 				break;
 			case Throw:
 				{
-				State = 116;
+				State = 118;
 				throwStatement();
 				}
 				break;
 			case Comment:
 				{
-				State = 117;
+				State = 119;
 				comment();
 				}
 				break;
@@ -513,48 +513,48 @@ public partial class ScratchScriptParser : Parser {
 		StatementContext _localctx = new StatementContext(Context, State);
 		EnterRule(_localctx, 6, RULE_statement);
 		try {
-			State = 126;
+			State = 128;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,3,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 120;
+				State = 122;
 				assignmentStatement();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 121;
+				State = 123;
 				listAssignmentStatement();
 				}
 				break;
 			case 3:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 122;
+				State = 124;
 				procedureCallStatement();
 				}
 				break;
 			case 4:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 123;
+				State = 125;
 				memberProcedureCallStatement();
 				}
 				break;
 			case 5:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 124;
+				State = 126;
 				variableDeclarationStatement();
 				}
 				break;
 			case 6:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 125;
+				State = 127;
 				postIncrementStatement();
 				}
 				break;
@@ -621,45 +621,45 @@ public partial class ScratchScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 128;
+			State = 130;
 			Match(Event);
-			State = 129;
+			State = 131;
 			Match(Identifier);
-			State = 141;
+			State = 143;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LeftParen) {
 				{
-				State = 130;
+				State = 132;
 				Match(LeftParen);
 				{
-				State = 131;
+				State = 133;
 				expression(0);
-				State = 136;
+				State = 138;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
 				while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1+1 ) {
 						{
 						{
-						State = 132;
+						State = 134;
 						Match(Comma);
-						State = 133;
+						State = 135;
 						expression(0);
 						}
 						} 
 					}
-					State = 138;
+					State = 140;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,4,Context);
 				}
 				}
-				State = 139;
+				State = 141;
 				Match(RightParen);
 				}
 			}
 
-			State = 143;
+			State = 145;
 			block();
 			}
 		}
@@ -712,11 +712,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 145;
-			Match(Identifier);
-			State = 146;
-			assignmentOperators();
 			State = 147;
+			Match(Identifier);
+			State = 148;
+			assignmentOperators();
+			State = 149;
 			expression(0);
 			}
 		}
@@ -768,13 +768,13 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 149;
-			Match(Identifier);
-			State = 150;
-			Match(LeftBracket);
 			State = 151;
-			expression(0);
+			Match(Identifier);
 			State = 152;
+			Match(LeftBracket);
+			State = 153;
+			expression(0);
+			State = 154;
 			Match(RightBracket);
 			}
 		}
@@ -826,13 +826,13 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 154;
-			Match(VariableDeclare);
-			State = 155;
-			Match(Identifier);
 			State = 156;
-			Match(Assignment);
+			Match(VariableDeclare);
 			State = 157;
+			Match(Identifier);
+			State = 158;
+			Match(Assignment);
+			State = 159;
 			expression(0);
 			}
 		}
@@ -885,11 +885,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 159;
-			expression(0);
-			State = 160;
-			Match(Dot);
 			State = 161;
+			expression(0);
+			State = 162;
+			Match(Dot);
+			State = 163;
 			procedureCallStatement();
 			}
 		}
@@ -950,39 +950,39 @@ public partial class ScratchScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 163;
+			State = 165;
 			Match(Identifier);
-			State = 164;
+			State = 166;
 			Match(LeftParen);
-			State = 173;
+			State = 175;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510799083446434L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 31L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510799083446434L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 31L) != 0)) {
 				{
-				State = 165;
+				State = 167;
 				procedureArgument();
-				State = 170;
+				State = 172;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,6,Context);
 				while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1+1 ) {
 						{
 						{
-						State = 166;
+						State = 168;
 						Match(Comma);
-						State = 167;
+						State = 169;
 						procedureArgument();
 						}
 						} 
 					}
-					State = 172;
+					State = 174;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,6,Context);
 				}
 				}
 			}
 
-			State = 175;
+			State = 177;
 			Match(RightParen);
 			}
 		}
@@ -1053,59 +1053,59 @@ public partial class ScratchScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 180;
+			State = 182;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
 			while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1+1 ) {
 					{
 					{
-					State = 177;
+					State = 179;
 					attributeStatement();
 					}
 					} 
 				}
-				State = 182;
+				State = 184;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,8,Context);
 			}
-			State = 183;
-			Match(ProcedureDeclare);
-			State = 184;
-			Match(Identifier);
 			State = 185;
+			Match(ProcedureDeclare);
+			State = 186;
+			Match(Identifier);
+			State = 187;
 			Match(LeftParen);
-			State = 194;
+			State = 196;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Identifier) {
 				{
-				State = 186;
+				State = 188;
 				typedIdentifier();
-				State = 191;
+				State = 193;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,9,Context);
 				while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1+1 ) {
 						{
 						{
-						State = 187;
+						State = 189;
 						Match(Comma);
-						State = 188;
+						State = 190;
 						typedIdentifier();
 						}
 						} 
 					}
-					State = 193;
+					State = 195;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,9,Context);
 				}
 				}
 			}
 
-			State = 196;
+			State = 198;
 			Match(RightParen);
-			State = 197;
+			State = 199;
 			block();
 			}
 		}
@@ -1165,24 +1165,24 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 199;
-			Match(If);
-			State = 200;
-			Match(LeftParen);
 			State = 201;
-			expression(0);
+			Match(If);
 			State = 202;
-			Match(RightParen);
+			Match(LeftParen);
 			State = 203;
+			expression(0);
+			State = 204;
+			Match(RightParen);
+			State = 205;
 			block();
-			State = 206;
+			State = 208;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Else) {
 				{
-				State = 204;
+				State = 206;
 				Match(Else);
-				State = 205;
+				State = 207;
 				elseIfStatement();
 				}
 			}
@@ -1240,15 +1240,15 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 208;
-			Match(While);
-			State = 209;
-			Match(LeftParen);
 			State = 210;
-			expression(0);
+			Match(While);
 			State = 211;
-			Match(RightParen);
+			Match(LeftParen);
 			State = 212;
+			expression(0);
+			State = 213;
+			Match(RightParen);
+			State = 214;
 			block();
 			}
 		}
@@ -1314,47 +1314,47 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 214;
+			State = 216;
 			Match(For);
-			State = 215;
-			Match(LeftParen);
 			State = 217;
+			Match(LeftParen);
+			State = 219;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2319353808297140386L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 31L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4625196817510834338L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 31L) != 0)) {
 				{
-				State = 216;
+				State = 218;
 				statement();
 				}
 			}
 
-			State = 219;
-			Match(Semicolon);
 			State = 221;
+			Match(Semicolon);
+			State = 223;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510799083446434L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 31L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510799083446434L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 31L) != 0)) {
 				{
-				State = 220;
+				State = 222;
 				expression(0);
 				}
 			}
 
-			State = 223;
-			Match(Semicolon);
 			State = 225;
+			Match(Semicolon);
+			State = 227;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2319353808297140386L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 31L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4625196817510834338L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 31L) != 0)) {
 				{
-				State = 224;
+				State = 226;
 				statement();
 				}
 			}
 
-			State = 227;
+			State = 229;
 			Match(RightParen);
-			State = 228;
+			State = 230;
 			block();
 			}
 		}
@@ -1404,20 +1404,20 @@ public partial class ScratchScriptParser : Parser {
 		ElseIfStatementContext _localctx = new ElseIfStatementContext(Context, State);
 		EnterRule(_localctx, 28, RULE_elseIfStatement);
 		try {
-			State = 232;
+			State = 234;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case LeftBrace:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 230;
+				State = 232;
 				block();
 				}
 				break;
 			case If:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 231;
+				State = 233;
 				ifStatement();
 				}
 				break;
@@ -1471,9 +1471,9 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 234;
+			State = 236;
 			Match(Identifier);
-			State = 235;
+			State = 237;
 			postIncrementOperators();
 			}
 		}
@@ -1490,15 +1490,18 @@ public partial class ScratchScriptParser : Parser {
 
 	public partial class ImportStatementContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Import() { return GetToken(ScratchScriptParser.Import, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode From() { return GetToken(ScratchScriptParser.From, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode String() { return GetToken(ScratchScriptParser.String, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Semicolon() { return GetToken(ScratchScriptParser.Semicolon, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ImportAllContext importAll() {
+			return GetRuleContext<ImportAllContext>(0);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LeftBrace() { return GetToken(ScratchScriptParser.LeftBrace, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] Identifier() { return GetTokens(ScratchScriptParser.Identifier); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Identifier(int i) {
 			return GetToken(ScratchScriptParser.Identifier, i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RightBrace() { return GetToken(ScratchScriptParser.RightBrace, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode From() { return GetToken(ScratchScriptParser.From, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] Comma() { return GetTokens(ScratchScriptParser.Comma); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Comma(int i) {
 			return GetToken(ScratchScriptParser.Comma, i);
@@ -1530,50 +1533,59 @@ public partial class ScratchScriptParser : Parser {
 	public ImportStatementContext importStatement() {
 		ImportStatementContext _localctx = new ImportStatementContext(Context, State);
 		EnterRule(_localctx, 32, RULE_importStatement);
-		int _la;
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 237;
+			State = 239;
 			Match(Import);
-			State = 249;
+			State = 251;
 			ErrorHandler.Sync(this);
-			_la = TokenStream.LA(1);
-			if (_la==LeftBrace) {
+			switch (TokenStream.LA(1)) {
+			case LeftBrace:
 				{
-				State = 238;
+				{
+				State = 240;
 				Match(LeftBrace);
-				State = 239;
+				State = 241;
 				Match(Identifier);
-				State = 244;
+				State = 246;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
 				while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 					if ( _alt==1+1 ) {
 						{
 						{
-						State = 240;
+						State = 242;
 						Match(Comma);
-						State = 241;
+						State = 243;
 						Match(Identifier);
 						}
 						} 
 					}
-					State = 246;
+					State = 248;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,16,Context);
 				}
-				State = 247;
+				State = 249;
 				Match(RightBrace);
-				State = 248;
-				Match(From);
 				}
+				}
+				break;
+			case Multiply:
+				{
+				State = 250;
+				importAll();
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
 			}
-
-			State = 251;
+			State = 253;
+			Match(From);
+			State = 254;
 			Match(String);
-			State = 252;
+			State = 255;
 			Match(Semicolon);
 			}
 		}
@@ -1635,46 +1647,46 @@ public partial class ScratchScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 254;
+			State = 257;
 			Match(At);
-			State = 255;
+			State = 258;
 			Match(Identifier);
-			State = 268;
+			State = 271;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==LeftParen) {
 				{
-				State = 256;
+				State = 259;
 				Match(LeftParen);
-				State = 265;
+				State = 268;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510798882111490L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 27L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510798882111490L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 27L) != 0)) {
 					{
-					State = 257;
+					State = 260;
 					constant();
-					State = 262;
+					State = 265;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,18,Context);
 					while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 						if ( _alt==1+1 ) {
 							{
 							{
-							State = 258;
+							State = 261;
 							Match(Comma);
-							State = 259;
+							State = 262;
 							constant();
 							}
 							} 
 						}
-						State = 264;
+						State = 267;
 						ErrorHandler.Sync(this);
 						_alt = Interpreter.AdaptivePredict(TokenStream,18,Context);
 					}
 					}
 				}
 
-				State = 267;
+				State = 270;
 				Match(RightParen);
 				}
 			}
@@ -1728,11 +1740,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 270;
+			State = 273;
 			Match(Return);
-			State = 271;
+			State = 274;
 			expression(0);
-			State = 272;
+			State = 275;
 			Match(Semicolon);
 			}
 		}
@@ -1787,15 +1799,15 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 274;
-			Match(Repeat);
-			State = 275;
-			Match(LeftParen);
-			State = 276;
-			expression(0);
 			State = 277;
-			Match(RightParen);
+			Match(Repeat);
 			State = 278;
+			Match(LeftParen);
+			State = 279;
+			expression(0);
+			State = 280;
+			Match(RightParen);
+			State = 281;
 			block();
 			}
 		}
@@ -1844,11 +1856,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 280;
+			State = 283;
 			Match(Throw);
-			State = 281;
+			State = 284;
 			Match(String);
-			State = 282;
+			State = 285;
 			Match(Semicolon);
 			}
 		}
@@ -1896,9 +1908,9 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 284;
+			State = 287;
 			Match(Break);
-			State = 285;
+			State = 288;
 			Match(Semicolon);
 			}
 		}
@@ -1947,11 +1959,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 287;
+			State = 290;
 			Match(Namespace);
-			State = 288;
+			State = 291;
 			Match(String);
-			State = 289;
+			State = 292;
 			Match(Semicolon);
 			}
 		}
@@ -2006,15 +2018,15 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 291;
-			Match(Switch);
-			State = 292;
-			Match(LeftParen);
-			State = 293;
-			expression(0);
 			State = 294;
-			Match(RightParen);
+			Match(Switch);
 			State = 295;
+			Match(LeftParen);
+			State = 296;
+			expression(0);
+			State = 297;
+			Match(RightParen);
+			State = 298;
 			switchBlock();
 			}
 		}
@@ -2065,11 +2077,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 297;
+			State = 300;
 			Match(Identifier);
-			State = 298;
+			State = 301;
 			Match(Colon);
-			State = 299;
+			State = 302;
 			type();
 			}
 		}
@@ -2120,19 +2132,19 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 303;
+			State = 306;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,21,Context) ) {
 			case 1:
 				{
-				State = 301;
+				State = 304;
 				Match(Identifier);
-				State = 302;
+				State = 305;
 				Match(Colon);
 				}
 				break;
 			}
-			State = 305;
+			State = 308;
 			expression(0);
 			}
 		}
@@ -2180,9 +2192,9 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 307;
+			State = 310;
 			Match(Debugger);
-			State = 308;
+			State = 311;
 			Match(Semicolon);
 			}
 		}
@@ -2692,7 +2704,7 @@ public partial class ScratchScriptParser : Parser {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 335;
+			State = 338;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,24,Context) ) {
 			case 1:
@@ -2701,7 +2713,7 @@ public partial class ScratchScriptParser : Parser {
 				Context = _localctx;
 				_prevctx = _localctx;
 
-				State = 311;
+				State = 314;
 				constant();
 				}
 				break;
@@ -2710,7 +2722,7 @@ public partial class ScratchScriptParser : Parser {
 				_localctx = new IdentifierExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 312;
+				State = 315;
 				Match(Identifier);
 				}
 				break;
@@ -2719,7 +2731,7 @@ public partial class ScratchScriptParser : Parser {
 				_localctx = new ProcedureCallExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 313;
+				State = 316;
 				procedureCallStatement();
 				}
 				break;
@@ -2728,37 +2740,37 @@ public partial class ScratchScriptParser : Parser {
 				_localctx = new ArrayInitializeExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 314;
+				State = 317;
 				Match(LeftBracket);
-				State = 323;
+				State = 326;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510799083446434L) != 0) || ((((_la - 70)) & ~0x3f) == 0 && ((1L << (_la - 70)) & 31L) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 13510799083446434L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 31L) != 0)) {
 					{
-					State = 315;
+					State = 318;
 					expression(0);
-					State = 320;
+					State = 323;
 					ErrorHandler.Sync(this);
 					_alt = Interpreter.AdaptivePredict(TokenStream,22,Context);
 					while ( _alt!=1 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
 						if ( _alt==1+1 ) {
 							{
 							{
-							State = 316;
+							State = 319;
 							Match(Comma);
-							State = 317;
+							State = 320;
 							expression(0);
 							}
 							} 
 						}
-						State = 322;
+						State = 325;
 						ErrorHandler.Sync(this);
 						_alt = Interpreter.AdaptivePredict(TokenStream,22,Context);
 					}
 					}
 				}
 
-				State = 325;
+				State = 328;
 				Match(RightBracket);
 				}
 				break;
@@ -2767,11 +2779,11 @@ public partial class ScratchScriptParser : Parser {
 				_localctx = new ParenthesizedExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 326;
+				State = 329;
 				Match(LeftParen);
-				State = 327;
+				State = 330;
 				expression(0);
-				State = 328;
+				State = 331;
 				Match(RightParen);
 				}
 				break;
@@ -2780,9 +2792,9 @@ public partial class ScratchScriptParser : Parser {
 				_localctx = new NotExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 330;
+				State = 333;
 				Match(Not);
-				State = 331;
+				State = 334;
 				expression(12);
 				}
 				break;
@@ -2791,15 +2803,15 @@ public partial class ScratchScriptParser : Parser {
 				_localctx = new UnaryAddExpressionContext(_localctx);
 				Context = _localctx;
 				_prevctx = _localctx;
-				State = 332;
+				State = 335;
 				addOperators();
-				State = 333;
+				State = 336;
 				expression(10);
 				}
 				break;
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 382;
+			State = 385;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,26,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -2808,18 +2820,18 @@ public partial class ScratchScriptParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 380;
+					State = 383;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,25,Context) ) {
 					case 1:
 						{
 						_localctx = new BinaryBitwiseOrExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 337;
+						State = 340;
 						if (!(Precpred(Context, 9))) throw new FailedPredicateException(this, "Precpred(Context, 9)");
-						State = 338;
+						State = 341;
 						Match(BitwiseOr);
-						State = 339;
+						State = 342;
 						expression(10);
 						}
 						break;
@@ -2827,11 +2839,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryBitwiseXorExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 340;
+						State = 343;
 						if (!(Precpred(Context, 8))) throw new FailedPredicateException(this, "Precpred(Context, 8)");
-						State = 341;
+						State = 344;
 						Match(BitwiseXor);
-						State = 342;
+						State = 345;
 						expression(9);
 						}
 						break;
@@ -2839,11 +2851,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryBitwiseAndExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 343;
+						State = 346;
 						if (!(Precpred(Context, 7))) throw new FailedPredicateException(this, "Precpred(Context, 7)");
-						State = 344;
+						State = 347;
 						Match(BitwiseAnd);
-						State = 345;
+						State = 348;
 						expression(8);
 						}
 						break;
@@ -2851,11 +2863,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryBitwiseShiftExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 346;
+						State = 349;
 						if (!(Precpred(Context, 6))) throw new FailedPredicateException(this, "Precpred(Context, 6)");
-						State = 347;
+						State = 350;
 						shiftOperators();
-						State = 348;
+						State = 351;
 						expression(7);
 						}
 						break;
@@ -2863,11 +2875,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryMultiplyExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 350;
+						State = 353;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 351;
+						State = 354;
 						multiplyOperators();
-						State = 352;
+						State = 355;
 						expression(6);
 						}
 						break;
@@ -2875,11 +2887,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryAddExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 354;
+						State = 357;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 355;
+						State = 358;
 						addOperators();
-						State = 356;
+						State = 359;
 						expression(5);
 						}
 						break;
@@ -2887,11 +2899,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryCompareExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 358;
+						State = 361;
 						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
-						State = 359;
+						State = 362;
 						compareOperators();
-						State = 360;
+						State = 363;
 						expression(4);
 						}
 						break;
@@ -2899,11 +2911,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new BinaryBooleanExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 362;
+						State = 365;
 						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 363;
+						State = 366;
 						booleanOperators();
-						State = 364;
+						State = 367;
 						expression(3);
 						}
 						break;
@@ -2911,15 +2923,15 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new TernaryExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 366;
-						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
-						State = 367;
-						Match(Ternary);
-						State = 368;
-						expression(0);
 						State = 369;
-						Match(Colon);
+						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
 						State = 370;
+						Match(Ternary);
+						State = 371;
+						expression(0);
+						State = 372;
+						Match(Colon);
+						State = 373;
 						expression(2);
 						}
 						break;
@@ -2927,11 +2939,11 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new MemberProcedureCallExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 372;
+						State = 375;
 						if (!(Precpred(Context, 15))) throw new FailedPredicateException(this, "Precpred(Context, 15)");
-						State = 373;
+						State = 376;
 						Match(Dot);
-						State = 374;
+						State = 377;
 						procedureCallStatement();
 						}
 						break;
@@ -2939,20 +2951,20 @@ public partial class ScratchScriptParser : Parser {
 						{
 						_localctx = new ArrayAccessExpressionContext(new ExpressionContext(_parentctx, _parentState));
 						PushNewRecursionContext(_localctx, _startState, RULE_expression);
-						State = 375;
-						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
-						State = 376;
-						Match(LeftBracket);
-						State = 377;
-						expression(0);
 						State = 378;
+						if (!(Precpred(Context, 11))) throw new FailedPredicateException(this, "Precpred(Context, 11)");
+						State = 379;
+						Match(LeftBracket);
+						State = 380;
+						expression(0);
+						State = 381;
 						Match(RightBracket);
 						}
 						break;
 					}
 					} 
 				}
-				State = 384;
+				State = 387;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,26,Context);
 			}
@@ -3005,7 +3017,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 385;
+			State = 388;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1912602624L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3062,20 +3074,20 @@ public partial class ScratchScriptParser : Parser {
 		ShiftOperatorsContext _localctx = new ShiftOperatorsContext(Context, State);
 		EnterRule(_localctx, 58, RULE_shiftOperators);
 		try {
-			State = 389;
+			State = 392;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Lesser:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 387;
+				State = 390;
 				leftShift();
 				}
 				break;
 			case Greater:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 388;
+				State = 391;
 				rightShift();
 				}
 				break;
@@ -3131,11 +3143,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 391;
+			State = 394;
 			_localctx.first = Match(Lesser);
-			State = 392;
+			State = 395;
 			_localctx.second = Match(Lesser);
-			State = 393;
+			State = 396;
 			if (!((_localctx.first!=null?_localctx.first.TokenIndex:0) + 1 == (_localctx.second!=null?_localctx.second.TokenIndex:0))) throw new FailedPredicateException(this, "$first.index + 1 == $second.index");
 			}
 		}
@@ -3187,11 +3199,11 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 395;
+			State = 398;
 			_localctx.first = Match(Greater);
-			State = 396;
+			State = 399;
 			_localctx.second = Match(Greater);
-			State = 397;
+			State = 400;
 			if (!((_localctx.first!=null?_localctx.first.TokenIndex:0) + 1 == (_localctx.second!=null?_localctx.second.TokenIndex:0))) throw new FailedPredicateException(this, "$first.index + 1 == $second.index");
 			}
 		}
@@ -3240,7 +3252,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 399;
+			State = 402;
 			_la = TokenStream.LA(1);
 			if ( !(_la==Plus || _la==Minus) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3300,7 +3312,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 401;
+			State = 404;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 17317308137472L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3356,7 +3368,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 403;
+			State = 406;
 			_la = TokenStream.LA(1);
 			if ( !(_la==And || _la==Or) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3417,7 +3429,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 405;
+			State = 408;
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 1108307720800256L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3473,7 +3485,7 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 407;
+			State = 410;
 			_la = TokenStream.LA(1);
 			if ( !(_la==PostIncrement || _la==PostDecrement) ) {
 			ErrorHandler.RecoverInline(this);
@@ -3535,20 +3547,20 @@ public partial class ScratchScriptParser : Parser {
 		CaseContext _localctx = new CaseContext(Context, State);
 		EnterRule(_localctx, 74, RULE_case);
 		try {
-			State = 415;
+			State = 418;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Case:
 				EnterOuterAlt(_localctx, 1);
 				{
 				{
-				State = 409;
-				Match(Case);
-				State = 410;
-				constant();
-				State = 411;
-				Match(Colon);
 				State = 412;
+				Match(Case);
+				State = 413;
+				constant();
+				State = 414;
+				Match(Colon);
+				State = 415;
 				block();
 				}
 				}
@@ -3556,7 +3568,7 @@ public partial class ScratchScriptParser : Parser {
 			case Default:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 414;
+				State = 417;
 				defaultCase();
 				}
 				break;
@@ -3615,23 +3627,23 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 417;
+			State = 420;
 			Match(LeftBrace);
-			State = 421;
+			State = 424;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4284049145739616418L) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & 1991L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 8463389599939436706L) != 0) || ((((_la - 65)) & ~0x3f) == 0 && ((1L << (_la - 65)) & 1991L) != 0)) {
 				{
 				{
-				State = 418;
+				State = 421;
 				line();
 				}
 				}
-				State = 423;
+				State = 426;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 424;
+			State = 427;
 			Match(RightBrace);
 			}
 		}
@@ -3686,23 +3698,23 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 426;
+			State = 429;
 			Match(LeftBrace);
-			State = 430;
+			State = 433;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Default || _la==Case) {
 				{
 				{
-				State = 427;
+				State = 430;
 				@case();
 				}
 				}
-				State = 432;
+				State = 435;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 433;
+			State = 436;
 			Match(RightBrace);
 			}
 		}
@@ -3753,12 +3765,74 @@ public partial class ScratchScriptParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 435;
+			State = 438;
 			Match(Default);
-			State = 436;
+			State = 439;
 			Match(Colon);
-			State = 437;
+			State = 440;
 			block();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class ImportAllContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Multiply() { return GetToken(ScratchScriptParser.Multiply, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode As() { return GetToken(ScratchScriptParser.As, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Identifier() { return GetToken(ScratchScriptParser.Identifier, 0); }
+		public ImportAllContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_importAll; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void EnterRule(IParseTreeListener listener) {
+			IScratchScriptListener typedListener = listener as IScratchScriptListener;
+			if (typedListener != null) typedListener.EnterImportAll(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override void ExitRule(IParseTreeListener listener) {
+			IScratchScriptListener typedListener = listener as IScratchScriptListener;
+			if (typedListener != null) typedListener.ExitImportAll(this);
+		}
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IScratchScriptVisitor<TResult> typedVisitor = visitor as IScratchScriptVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitImportAll(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public ImportAllContext importAll() {
+		ImportAllContext _localctx = new ImportAllContext(Context, State);
+		EnterRule(_localctx, 82, RULE_importAll);
+		int _la;
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 442;
+			Match(Multiply);
+			State = 445;
+			ErrorHandler.Sync(this);
+			_la = TokenStream.LA(1);
+			if (_la==As) {
+				{
+				State = 443;
+				Match(As);
+				State = 444;
+				Match(Identifier);
+				}
+			}
+
 			}
 		}
 		catch (RecognitionException re) {
@@ -3808,22 +3882,22 @@ public partial class ScratchScriptParser : Parser {
 	[RuleVersion(0)]
 	public ConstantContext constant() {
 		ConstantContext _localctx = new ConstantContext(Context, State);
-		EnterRule(_localctx, 82, RULE_constant);
+		EnterRule(_localctx, 84, RULE_constant);
 		try {
-			State = 444;
+			State = 452;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Number:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 439;
+				State = 447;
 				Match(Number);
 				}
 				break;
 			case String:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 440;
+				State = 448;
 				Match(String);
 				}
 				break;
@@ -3831,14 +3905,14 @@ public partial class ScratchScriptParser : Parser {
 			case False:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 441;
+				State = 449;
 				boolean();
 				}
 				break;
 			case Color:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 442;
+				State = 450;
 				Match(Color);
 				}
 				break;
@@ -3846,7 +3920,7 @@ public partial class ScratchScriptParser : Parser {
 			case Type:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 443;
+				State = 451;
 				type();
 				}
 				break;
@@ -3893,11 +3967,11 @@ public partial class ScratchScriptParser : Parser {
 	[RuleVersion(0)]
 	public CommentContext comment() {
 		CommentContext _localctx = new CommentContext(Context, State);
-		EnterRule(_localctx, 84, RULE_comment);
+		EnterRule(_localctx, 86, RULE_comment);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 446;
+			State = 454;
 			Match(Comment);
 			}
 		}
@@ -3941,12 +4015,12 @@ public partial class ScratchScriptParser : Parser {
 	[RuleVersion(0)]
 	public BooleanContext boolean() {
 		BooleanContext _localctx = new BooleanContext(Context, State);
-		EnterRule(_localctx, 86, RULE_boolean);
+		EnterRule(_localctx, 88, RULE_boolean);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 448;
+			State = 456;
 			_la = TokenStream.LA(1);
 			if ( !(_la==True || _la==False) ) {
 			ErrorHandler.RecoverInline(this);
@@ -4001,28 +4075,28 @@ public partial class ScratchScriptParser : Parser {
 	[RuleVersion(0)]
 	public TypeContext type() {
 		TypeContext _localctx = new TypeContext(Context, State);
-		EnterRule(_localctx, 88, RULE_type);
+		EnterRule(_localctx, 90, RULE_type);
 		try {
-			State = 456;
+			State = 464;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Type:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 450;
+				State = 458;
 				Match(Type);
 				}
 				break;
 			case T__0:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 451;
+				State = 459;
 				Match(T__0);
-				State = 452;
+				State = 460;
 				Match(Lesser);
-				State = 453;
+				State = 461;
 				type();
-				State = 454;
+				State = 462;
 				Match(Greater);
 				}
 				break;
@@ -4079,156 +4153,158 @@ public partial class ScratchScriptParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,74,459,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,75,467,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
 		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,35,
 		2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,2,41,7,41,2,42,7,42,
-		2,43,7,43,2,44,7,44,1,0,5,0,92,8,0,10,0,12,0,95,9,0,1,0,1,0,1,1,1,1,1,
-		1,1,1,1,1,3,1,104,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,
-		1,2,3,2,119,8,2,1,3,1,3,1,3,1,3,1,3,1,3,3,3,127,8,3,1,4,1,4,1,4,1,4,1,
-		4,1,4,5,4,135,8,4,10,4,12,4,138,9,4,1,4,1,4,3,4,142,8,4,1,4,1,4,1,5,1,
-		5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,8,1,8,1,8,1,8,1,9,
-		1,9,1,9,1,9,1,9,5,9,169,8,9,10,9,12,9,172,9,9,3,9,174,8,9,1,9,1,9,1,10,
-		5,10,179,8,10,10,10,12,10,182,9,10,1,10,1,10,1,10,1,10,1,10,1,10,5,10,
-		190,8,10,10,10,12,10,193,9,10,3,10,195,8,10,1,10,1,10,1,10,1,11,1,11,1,
-		11,1,11,1,11,1,11,1,11,3,11,207,8,11,1,12,1,12,1,12,1,12,1,12,1,12,1,13,
-		1,13,1,13,3,13,218,8,13,1,13,1,13,3,13,222,8,13,1,13,1,13,3,13,226,8,13,
-		1,13,1,13,1,13,1,14,1,14,3,14,233,8,14,1,15,1,15,1,15,1,16,1,16,1,16,1,
-		16,1,16,5,16,243,8,16,10,16,12,16,246,9,16,1,16,1,16,3,16,250,8,16,1,16,
-		1,16,1,16,1,17,1,17,1,17,1,17,1,17,1,17,5,17,261,8,17,10,17,12,17,264,
-		9,17,3,17,266,8,17,1,17,3,17,269,8,17,1,18,1,18,1,18,1,18,1,19,1,19,1,
-		19,1,19,1,19,1,19,1,20,1,20,1,20,1,20,1,21,1,21,1,21,1,22,1,22,1,22,1,
-		22,1,23,1,23,1,23,1,23,1,23,1,23,1,24,1,24,1,24,1,24,1,25,1,25,3,25,304,
-		8,25,1,25,1,25,1,26,1,26,1,26,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,
-		5,27,319,8,27,10,27,12,27,322,9,27,3,27,324,8,27,1,27,1,27,1,27,1,27,1,
-		27,1,27,1,27,1,27,1,27,1,27,3,27,336,8,27,1,27,1,27,1,27,1,27,1,27,1,27,
-		1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,
-		1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,
-		1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,5,27,381,8,27,10,27,12,27,
-		384,9,27,1,28,1,28,1,29,1,29,3,29,390,8,29,1,30,1,30,1,30,1,30,1,31,1,
-		31,1,31,1,31,1,32,1,32,1,33,1,33,1,34,1,34,1,35,1,35,1,36,1,36,1,37,1,
-		37,1,37,1,37,1,37,1,37,3,37,416,8,37,1,38,1,38,5,38,420,8,38,10,38,12,
-		38,423,9,38,1,38,1,38,1,39,1,39,5,39,429,8,39,10,39,12,39,432,9,39,1,39,
-		1,39,1,40,1,40,1,40,1,40,1,41,1,41,1,41,1,41,1,41,3,41,445,8,41,1,42,1,
-		42,1,43,1,43,1,44,1,44,1,44,1,44,1,44,1,44,3,44,457,8,44,1,44,7,136,170,
-		180,191,244,262,320,1,54,45,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,
-		32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,
-		80,82,84,86,88,0,7,2,0,25,25,28,30,1,0,26,27,1,0,38,43,1,0,31,32,2,0,11,
-		11,44,49,1,0,36,37,1,0,52,53,479,0,93,1,0,0,0,2,103,1,0,0,0,4,118,1,0,
-		0,0,6,126,1,0,0,0,8,128,1,0,0,0,10,145,1,0,0,0,12,149,1,0,0,0,14,154,1,
-		0,0,0,16,159,1,0,0,0,18,163,1,0,0,0,20,180,1,0,0,0,22,199,1,0,0,0,24,208,
-		1,0,0,0,26,214,1,0,0,0,28,232,1,0,0,0,30,234,1,0,0,0,32,237,1,0,0,0,34,
-		254,1,0,0,0,36,270,1,0,0,0,38,274,1,0,0,0,40,280,1,0,0,0,42,284,1,0,0,
-		0,44,287,1,0,0,0,46,291,1,0,0,0,48,297,1,0,0,0,50,303,1,0,0,0,52,307,1,
-		0,0,0,54,335,1,0,0,0,56,385,1,0,0,0,58,389,1,0,0,0,60,391,1,0,0,0,62,395,
-		1,0,0,0,64,399,1,0,0,0,66,401,1,0,0,0,68,403,1,0,0,0,70,405,1,0,0,0,72,
-		407,1,0,0,0,74,415,1,0,0,0,76,417,1,0,0,0,78,426,1,0,0,0,80,435,1,0,0,
-		0,82,444,1,0,0,0,84,446,1,0,0,0,86,448,1,0,0,0,88,456,1,0,0,0,90,92,3,
-		2,1,0,91,90,1,0,0,0,92,95,1,0,0,0,93,91,1,0,0,0,93,94,1,0,0,0,94,96,1,
-		0,0,0,95,93,1,0,0,0,96,97,5,0,0,1,97,1,1,0,0,0,98,104,3,20,10,0,99,104,
-		3,34,17,0,100,104,3,8,4,0,101,104,3,32,16,0,102,104,3,44,22,0,103,98,1,
-		0,0,0,103,99,1,0,0,0,103,100,1,0,0,0,103,101,1,0,0,0,103,102,1,0,0,0,104,
-		3,1,0,0,0,105,106,3,6,3,0,106,107,5,4,0,0,107,119,1,0,0,0,108,119,3,22,
-		11,0,109,119,3,24,12,0,110,119,3,38,19,0,111,119,3,26,13,0,112,119,3,46,
-		23,0,113,119,3,36,18,0,114,119,3,42,21,0,115,119,3,52,26,0,116,119,3,40,
-		20,0,117,119,3,84,42,0,118,105,1,0,0,0,118,108,1,0,0,0,118,109,1,0,0,0,
-		118,110,1,0,0,0,118,111,1,0,0,0,118,112,1,0,0,0,118,113,1,0,0,0,118,114,
-		1,0,0,0,118,115,1,0,0,0,118,116,1,0,0,0,118,117,1,0,0,0,119,5,1,0,0,0,
-		120,127,3,10,5,0,121,127,3,12,6,0,122,127,3,18,9,0,123,127,3,16,8,0,124,
-		127,3,14,7,0,125,127,3,30,15,0,126,120,1,0,0,0,126,121,1,0,0,0,126,122,
-		1,0,0,0,126,123,1,0,0,0,126,124,1,0,0,0,126,125,1,0,0,0,127,7,1,0,0,0,
-		128,129,5,67,0,0,129,141,5,72,0,0,130,131,5,5,0,0,131,136,3,54,27,0,132,
-		133,5,12,0,0,133,135,3,54,27,0,134,132,1,0,0,0,135,138,1,0,0,0,136,137,
-		1,0,0,0,136,134,1,0,0,0,137,139,1,0,0,0,138,136,1,0,0,0,139,140,5,6,0,
-		0,140,142,1,0,0,0,141,130,1,0,0,0,141,142,1,0,0,0,142,143,1,0,0,0,143,
-		144,3,76,38,0,144,9,1,0,0,0,145,146,5,72,0,0,146,147,3,70,35,0,147,148,
-		3,54,27,0,148,11,1,0,0,0,149,150,5,72,0,0,150,151,5,7,0,0,151,152,3,54,
-		27,0,152,153,5,8,0,0,153,13,1,0,0,0,154,155,5,61,0,0,155,156,5,72,0,0,
-		156,157,5,11,0,0,157,158,3,54,27,0,158,15,1,0,0,0,159,160,3,54,27,0,160,
-		161,5,16,0,0,161,162,3,18,9,0,162,17,1,0,0,0,163,164,5,72,0,0,164,173,
-		5,5,0,0,165,170,3,50,25,0,166,167,5,12,0,0,167,169,3,50,25,0,168,166,1,
-		0,0,0,169,172,1,0,0,0,170,171,1,0,0,0,170,168,1,0,0,0,171,174,1,0,0,0,
-		172,170,1,0,0,0,173,165,1,0,0,0,173,174,1,0,0,0,174,175,1,0,0,0,175,176,
-		5,6,0,0,176,19,1,0,0,0,177,179,3,34,17,0,178,177,1,0,0,0,179,182,1,0,0,
-		0,180,181,1,0,0,0,180,178,1,0,0,0,181,183,1,0,0,0,182,180,1,0,0,0,183,
-		184,5,63,0,0,184,185,5,72,0,0,185,194,5,5,0,0,186,191,3,48,24,0,187,188,
-		5,12,0,0,188,190,3,48,24,0,189,187,1,0,0,0,190,193,1,0,0,0,191,192,1,0,
-		0,0,191,189,1,0,0,0,192,195,1,0,0,0,193,191,1,0,0,0,194,186,1,0,0,0,194,
-		195,1,0,0,0,195,196,1,0,0,0,196,197,5,6,0,0,197,198,3,76,38,0,198,21,1,
-		0,0,0,199,200,5,50,0,0,200,201,5,5,0,0,201,202,3,54,27,0,202,203,5,6,0,
-		0,203,206,3,76,38,0,204,205,5,51,0,0,205,207,3,28,14,0,206,204,1,0,0,0,
-		206,207,1,0,0,0,207,23,1,0,0,0,208,209,5,60,0,0,209,210,5,5,0,0,210,211,
-		3,54,27,0,211,212,5,6,0,0,212,213,3,76,38,0,213,25,1,0,0,0,214,215,5,57,
-		0,0,215,217,5,5,0,0,216,218,3,6,3,0,217,216,1,0,0,0,217,218,1,0,0,0,218,
-		219,1,0,0,0,219,221,5,4,0,0,220,222,3,54,27,0,221,220,1,0,0,0,221,222,
-		1,0,0,0,222,223,1,0,0,0,223,225,5,4,0,0,224,226,3,6,3,0,225,224,1,0,0,
-		0,225,226,1,0,0,0,226,227,1,0,0,0,227,228,5,6,0,0,228,229,3,76,38,0,229,
-		27,1,0,0,0,230,233,3,76,38,0,231,233,3,22,11,0,232,230,1,0,0,0,232,231,
-		1,0,0,0,233,29,1,0,0,0,234,235,5,72,0,0,235,236,3,72,36,0,236,31,1,0,0,
-		0,237,249,5,62,0,0,238,239,5,9,0,0,239,244,5,72,0,0,240,241,5,12,0,0,241,
-		243,5,72,0,0,242,240,1,0,0,0,243,246,1,0,0,0,244,245,1,0,0,0,244,242,1,
-		0,0,0,245,247,1,0,0,0,246,244,1,0,0,0,247,248,5,10,0,0,248,250,5,68,0,
-		0,249,238,1,0,0,0,249,250,1,0,0,0,250,251,1,0,0,0,251,252,5,73,0,0,252,
-		253,5,4,0,0,253,33,1,0,0,0,254,255,5,23,0,0,255,268,5,72,0,0,256,265,5,
-		5,0,0,257,262,3,82,41,0,258,259,5,12,0,0,259,261,3,82,41,0,260,258,1,0,
-		0,0,261,264,1,0,0,0,262,263,1,0,0,0,262,260,1,0,0,0,263,266,1,0,0,0,264,
-		262,1,0,0,0,265,257,1,0,0,0,265,266,1,0,0,0,266,267,1,0,0,0,267,269,5,
-		6,0,0,268,256,1,0,0,0,268,269,1,0,0,0,269,35,1,0,0,0,270,271,5,64,0,0,
-		271,272,3,54,27,0,272,273,5,4,0,0,273,37,1,0,0,0,274,275,5,66,0,0,275,
-		276,5,5,0,0,276,277,3,54,27,0,277,278,5,6,0,0,278,279,3,76,38,0,279,39,
-		1,0,0,0,280,281,5,65,0,0,281,282,5,73,0,0,282,283,5,4,0,0,283,41,1,0,0,
-		0,284,285,5,54,0,0,285,286,5,4,0,0,286,43,1,0,0,0,287,288,5,69,0,0,288,
-		289,5,73,0,0,289,290,5,4,0,0,290,45,1,0,0,0,291,292,5,59,0,0,292,293,5,
-		5,0,0,293,294,3,54,27,0,294,295,5,6,0,0,295,296,3,78,39,0,296,47,1,0,0,
-		0,297,298,5,72,0,0,298,299,5,15,0,0,299,300,3,88,44,0,300,49,1,0,0,0,301,
-		302,5,72,0,0,302,304,5,15,0,0,303,301,1,0,0,0,303,304,1,0,0,0,304,305,
-		1,0,0,0,305,306,3,54,27,0,306,51,1,0,0,0,307,308,5,56,0,0,308,309,5,4,
-		0,0,309,53,1,0,0,0,310,311,6,27,-1,0,311,336,3,82,41,0,312,336,5,72,0,
-		0,313,336,3,18,9,0,314,323,5,7,0,0,315,320,3,54,27,0,316,317,5,12,0,0,
-		317,319,3,54,27,0,318,316,1,0,0,0,319,322,1,0,0,0,320,321,1,0,0,0,320,
-		318,1,0,0,0,321,324,1,0,0,0,322,320,1,0,0,0,323,315,1,0,0,0,323,324,1,
-		0,0,0,324,325,1,0,0,0,325,336,5,8,0,0,326,327,5,5,0,0,327,328,3,54,27,
-		0,328,329,5,6,0,0,329,336,1,0,0,0,330,331,5,13,0,0,331,336,3,54,27,12,
-		332,333,3,64,32,0,333,334,3,54,27,10,334,336,1,0,0,0,335,310,1,0,0,0,335,
-		312,1,0,0,0,335,313,1,0,0,0,335,314,1,0,0,0,335,326,1,0,0,0,335,330,1,
-		0,0,0,335,332,1,0,0,0,336,382,1,0,0,0,337,338,10,9,0,0,338,339,5,34,0,
-		0,339,381,3,54,27,10,340,341,10,8,0,0,341,342,5,35,0,0,342,381,3,54,27,
-		9,343,344,10,7,0,0,344,345,5,33,0,0,345,381,3,54,27,8,346,347,10,6,0,0,
-		347,348,3,58,29,0,348,349,3,54,27,7,349,381,1,0,0,0,350,351,10,5,0,0,351,
-		352,3,56,28,0,352,353,3,54,27,6,353,381,1,0,0,0,354,355,10,4,0,0,355,356,
-		3,64,32,0,356,357,3,54,27,5,357,381,1,0,0,0,358,359,10,3,0,0,359,360,3,
-		66,33,0,360,361,3,54,27,4,361,381,1,0,0,0,362,363,10,2,0,0,363,364,3,68,
-		34,0,364,365,3,54,27,3,365,381,1,0,0,0,366,367,10,1,0,0,367,368,5,17,0,
-		0,368,369,3,54,27,0,369,370,5,15,0,0,370,371,3,54,27,2,371,381,1,0,0,0,
-		372,373,10,15,0,0,373,374,5,16,0,0,374,381,3,18,9,0,375,376,10,11,0,0,
-		376,377,5,7,0,0,377,378,3,54,27,0,378,379,5,8,0,0,379,381,1,0,0,0,380,
-		337,1,0,0,0,380,340,1,0,0,0,380,343,1,0,0,0,380,346,1,0,0,0,380,350,1,
-		0,0,0,380,354,1,0,0,0,380,358,1,0,0,0,380,362,1,0,0,0,380,366,1,0,0,0,
-		380,372,1,0,0,0,380,375,1,0,0,0,381,384,1,0,0,0,382,380,1,0,0,0,382,383,
-		1,0,0,0,383,55,1,0,0,0,384,382,1,0,0,0,385,386,7,0,0,0,386,57,1,0,0,0,
-		387,390,3,60,30,0,388,390,3,62,31,0,389,387,1,0,0,0,389,388,1,0,0,0,390,
-		59,1,0,0,0,391,392,5,39,0,0,392,393,5,39,0,0,393,394,4,30,11,1,394,61,
-		1,0,0,0,395,396,5,38,0,0,396,397,5,38,0,0,397,398,4,31,12,1,398,63,1,0,
-		0,0,399,400,7,1,0,0,400,65,1,0,0,0,401,402,7,2,0,0,402,67,1,0,0,0,403,
-		404,7,3,0,0,404,69,1,0,0,0,405,406,7,4,0,0,406,71,1,0,0,0,407,408,7,5,
-		0,0,408,73,1,0,0,0,409,410,5,58,0,0,410,411,3,82,41,0,411,412,5,15,0,0,
-		412,413,3,76,38,0,413,416,1,0,0,0,414,416,3,80,40,0,415,409,1,0,0,0,415,
-		414,1,0,0,0,416,75,1,0,0,0,417,421,5,9,0,0,418,420,3,4,2,0,419,418,1,0,
-		0,0,420,423,1,0,0,0,421,419,1,0,0,0,421,422,1,0,0,0,422,424,1,0,0,0,423,
-		421,1,0,0,0,424,425,5,10,0,0,425,77,1,0,0,0,426,430,5,9,0,0,427,429,3,
-		74,37,0,428,427,1,0,0,0,429,432,1,0,0,0,430,428,1,0,0,0,430,431,1,0,0,
-		0,431,433,1,0,0,0,432,430,1,0,0,0,433,434,5,10,0,0,434,79,1,0,0,0,435,
-		436,5,55,0,0,436,437,5,15,0,0,437,438,3,76,38,0,438,81,1,0,0,0,439,445,
-		5,71,0,0,440,445,5,73,0,0,441,445,3,86,43,0,442,445,5,74,0,0,443,445,3,
-		88,44,0,444,439,1,0,0,0,444,440,1,0,0,0,444,441,1,0,0,0,444,442,1,0,0,
-		0,444,443,1,0,0,0,445,83,1,0,0,0,446,447,5,21,0,0,447,85,1,0,0,0,448,449,
-		7,6,0,0,449,87,1,0,0,0,450,457,5,70,0,0,451,452,5,1,0,0,452,453,5,39,0,
-		0,453,454,3,88,44,0,454,455,5,38,0,0,455,457,1,0,0,0,456,450,1,0,0,0,456,
-		451,1,0,0,0,457,89,1,0,0,0,33,93,103,118,126,136,141,170,173,180,191,194,
-		206,217,221,225,232,244,249,262,265,268,303,320,323,335,380,382,389,415,
-		421,430,444,456
+		2,43,7,43,2,44,7,44,2,45,7,45,1,0,5,0,94,8,0,10,0,12,0,97,9,0,1,0,1,0,
+		1,1,1,1,1,1,1,1,1,1,3,1,106,8,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,
+		2,1,2,1,2,1,2,3,2,121,8,2,1,3,1,3,1,3,1,3,1,3,1,3,3,3,129,8,3,1,4,1,4,
+		1,4,1,4,1,4,1,4,5,4,137,8,4,10,4,12,4,140,9,4,1,4,1,4,3,4,144,8,4,1,4,
+		1,4,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,7,1,8,1,8,1,
+		8,1,8,1,9,1,9,1,9,1,9,1,9,5,9,171,8,9,10,9,12,9,174,9,9,3,9,176,8,9,1,
+		9,1,9,1,10,5,10,181,8,10,10,10,12,10,184,9,10,1,10,1,10,1,10,1,10,1,10,
+		1,10,5,10,192,8,10,10,10,12,10,195,9,10,3,10,197,8,10,1,10,1,10,1,10,1,
+		11,1,11,1,11,1,11,1,11,1,11,1,11,3,11,209,8,11,1,12,1,12,1,12,1,12,1,12,
+		1,12,1,13,1,13,1,13,3,13,220,8,13,1,13,1,13,3,13,224,8,13,1,13,1,13,3,
+		13,228,8,13,1,13,1,13,1,13,1,14,1,14,3,14,235,8,14,1,15,1,15,1,15,1,16,
+		1,16,1,16,1,16,1,16,5,16,245,8,16,10,16,12,16,248,9,16,1,16,1,16,3,16,
+		252,8,16,1,16,1,16,1,16,1,16,1,17,1,17,1,17,1,17,1,17,1,17,5,17,264,8,
+		17,10,17,12,17,267,9,17,3,17,269,8,17,1,17,3,17,272,8,17,1,18,1,18,1,18,
+		1,18,1,19,1,19,1,19,1,19,1,19,1,19,1,20,1,20,1,20,1,20,1,21,1,21,1,21,
+		1,22,1,22,1,22,1,22,1,23,1,23,1,23,1,23,1,23,1,23,1,24,1,24,1,24,1,24,
+		1,25,1,25,3,25,307,8,25,1,25,1,25,1,26,1,26,1,26,1,27,1,27,1,27,1,27,1,
+		27,1,27,1,27,1,27,5,27,322,8,27,10,27,12,27,325,9,27,3,27,327,8,27,1,27,
+		1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,3,27,339,8,27,1,27,1,27,1,
+		27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,
+		27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,
+		27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,1,27,5,27,384,
+		8,27,10,27,12,27,387,9,27,1,28,1,28,1,29,1,29,3,29,393,8,29,1,30,1,30,
+		1,30,1,30,1,31,1,31,1,31,1,31,1,32,1,32,1,33,1,33,1,34,1,34,1,35,1,35,
+		1,36,1,36,1,37,1,37,1,37,1,37,1,37,1,37,3,37,419,8,37,1,38,1,38,5,38,423,
+		8,38,10,38,12,38,426,9,38,1,38,1,38,1,39,1,39,5,39,432,8,39,10,39,12,39,
+		435,9,39,1,39,1,39,1,40,1,40,1,40,1,40,1,41,1,41,1,41,3,41,446,8,41,1,
+		42,1,42,1,42,1,42,1,42,3,42,453,8,42,1,43,1,43,1,44,1,44,1,45,1,45,1,45,
+		1,45,1,45,1,45,3,45,465,8,45,1,45,7,138,172,182,193,246,265,323,1,54,46,
+		0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,
+		50,52,54,56,58,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88,90,0,7,2,0,
+		25,25,28,30,1,0,26,27,1,0,38,43,1,0,31,32,2,0,11,11,44,49,1,0,36,37,1,
+		0,52,53,487,0,95,1,0,0,0,2,105,1,0,0,0,4,120,1,0,0,0,6,128,1,0,0,0,8,130,
+		1,0,0,0,10,147,1,0,0,0,12,151,1,0,0,0,14,156,1,0,0,0,16,161,1,0,0,0,18,
+		165,1,0,0,0,20,182,1,0,0,0,22,201,1,0,0,0,24,210,1,0,0,0,26,216,1,0,0,
+		0,28,234,1,0,0,0,30,236,1,0,0,0,32,239,1,0,0,0,34,257,1,0,0,0,36,273,1,
+		0,0,0,38,277,1,0,0,0,40,283,1,0,0,0,42,287,1,0,0,0,44,290,1,0,0,0,46,294,
+		1,0,0,0,48,300,1,0,0,0,50,306,1,0,0,0,52,310,1,0,0,0,54,338,1,0,0,0,56,
+		388,1,0,0,0,58,392,1,0,0,0,60,394,1,0,0,0,62,398,1,0,0,0,64,402,1,0,0,
+		0,66,404,1,0,0,0,68,406,1,0,0,0,70,408,1,0,0,0,72,410,1,0,0,0,74,418,1,
+		0,0,0,76,420,1,0,0,0,78,429,1,0,0,0,80,438,1,0,0,0,82,442,1,0,0,0,84,452,
+		1,0,0,0,86,454,1,0,0,0,88,456,1,0,0,0,90,464,1,0,0,0,92,94,3,2,1,0,93,
+		92,1,0,0,0,94,97,1,0,0,0,95,93,1,0,0,0,95,96,1,0,0,0,96,98,1,0,0,0,97,
+		95,1,0,0,0,98,99,5,0,0,1,99,1,1,0,0,0,100,106,3,20,10,0,101,106,3,34,17,
+		0,102,106,3,8,4,0,103,106,3,32,16,0,104,106,3,44,22,0,105,100,1,0,0,0,
+		105,101,1,0,0,0,105,102,1,0,0,0,105,103,1,0,0,0,105,104,1,0,0,0,106,3,
+		1,0,0,0,107,108,3,6,3,0,108,109,5,4,0,0,109,121,1,0,0,0,110,121,3,22,11,
+		0,111,121,3,24,12,0,112,121,3,38,19,0,113,121,3,26,13,0,114,121,3,46,23,
+		0,115,121,3,36,18,0,116,121,3,42,21,0,117,121,3,52,26,0,118,121,3,40,20,
+		0,119,121,3,86,43,0,120,107,1,0,0,0,120,110,1,0,0,0,120,111,1,0,0,0,120,
+		112,1,0,0,0,120,113,1,0,0,0,120,114,1,0,0,0,120,115,1,0,0,0,120,116,1,
+		0,0,0,120,117,1,0,0,0,120,118,1,0,0,0,120,119,1,0,0,0,121,5,1,0,0,0,122,
+		129,3,10,5,0,123,129,3,12,6,0,124,129,3,18,9,0,125,129,3,16,8,0,126,129,
+		3,14,7,0,127,129,3,30,15,0,128,122,1,0,0,0,128,123,1,0,0,0,128,124,1,0,
+		0,0,128,125,1,0,0,0,128,126,1,0,0,0,128,127,1,0,0,0,129,7,1,0,0,0,130,
+		131,5,68,0,0,131,143,5,73,0,0,132,133,5,5,0,0,133,138,3,54,27,0,134,135,
+		5,12,0,0,135,137,3,54,27,0,136,134,1,0,0,0,137,140,1,0,0,0,138,139,1,0,
+		0,0,138,136,1,0,0,0,139,141,1,0,0,0,140,138,1,0,0,0,141,142,5,6,0,0,142,
+		144,1,0,0,0,143,132,1,0,0,0,143,144,1,0,0,0,144,145,1,0,0,0,145,146,3,
+		76,38,0,146,9,1,0,0,0,147,148,5,73,0,0,148,149,3,70,35,0,149,150,3,54,
+		27,0,150,11,1,0,0,0,151,152,5,73,0,0,152,153,5,7,0,0,153,154,3,54,27,0,
+		154,155,5,8,0,0,155,13,1,0,0,0,156,157,5,62,0,0,157,158,5,73,0,0,158,159,
+		5,11,0,0,159,160,3,54,27,0,160,15,1,0,0,0,161,162,3,54,27,0,162,163,5,
+		16,0,0,163,164,3,18,9,0,164,17,1,0,0,0,165,166,5,73,0,0,166,175,5,5,0,
+		0,167,172,3,50,25,0,168,169,5,12,0,0,169,171,3,50,25,0,170,168,1,0,0,0,
+		171,174,1,0,0,0,172,173,1,0,0,0,172,170,1,0,0,0,173,176,1,0,0,0,174,172,
+		1,0,0,0,175,167,1,0,0,0,175,176,1,0,0,0,176,177,1,0,0,0,177,178,5,6,0,
+		0,178,19,1,0,0,0,179,181,3,34,17,0,180,179,1,0,0,0,181,184,1,0,0,0,182,
+		183,1,0,0,0,182,180,1,0,0,0,183,185,1,0,0,0,184,182,1,0,0,0,185,186,5,
+		64,0,0,186,187,5,73,0,0,187,196,5,5,0,0,188,193,3,48,24,0,189,190,5,12,
+		0,0,190,192,3,48,24,0,191,189,1,0,0,0,192,195,1,0,0,0,193,194,1,0,0,0,
+		193,191,1,0,0,0,194,197,1,0,0,0,195,193,1,0,0,0,196,188,1,0,0,0,196,197,
+		1,0,0,0,197,198,1,0,0,0,198,199,5,6,0,0,199,200,3,76,38,0,200,21,1,0,0,
+		0,201,202,5,50,0,0,202,203,5,5,0,0,203,204,3,54,27,0,204,205,5,6,0,0,205,
+		208,3,76,38,0,206,207,5,51,0,0,207,209,3,28,14,0,208,206,1,0,0,0,208,209,
+		1,0,0,0,209,23,1,0,0,0,210,211,5,61,0,0,211,212,5,5,0,0,212,213,3,54,27,
+		0,213,214,5,6,0,0,214,215,3,76,38,0,215,25,1,0,0,0,216,217,5,58,0,0,217,
+		219,5,5,0,0,218,220,3,6,3,0,219,218,1,0,0,0,219,220,1,0,0,0,220,221,1,
+		0,0,0,221,223,5,4,0,0,222,224,3,54,27,0,223,222,1,0,0,0,223,224,1,0,0,
+		0,224,225,1,0,0,0,225,227,5,4,0,0,226,228,3,6,3,0,227,226,1,0,0,0,227,
+		228,1,0,0,0,228,229,1,0,0,0,229,230,5,6,0,0,230,231,3,76,38,0,231,27,1,
+		0,0,0,232,235,3,76,38,0,233,235,3,22,11,0,234,232,1,0,0,0,234,233,1,0,
+		0,0,235,29,1,0,0,0,236,237,5,73,0,0,237,238,3,72,36,0,238,31,1,0,0,0,239,
+		251,5,63,0,0,240,241,5,9,0,0,241,246,5,73,0,0,242,243,5,12,0,0,243,245,
+		5,73,0,0,244,242,1,0,0,0,245,248,1,0,0,0,246,247,1,0,0,0,246,244,1,0,0,
+		0,247,249,1,0,0,0,248,246,1,0,0,0,249,252,5,10,0,0,250,252,3,82,41,0,251,
+		240,1,0,0,0,251,250,1,0,0,0,252,253,1,0,0,0,253,254,5,69,0,0,254,255,5,
+		74,0,0,255,256,5,4,0,0,256,33,1,0,0,0,257,258,5,23,0,0,258,271,5,73,0,
+		0,259,268,5,5,0,0,260,265,3,84,42,0,261,262,5,12,0,0,262,264,3,84,42,0,
+		263,261,1,0,0,0,264,267,1,0,0,0,265,266,1,0,0,0,265,263,1,0,0,0,266,269,
+		1,0,0,0,267,265,1,0,0,0,268,260,1,0,0,0,268,269,1,0,0,0,269,270,1,0,0,
+		0,270,272,5,6,0,0,271,259,1,0,0,0,271,272,1,0,0,0,272,35,1,0,0,0,273,274,
+		5,65,0,0,274,275,3,54,27,0,275,276,5,4,0,0,276,37,1,0,0,0,277,278,5,67,
+		0,0,278,279,5,5,0,0,279,280,3,54,27,0,280,281,5,6,0,0,281,282,3,76,38,
+		0,282,39,1,0,0,0,283,284,5,66,0,0,284,285,5,74,0,0,285,286,5,4,0,0,286,
+		41,1,0,0,0,287,288,5,54,0,0,288,289,5,4,0,0,289,43,1,0,0,0,290,291,5,70,
+		0,0,291,292,5,74,0,0,292,293,5,4,0,0,293,45,1,0,0,0,294,295,5,60,0,0,295,
+		296,5,5,0,0,296,297,3,54,27,0,297,298,5,6,0,0,298,299,3,78,39,0,299,47,
+		1,0,0,0,300,301,5,73,0,0,301,302,5,15,0,0,302,303,3,90,45,0,303,49,1,0,
+		0,0,304,305,5,73,0,0,305,307,5,15,0,0,306,304,1,0,0,0,306,307,1,0,0,0,
+		307,308,1,0,0,0,308,309,3,54,27,0,309,51,1,0,0,0,310,311,5,56,0,0,311,
+		312,5,4,0,0,312,53,1,0,0,0,313,314,6,27,-1,0,314,339,3,84,42,0,315,339,
+		5,73,0,0,316,339,3,18,9,0,317,326,5,7,0,0,318,323,3,54,27,0,319,320,5,
+		12,0,0,320,322,3,54,27,0,321,319,1,0,0,0,322,325,1,0,0,0,323,324,1,0,0,
+		0,323,321,1,0,0,0,324,327,1,0,0,0,325,323,1,0,0,0,326,318,1,0,0,0,326,
+		327,1,0,0,0,327,328,1,0,0,0,328,339,5,8,0,0,329,330,5,5,0,0,330,331,3,
+		54,27,0,331,332,5,6,0,0,332,339,1,0,0,0,333,334,5,13,0,0,334,339,3,54,
+		27,12,335,336,3,64,32,0,336,337,3,54,27,10,337,339,1,0,0,0,338,313,1,0,
+		0,0,338,315,1,0,0,0,338,316,1,0,0,0,338,317,1,0,0,0,338,329,1,0,0,0,338,
+		333,1,0,0,0,338,335,1,0,0,0,339,385,1,0,0,0,340,341,10,9,0,0,341,342,5,
+		34,0,0,342,384,3,54,27,10,343,344,10,8,0,0,344,345,5,35,0,0,345,384,3,
+		54,27,9,346,347,10,7,0,0,347,348,5,33,0,0,348,384,3,54,27,8,349,350,10,
+		6,0,0,350,351,3,58,29,0,351,352,3,54,27,7,352,384,1,0,0,0,353,354,10,5,
+		0,0,354,355,3,56,28,0,355,356,3,54,27,6,356,384,1,0,0,0,357,358,10,4,0,
+		0,358,359,3,64,32,0,359,360,3,54,27,5,360,384,1,0,0,0,361,362,10,3,0,0,
+		362,363,3,66,33,0,363,364,3,54,27,4,364,384,1,0,0,0,365,366,10,2,0,0,366,
+		367,3,68,34,0,367,368,3,54,27,3,368,384,1,0,0,0,369,370,10,1,0,0,370,371,
+		5,17,0,0,371,372,3,54,27,0,372,373,5,15,0,0,373,374,3,54,27,2,374,384,
+		1,0,0,0,375,376,10,15,0,0,376,377,5,16,0,0,377,384,3,18,9,0,378,379,10,
+		11,0,0,379,380,5,7,0,0,380,381,3,54,27,0,381,382,5,8,0,0,382,384,1,0,0,
+		0,383,340,1,0,0,0,383,343,1,0,0,0,383,346,1,0,0,0,383,349,1,0,0,0,383,
+		353,1,0,0,0,383,357,1,0,0,0,383,361,1,0,0,0,383,365,1,0,0,0,383,369,1,
+		0,0,0,383,375,1,0,0,0,383,378,1,0,0,0,384,387,1,0,0,0,385,383,1,0,0,0,
+		385,386,1,0,0,0,386,55,1,0,0,0,387,385,1,0,0,0,388,389,7,0,0,0,389,57,
+		1,0,0,0,390,393,3,60,30,0,391,393,3,62,31,0,392,390,1,0,0,0,392,391,1,
+		0,0,0,393,59,1,0,0,0,394,395,5,39,0,0,395,396,5,39,0,0,396,397,4,30,11,
+		1,397,61,1,0,0,0,398,399,5,38,0,0,399,400,5,38,0,0,400,401,4,31,12,1,401,
+		63,1,0,0,0,402,403,7,1,0,0,403,65,1,0,0,0,404,405,7,2,0,0,405,67,1,0,0,
+		0,406,407,7,3,0,0,407,69,1,0,0,0,408,409,7,4,0,0,409,71,1,0,0,0,410,411,
+		7,5,0,0,411,73,1,0,0,0,412,413,5,59,0,0,413,414,3,84,42,0,414,415,5,15,
+		0,0,415,416,3,76,38,0,416,419,1,0,0,0,417,419,3,80,40,0,418,412,1,0,0,
+		0,418,417,1,0,0,0,419,75,1,0,0,0,420,424,5,9,0,0,421,423,3,4,2,0,422,421,
+		1,0,0,0,423,426,1,0,0,0,424,422,1,0,0,0,424,425,1,0,0,0,425,427,1,0,0,
+		0,426,424,1,0,0,0,427,428,5,10,0,0,428,77,1,0,0,0,429,433,5,9,0,0,430,
+		432,3,74,37,0,431,430,1,0,0,0,432,435,1,0,0,0,433,431,1,0,0,0,433,434,
+		1,0,0,0,434,436,1,0,0,0,435,433,1,0,0,0,436,437,5,10,0,0,437,79,1,0,0,
+		0,438,439,5,55,0,0,439,440,5,15,0,0,440,441,3,76,38,0,441,81,1,0,0,0,442,
+		445,5,25,0,0,443,444,5,57,0,0,444,446,5,73,0,0,445,443,1,0,0,0,445,446,
+		1,0,0,0,446,83,1,0,0,0,447,453,5,72,0,0,448,453,5,74,0,0,449,453,3,88,
+		44,0,450,453,5,75,0,0,451,453,3,90,45,0,452,447,1,0,0,0,452,448,1,0,0,
+		0,452,449,1,0,0,0,452,450,1,0,0,0,452,451,1,0,0,0,453,85,1,0,0,0,454,455,
+		5,21,0,0,455,87,1,0,0,0,456,457,7,6,0,0,457,89,1,0,0,0,458,465,5,71,0,
+		0,459,460,5,1,0,0,460,461,5,39,0,0,461,462,3,90,45,0,462,463,5,38,0,0,
+		463,465,1,0,0,0,464,458,1,0,0,0,464,459,1,0,0,0,465,91,1,0,0,0,34,95,105,
+		120,128,138,143,172,175,182,193,196,208,219,223,227,234,246,251,265,268,
+		271,306,323,326,338,383,385,392,418,424,433,445,452,464
 	};
 
 	public static readonly ATN _ATN =

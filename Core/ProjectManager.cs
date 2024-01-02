@@ -128,7 +128,7 @@ public class ProjectManager
         var parser = new ScratchScriptParser(tokenStream);
         var visitor = new ScratchScriptVisitor(parser, _input);
         visitor.Visit(parser.program());
-        return (StdLoader.Variables + visitor.Output, visitor.Success); // TODO: again, StdLoader.Variables is a hack here
+        return (visitor.Output, visitor.Success);
     }
 
     private Target GetTarget(string ir)

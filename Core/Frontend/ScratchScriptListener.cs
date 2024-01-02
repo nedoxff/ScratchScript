@@ -647,6 +647,16 @@ public interface IScratchScriptListener : IParseTreeListener {
 	/// <param name="context">The parse tree.</param>
 	void ExitDefaultCase([NotNull] ScratchScriptParser.DefaultCaseContext context);
 	/// <summary>
+	/// Enter a parse tree produced by <see cref="ScratchScriptParser.importAll"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void EnterImportAll([NotNull] ScratchScriptParser.ImportAllContext context);
+	/// <summary>
+	/// Exit a parse tree produced by <see cref="ScratchScriptParser.importAll"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	void ExitImportAll([NotNull] ScratchScriptParser.ImportAllContext context);
+	/// <summary>
 	/// Enter a parse tree produced by <see cref="ScratchScriptParser.constant"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
